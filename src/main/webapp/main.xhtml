@@ -3,7 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html">
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <title>Start Page</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -15,9 +16,43 @@
         <h:commandButton value="New Project" action="newProject.xhtml"/> 
         <br/><br/>
         <label><b>Projects you own:</b></label>
-        <br/><br/><!--use c:foreach-->
+        <br/><br/>
+        <c:choose>
+            <c:when test="#{comBean.user.owns.size()>0}">
+                <c:forEach var="i" begin="0" end="#{comBean.user.owns.size()-1}">
+                    #{comBean.getProject(comBean.user.owns.get(i)).getOverview()}<br/>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                You haven't created any projects yet!<br/>
+            </c:otherwise>
+        </c:choose>
+        <br/>
         <label><b>Projects you follow:</b></label>
         <br/><br/>
-        <label><b>Other trending projects:</b></label>
+        <c:choose>
+            <c:when test="#{comBean.user.follows.size()>0}">
+                <c:forEach var="i" begin="0" end="#{comBean.user.follows.size()-1}">
+                    #{comBean.getProject(comBean.user.follows.get(i)).getOverview()}<br/>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                You're not following any projects!<br/>
+            </c:otherwise>
+        </c:choose>
+        <br/>
+        <label><b>Trending projects:</b></label>
+        <br/><br/>
+        <c:choose>
+            <c:when test="#{comBean.getPopularProjects().size()>0}">
+                <c:forEach var="i" begin="0" end="#{comBean.getPopularProjects().size()-1}">
+                    #{comBean.getPopularProjects().get(i).getOverview()}<br/>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                There are no other projects!<br/>
+            </c:otherwise>
+        </c:choose>
+        <br/>
     </h:body>
 </html>

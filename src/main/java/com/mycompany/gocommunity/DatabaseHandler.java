@@ -2,6 +2,7 @@ package com.mycompany.gocommunity;
 
 import db.Client;
 import db.Project;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -13,7 +14,7 @@ import javax.persistence.TypedQuery;
  */
 public class DatabaseHandler {
     
-    private final EntityManager em;
+    public final EntityManager em;
     
     public DatabaseHandler(String file) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("$objectdb/db/"+file);
@@ -27,6 +28,21 @@ public class DatabaseHandler {
         if (query.getResultList().size()>0) {
             return query.getResultList().get(0);
         } else return null;
+    }
+    
+    public Project getProject(long id) {
+        TypedQuery<Project> query = em.createQuery(
+                "SELECT u FROM Project u WHERE u.id="+id, Project.class);
+        
+        return query.getSingleResult();
+    }
+    
+    public List<Project> getPopularProjects() {
+        TypedQuery<Project> query = em.createQuery(
+                "SELECT u FROM Project u ORDER BY u.progress DESC", 
+                Project.class).setMaxResults(5);
+        
+        return query.getResultList();
     }
     
     public boolean createAccount(Client user) {

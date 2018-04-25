@@ -2,6 +2,7 @@ package db;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,14 +37,18 @@ public class Project implements Serializable {
         
     }
     
-    public Project(String name, String desc, Double goal, Date created, Date ends) {
+    public Project(String name, String desc, Double goal, Date ends) {
         this.name = name;
         this.description = desc;
         this.goal = goal;
-        this.createdOn = created;
+        this.createdOn = new Date(Calendar.getInstance().getTime().getTime());
         this.endsOn = ends;
         this.milestones = new HashMap<>();
         this.progress = 0.0;
+    }
+    
+    public String getOverview() {
+        return String.format(name+" - %.2f/%.2f - Ends on "+endsOn.toString(),progress,goal);
     }
     
     public Long getId() {

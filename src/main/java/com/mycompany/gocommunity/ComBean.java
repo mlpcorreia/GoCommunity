@@ -3,7 +3,7 @@ package com.mycompany.gocommunity;
 import db.Client;
 import db.Project;
 import java.sql.Date;
-import java.util.Calendar;
+import java.util.List;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
@@ -40,8 +40,6 @@ public class ComBean {
     }
     
     public String login() {
-        //username: x
-        //password: d
         this.user = db.login(username,password);
         
         if (user!=null) {
@@ -87,7 +85,6 @@ public class ComBean {
         
         double goal;
         Date end;
-        Date now = new Date(Calendar.getInstance().getTime().getTime());
         
         try {
             goal = Double.parseDouble(projGoalString);
@@ -100,7 +97,7 @@ public class ComBean {
             return "newProject.xhtml";
         }
         
-        Project newProject = new Project(projName, projDesc, goal, now, end);
+        Project newProject = new Project(projName, projDesc, goal, end);
         long id = db.createProject(newProject);
         
         if (id!=-1) {
@@ -112,6 +109,14 @@ public class ComBean {
             return "newAccount.xhtml";
         }
 
+    }
+    
+    public Project getProject(int id) {
+        return db.getProject(id);
+    }
+    
+    public List<Project> getPopularProjects() {
+        return db.getPopularProjects();
     }
     
     public Client getUser() {
