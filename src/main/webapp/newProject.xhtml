@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+    <h:head>
+        <title>Start Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    </h:head>
+    <h:body>
+        <h1>Project creation page</h1>
+        <h:form role="form" style="text-align: center;">
+        <label>Name:</label>
+        <br />
+        <h:inputText class="form-control" value="#{comBean.projName}"/> 
+        <br /><br />
+        <label>Description:</label>
+        <br />
+        <h:inputTextarea class="form-control" value="#{comBean.projDesc}"/>
+        <br /><br/>
+        <label>Goal (€):</label>
+        <br />
+        <h:inputText class="form-control" value="#{comBean.projGoalString}"/> 
+        <br /><br/>
+        <label>Ends on (YYYY-MM-DD):</label>
+        <br />
+        <h:inputText class="form-control" value="#{comBean.projEndsString}"/> 
+        <br /><br/>
+        <h:commandButton value="Submit" action="#{comBean.createProject()}"/> 
+        <br /><br/>
+        <label>#{comBean.createProjectErrorMessage}</label>
+        </h:form>
+    </h:body>
+</html>

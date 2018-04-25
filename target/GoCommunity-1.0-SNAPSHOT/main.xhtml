@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+    <h:head>
+        <title>Start Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    </h:head>
+    <h:body>
+        <h1>Main page</h1>
+        <label>Hello #{comBean.user.name}</label>
+        <br/><br/>
+        <h:commandButton value="New Project" action="newProject.xhtml"/> 
+        <br/><br/>
+        <label><b>Projects you own:</b></label>
+        <br/><br/><!--use c:foreach-->
+        <label><b>Projects you follow:</b></label>
+        <br/><br/>
+        <label><b>Other trending projects:</b></label>
+    </h:body>
+</html>
