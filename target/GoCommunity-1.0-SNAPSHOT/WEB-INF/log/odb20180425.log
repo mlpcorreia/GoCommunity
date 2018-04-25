@@ -145,3 +145,213 @@ Type db.Client is not enhanced.
 [2018-04-25 13:38:33 #4 type] 
 Type db.Project is not enhanced.
 
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 18:43:46 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 8052@Utilizador
+
+[2018-04-25 18:43:46 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 18:43:46 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 18:57:43 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' has been recovered (tr. 19-19)
+
+[2018-04-25 18:57:44 #2 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 5420@Utilizador
+
+[2018-04-25 18:57:44 #3 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 18:57:45 #4 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:01:07 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' has been recovered (tr. 20-21)
+
+[2018-04-25 19:01:07 #2 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 7500@Utilizador
+
+[2018-04-25 19:01:07 #3 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:01:08 #4 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:09:00 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 1440@Utilizador
+
+[2018-04-25 19:09:00 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:09:00 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:10:58 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' has been recovered (tr. 22-22)
+
+[2018-04-25 19:10:58 #2 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 7532@Utilizador
+
+[2018-04-25 19:10:59 #3 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:10:59 #4 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:26:29 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' has been recovered (tr. 23-24)
+
+[2018-04-25 19:26:29 #2 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 5664@Utilizador
+
+[2018-04-25 19:26:30 #3 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:26:30 #4 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:28:42 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 4164@Utilizador
+
+[2018-04-25 19:28:42 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:28:42 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:30:58 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 2360@Utilizador
+
+[2018-04-25 19:30:58 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:30:58 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:32:21 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 3220@Utilizador
+
+[2018-04-25 19:32:22 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:32:22 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:37:10 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 7948@Utilizador
+
+[2018-04-25 19:37:10 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:37:10 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 19:42:34 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 3288@Utilizador
+
+[2018-04-25 19:42:34 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 19:42:34 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 20:10:26 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 5920@Utilizador
+
+[2018-04-25 20:10:27 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 20:10:27 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 20:13:43 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 4352@Utilizador
+
+[2018-04-25 20:13:43 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 20:13:43 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 20:17:10 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 3628@Utilizador
+
+[2018-04-25 20:17:11 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 20:17:11 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 20:18:45 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 7216@Utilizador
+
+[2018-04-25 20:18:45 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 20:18:45 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 20:24:05 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 7636@Utilizador
+
+[2018-04-25 20:24:06 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 20:24:06 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 20:26:31 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 7032@Utilizador
+
+[2018-04-25 20:26:32 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 20:26:32 #3 type] 
+Type db.Project is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2018-04-25 20:33:53 #1 store] 
+Database 'C:\Users\Asus\Documents\NetBeansProjects\GoCommunity\target\GoCommunity-1.0-SNAPSHOT\WEB-INF\db\go.odb' is opened by 5616@Utilizador
+
+[2018-04-25 20:33:53 #2 type] 
+Type db.Client is not enhanced.
+
+[2018-04-25 20:33:53 #3 type] 
+Type db.Project is not enhanced.
+

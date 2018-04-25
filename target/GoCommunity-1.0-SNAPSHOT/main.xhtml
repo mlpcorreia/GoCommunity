@@ -13,14 +13,17 @@
         <h1>Main page</h1>
         <label>Hello #{comBean.user.name}</label>
         <br/><br/>
-        <h:commandButton value="New Project" action="newProject.xhtml"/> 
+        <h:form>
+        <h:commandButton value="New Project" action="newProject.xhtml"/>
         <br/><br/>
         <label><b>Projects you own:</b></label>
         <br/><br/>
         <c:choose>
             <c:when test="#{comBean.user.owns.size()>0}">
                 <c:forEach var="i" begin="0" end="#{comBean.user.owns.size()-1}">
-                    #{comBean.getProject(comBean.user.owns.get(i)).getOverview()}<br/>
+                    #{comBean.getProject(comBean.user.owns.get(i)).getOverview()}
+                    <h:commandButton value="Project Page" action="#{comBean.goToOwnedProjectPage(i)}"/>
+                    <br/>
                 </c:forEach>
             </c:when>
             <c:otherwise>
@@ -33,7 +36,9 @@
         <c:choose>
             <c:when test="#{comBean.user.follows.size()>0}">
                 <c:forEach var="i" begin="0" end="#{comBean.user.follows.size()-1}">
-                    #{comBean.getProject(comBean.user.follows.get(i)).getOverview()}<br/>
+                    #{comBean.getProject(comBean.user.follows.get(i)).getOverview()}
+                    <h:commandButton value="Project Page" action="#{comBean.goToFollowedProjectPage(i)}"/>
+                    <br/>
                 </c:forEach>
             </c:when>
             <c:otherwise>
@@ -46,7 +51,9 @@
         <c:choose>
             <c:when test="#{comBean.getPopularProjects().size()>0}">
                 <c:forEach var="i" begin="0" end="#{comBean.getPopularProjects().size()-1}">
-                    #{comBean.getPopularProjects().get(i).getOverview()}<br/>
+                    #{comBean.getPopularProjects().get(i).getOverview()}
+                    <h:commandButton value="Project Page" action="#{comBean.goToProjectPage(i)}"/>
+                    <br/>
                 </c:forEach>
             </c:when>
             <c:otherwise>
@@ -54,5 +61,6 @@
             </c:otherwise>
         </c:choose>
         <br/>
+        </h:form>
     </h:body>
 </html>

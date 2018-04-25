@@ -3,9 +3,11 @@ package com.mycompany.gocommunity;
 import db.Client;
 import db.Project;
 import java.util.List;
+import javax.jdo.JDOHelper;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 /**
@@ -14,11 +16,25 @@ import javax.persistence.TypedQuery;
  */
 public class DatabaseHandler {
     
-    public final EntityManager em;
+    private final EntityManager em;
     
     public DatabaseHandler(String file) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("$objectdb/db/"+file);
         this.em = emf.createEntityManager();
+    }
+    
+    public void updateField(Object entity, String field) {
+        em.getTransaction().begin();
+        JDOHelper.makeDirty(entity, field);
+        em.getTransaction().commit();
+    }
+    
+    public void updateProgress(Project p) {
+        em.getTransaction().begin();
+        Query query = em.createQuery("UPDATE Project SET progress="+
+                p.getProgress()+" WHERE id="+p.getId());
+        query.executeUpdate();
+        em.getTransaction().commit();
     }
     
     public Client login(String username, String password) {
@@ -40,7 +56,7 @@ public class DatabaseHandler {
     public List<Project> getPopularProjects() {
         TypedQuery<Project> query = em.createQuery(
                 "SELECT u FROM Project u ORDER BY u.progress DESC", 
-                Project.class).setMaxResults(5);
+                Project.class).setMaxResults(10);
         
         return query.getResultList();
     }

@@ -48,7 +48,15 @@ public class Project implements Serializable {
     }
     
     public String getOverview() {
-        return String.format(name+" - %.2f/%.2f - Ends on "+endsOn.toString(),progress,goal);
+        return String.format(name+" - %.2f€/%.2f€ - Ends on "+endsOn.toString(),progress,goal);
+    }
+    
+    public String printFormattedProgress() {
+        return String.format("%.2f€",progress);
+    }
+    
+    public String printFormattedGoal() {
+        return String.format("%.2f€",goal);
     }
     
     public Long getId() {

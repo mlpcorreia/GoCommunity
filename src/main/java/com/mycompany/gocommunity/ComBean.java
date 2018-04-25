@@ -14,13 +14,16 @@ import javax.faces.bean.ManagedBean;
 
 @ManagedBean
 @ApplicationScoped
-public class ComBean {
-       
+public class ComBean {     
+    
+    private Client user;
+    private Project activeProject;
+    
+    private String donation;
+    
     private String name;
     private String username;
     private String password;
-    private Client user;
-    private long activeProject;
     
     private String projName;
     private String projDesc;
@@ -31,6 +34,7 @@ public class ComBean {
     private String loginErrorMessage;
     private String createAccountErrorMessage;
     private String createProjectErrorMessage;
+    private String donationErrorMessage;
     
     public ComBean() {
         db = new DatabaseHandler("go.odb");
@@ -103,6 +107,7 @@ public class ComBean {
         if (id!=-1) {
             createProjectErrorMessage = "";
             user.own(id);
+            db.updateField(user, "own");
             return "main.xhtml";
         } else {
             createProjectErrorMessage = "A project with this name already exists.";
@@ -111,6 +116,41 @@ public class ComBean {
 
     }
     
+    public void donate() {
+        if (donation==null || donation.equals("")) {
+            donationErrorMessage = "Please insert a monetary value.";
+            return;
+        }
+        
+        double amt;
+        
+        try {
+            amt = Double.parseDouble(donation);
+        } catch (NumberFormatException e) {
+            donationErrorMessage = "Please insert a valid number in the \"donation\" field.";
+            return;
+        }
+        
+        activeProject.addToProgress(amt);
+        //db.updateProgress(activeProject);
+        donationErrorMessage = "";
+    }
+    
+    public String goToOwnedProjectPage(byte id) {
+        activeProject = db.getProject(user.getOwns().get(id));
+        return "project.xhtml";
+    }
+    
+    public String goToFollowedProjectPage(byte id) {
+        activeProject = db.getProject(user.getFollows().get(id));
+        return "project.xhtml";
+    }
+    
+    public String goToProjectPage(byte id) {
+        activeProject = db.getPopularProjects().get(id);
+        return "project.xhtml";
+    }
+
     public Project getProject(int id) {
         return db.getProject(id);
     }
@@ -119,8 +159,20 @@ public class ComBean {
         return db.getPopularProjects();
     }
     
+    public Project getActiveProject() {
+        return activeProject;
+    }
+    
     public Client getUser() {
         return user;
+    }
+    
+    public void setDonation(String donation) {
+        this.donation = donation;
+    }
+    
+    public String getDonation() {
+        return donation;
     }
     
     public void setProjName(String projName) {
@@ -169,6 +221,10 @@ public class ComBean {
     
     public String getCreateProjectErrorMessage() {
         return createProjectErrorMessage;
+    }
+    
+    public String getDonationErrorMessage() {
+        return donationErrorMessage;
     }
     
     public String getLoginErrorMessage() {
