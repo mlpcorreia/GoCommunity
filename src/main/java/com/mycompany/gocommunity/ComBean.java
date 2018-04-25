@@ -20,6 +20,8 @@ public class ComBean {
     private Project activeProject;
     
     private String donation;
+    private String milestoneKey;
+    private String milestoneText;
     
     private String name;
     private String username;
@@ -35,12 +37,15 @@ public class ComBean {
     private String createAccountErrorMessage;
     private String createProjectErrorMessage;
     private String donationErrorMessage;
+    private String createMilestoneErrorMessage;
     
     public ComBean() {
         db = new DatabaseHandler("go.odb");
         loginErrorMessage = "";
         createAccountErrorMessage = "";
         createProjectErrorMessage = "";
+        donationErrorMessage = "";
+        createMilestoneErrorMessage = "";
     }
     
     public String login() {
@@ -131,9 +136,47 @@ public class ComBean {
             return;
         }
         
-        activeProject.addToProgress(amt);
-        //db.updateProgress(activeProject);
+        db.updateProgress(activeProject, amt);
         donationErrorMessage = "";
+    }
+    
+    public void addMilestone() {
+        if (milestoneKey==null || milestoneKey.equals("") ||
+                milestoneText==null || milestoneText.equals("")) {
+            createMilestoneErrorMessage = "Both fields are required.";
+            return;
+        }
+        
+        double key;
+        
+        try {
+            key = Double.parseDouble(milestoneKey);
+        } catch (NumberFormatException e) {
+            createMilestoneErrorMessage = "Please insert a valid number in the \"value\" field.";
+            return;
+        }
+        
+        activeProject.addMilestone(key, milestoneText);
+        db.updateField(activeProject, "milestones");
+        createMilestoneErrorMessage = "";
+    }
+    
+    public void follow() {
+        user.follow(activeProject.getId());
+        db.updateField(user, "follow");
+    }
+    
+    public void unfollow() {
+        user.unfollow(activeProject.getId());
+        db.updateField(user, "follow");
+    }
+    
+    public boolean isVisitingFollowedProject() {
+        return user.getFollows().contains(activeProject.getId());
+    }
+    
+    public boolean isVisitingOwnedProject() {
+        return user.getOwns().contains(activeProject.getId());
     }
     
     public String goToOwnedProjectPage(byte id) {
@@ -183,6 +226,22 @@ public class ComBean {
         return projName;
     }
     
+    public String getMilestoneKey() {
+        return milestoneKey;
+    }
+    
+    public String getMilestoneText() {
+        return milestoneText;
+    }
+    
+    public void setMilestoneKey(String milestoneKey) {
+        this.milestoneKey = milestoneKey;
+    }
+    
+    public void setMilestoneText(String milestoneText) {
+        this.milestoneText = milestoneText;
+    }
+    
     public void setProjDesc(String projDesc) {
         this.projDesc = projDesc;
     }
@@ -217,6 +276,10 @@ public class ComBean {
     
     public String getCreateAccountErrorMessage() {
         return createAccountErrorMessage;
+    }
+    
+    public String getCreateMilestoneErrorMessage() {
+        return createMilestoneErrorMessage;
     }
     
     public String getCreateProjectErrorMessage() {

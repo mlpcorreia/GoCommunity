@@ -71,7 +71,12 @@ public class Client implements Serializable {
     }
     
     public void follow(long i) {
-        follows.add(i);
+        if (!follows.contains(i))
+            follows.add(i);
+    }
+    
+    public void unfollow(long i) {
+        follows.remove(i);
     }
     
     public List<Long> getFollows() {
@@ -79,7 +84,8 @@ public class Client implements Serializable {
     }
     
     public void own(long i) {
-        owns.add(i);
+        if (!owns.contains(i))
+            owns.add(i);
     }
     
     public List<Long> getOwns() {

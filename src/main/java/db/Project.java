@@ -2,10 +2,13 @@ package db;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -87,8 +90,16 @@ public class Project implements Serializable {
         milestones.put(money, text);
     }
     
-    public Map<Double,String> getMilestones() {
-        return milestones;
+    public List<Double> getMilestoneKeys() {
+        return new ArrayList<>(milestones.keySet());
+    }
+    
+    public String getMilestoneText(double key) {
+        return milestones.get(key);
+    }
+    
+    public int getAmountOfMilestones() {
+        return milestones.keySet().size();
     }
     
     public Double getGoal() {

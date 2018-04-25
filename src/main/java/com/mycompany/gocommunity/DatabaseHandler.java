@@ -29,11 +29,10 @@ public class DatabaseHandler {
         em.getTransaction().commit();
     }
     
-    public void updateProgress(Project p) {
+    public void updateProgress(Project p, double amt) {
+        Project aux = em.find(Project.class, p.getId());
         em.getTransaction().begin();
-        Query query = em.createQuery("UPDATE Project SET progress="+
-                p.getProgress()+" WHERE id="+p.getId());
-        query.executeUpdate();
+        aux.addToProgress(amt);
         em.getTransaction().commit();
     }
     

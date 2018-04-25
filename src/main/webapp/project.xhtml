@@ -3,7 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html">
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <title>Start Page</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -12,23 +13,62 @@
         <h1>Project page</h1>
         <h:form role="form" style="text-align: center;">
             <label><b>#{comBean.activeProject.name}</b></label>
-        <br /><br />
-        <h:inputText class="form-control" value="#{comBean.donation}"/> 
-        <h:commandButton value="Donate" action="#{comBean.donate()}"/>
-        <br/>
-        <label>#{comBean.donationErrorMessage}</label>   
-        <br/><br/>      
-        <label>Description:</label>
-        <br />
-        <label>#{comBean.activeProject.description}</label>
-        <br /><br/>
-        <label>Status:</label>
-        <br/>
-        <label>#{comBean.activeProject.printFormattedProgress()} / #{comBean.activeProject.printFormattedGoal()}</label>
-        <br /><br/>
-        <label>Running from #{comBean.activeProject.createdOn} to #{comBean.activeProject.endsOn}</label>
-        <br/><br/>      
-        <h:commandButton value="Return to Main Page" action="main.xhtml"/> 
+            <c:if test="#{!comBean.visitingOwnedProject}">
+                <br /><br />
+                <c:choose>
+                    <c:when test="#{comBean.visitingFollowedProject}">
+                        <h:commandButton value="Unfollow" action="#{comBean.unfollow()}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <h:commandButton value="Follow" action="#{comBean.follow()}"/>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
+            <br /><br />
+            <h:inputText class="form-control" value="#{comBean.donation}"/> 
+            <h:commandButton value="Donate" action="#{comBean.donate()}"/>
+            <br/>
+            <label>#{comBean.donationErrorMessage}</label>   
+            <br/><br/>      
+            <label>Description:</label>
+            <br />
+            <label>#{comBean.activeProject.description}</label>
+            <br /><br/>
+            <label>Status:</label>
+            <br/>
+            <label>#{comBean.activeProject.printFormattedProgress()} / #{comBean.activeProject.printFormattedGoal()}</label>
+            <br /><br/>
+            <label>Running from #{comBean.activeProject.createdOn} to #{comBean.activeProject.endsOn}</label>
+            <br/><br/>
+            <c:choose>
+                <c:when test="#{comBean.activeProject.amountOfMilestones>0}">
+                    <c:forEach var="i" begin="0" end="#{comBean.activeProject.amountOfMilestones-1}">
+                        #{comBean.activeProject.milestoneKeys.get(i)}€ - #{comBean.activeProject.getMilestoneText(comBean.activeProject.milestoneKeys.get(i))}
+                        <br/>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    No milestones set.
+                    <br/>
+                </c:otherwise>
+            </c:choose>
+            <c:if test="#{comBean.visitingOwnedProject}">
+                <label>Add milestone:</label>
+                <br/><br/>
+                <label>Milestone value (€):</label>
+                <br/>
+                <h:inputText class="form-control" value="#{comBean.milestoneKey}"/>
+                <br/><br/>
+                <label>Milestone description:</label>
+                <br/>
+                <h:inputText class="form-control" value="#{comBean.milestoneText}"/>
+                <br/><br/>
+                <h:commandButton value="Add" action="#{comBean.addMilestone()}"/>
+                <br/>
+                <label>#{comBean.createMilestoneErrorMessage}</label>  
+                <br/><br/>
+            </c:if>
+            <h:commandButton value="Return to Main Page" action="main.xhtml"/> 
         </h:form>
     </h:body>
 </html>
