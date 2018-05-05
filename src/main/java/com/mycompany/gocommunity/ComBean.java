@@ -3,6 +3,7 @@ package com.mycompany.gocommunity;
 import db.Client;
 import db.Project;
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -106,6 +107,11 @@ public class ComBean {
             return "newProject.xhtml";
         }
         
+        if (end.before(new Date(Calendar.getInstance().getTime().getTime()))) {
+            createProjectErrorMessage = "Expiration date cannot be earlier than creation date.";
+            return "newProject.xhtml";
+        }
+        
         Project newProject = new Project(projName, projDesc, goal, end, user.getId());
         long id = db.createProject(newProject);
         
@@ -116,7 +122,7 @@ public class ComBean {
             return "main.xhtml";
         } else {
             createProjectErrorMessage = "A project with this name already exists.";
-            return "newAccount.xhtml";
+            return "newProject.xhtml";
         }
 
     }
