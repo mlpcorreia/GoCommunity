@@ -45,6 +45,38 @@ public class DatabaseHandler {
         } else return null;
     }
     
+    public Client apiGetUser(long id) {
+        TypedQuery<Client> query = em.createQuery(
+            "SELECT u FROM Client u WHERE u.id="+id, Client.class);
+        if (query.getResultList().size()>0) {
+            return query.getResultList().get(0);
+        } else return null;
+    }
+    
+    public Client apiGetUser(String username) {
+        TypedQuery<Client> query = em.createQuery(
+            "SELECT u FROM Client u WHERE u.username='"+username+"'", Client.class);
+        if (query.getResultList().size()>0) {
+            return query.getResultList().get(0);
+        } else return null;
+    }
+    
+    public Project apiGetProject(long id) {
+        TypedQuery<Project> query = em.createQuery(
+                "SELECT u FROM Project u WHERE u.id="+id, Project.class);
+        if (query.getResultList().size()>0) {
+            return query.getResultList().get(0);
+        } else return null;
+    }
+    
+    public Project apiGetProject(String name) {
+        TypedQuery<Project> query = em.createQuery(
+                "SELECT u FROM Project u WHERE u.name='"+name+"'", Project.class);
+        if (query.getResultList().size()>0) {
+            return query.getResultList().get(0);
+        } else return null;
+    }
+    
     public Project getProject(long id) {
         TypedQuery<Project> query = em.createQuery(
                 "SELECT u FROM Project u WHERE u.id="+id, Project.class);
@@ -89,5 +121,14 @@ public class DatabaseHandler {
                         "'", Project.class);
         
         return laterQuery.getSingleResult().getId();
+    }
+    
+    public void clearDatabase() {
+        em.getTransaction().begin();
+        int x = em.createQuery("DELETE FROM Client").executeUpdate();
+        int y = em.createQuery("DELETE FROM Project").executeUpdate();
+        em.getTransaction().commit();
+        
+        System.out.println("Deleted "+x+" clients, "+y+" projects.");
     }
 }
