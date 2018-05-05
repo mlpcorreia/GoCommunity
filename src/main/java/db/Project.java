@@ -35,12 +35,14 @@ public class Project implements Serializable {
     private Date createdOn;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date endsOn;
+    private Long owner;
+    private ArrayList<Long> followers;
     
     public Project() {
         
     }
     
-    public Project(String name, String desc, Double goal, Date ends) {
+    public Project(String name, String desc, Double goal, Date ends, Long owner) {
         this.name = name;
         this.description = desc;
         this.goal = goal;
@@ -48,6 +50,8 @@ public class Project implements Serializable {
         this.endsOn = ends;
         this.milestones = new HashMap<>();
         this.progress = 0.0;
+        this.owner = owner;
+        this.followers = new ArrayList<>();
     }
     
     public String getOverview() {
@@ -68,6 +72,27 @@ public class Project implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Long getOwner() {
+        return owner;
+    }
+    
+    public void setOwner(Long owner) {
+        this.owner=owner;
+    }
+    
+    public void followedBy(long i) {
+        if (!followers.contains(i))
+            followers.add(i);
+    }
+    
+    public void unfollowedBy(long i) {
+        followers.remove(i);
+    }
+    
+    public List<Long> getFollowers() {
+        return followers;
     }
     
     public String getName() {

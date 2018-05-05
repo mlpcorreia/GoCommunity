@@ -122,4 +122,13 @@ public class DatabaseHandler {
         
         return laterQuery.getSingleResult().getId();
     }
+    
+    public void clearDatabase() {
+        em.getTransaction().begin();
+        int x = em.createQuery("DELETE FROM Client").executeUpdate();
+        int y = em.createQuery("DELETE FROM Project").executeUpdate();
+        em.getTransaction().commit();
+        
+        System.out.println("Deleted "+x+" clients, "+y+" projects.");
+    }
 }

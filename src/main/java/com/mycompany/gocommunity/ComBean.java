@@ -106,7 +106,7 @@ public class ComBean {
             return "newProject.xhtml";
         }
         
-        Project newProject = new Project(projName, projDesc, goal, end);
+        Project newProject = new Project(projName, projDesc, goal, end, user.getId());
         long id = db.createProject(newProject);
         
         if (id!=-1) {
@@ -164,11 +164,15 @@ public class ComBean {
     public void follow() {
         user.follow(activeProject.getId());
         db.updateField(user, "follow");
+        activeProject.followedBy(user.getId());
+        db.updateField(activeProject, "followers");
     }
     
     public void unfollow() {
         user.unfollow(activeProject.getId());
         db.updateField(user, "follow");
+        activeProject.unfollowedBy(user.getId());
+        db.updateField(activeProject, "followers");
     }
     
     public boolean isVisitingFollowedProject() {

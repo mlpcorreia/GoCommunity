@@ -2,6 +2,7 @@ package com.mycompany.gocommunity;
 
 import db.Client;
 import db.Project;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,8 +18,7 @@ import javax.ws.rs.core.Response;
 public class ApiBean {
     
     //url structure is: /GoCommunity/api/data/
-    
-    private final ComBean bean = new ComBean();
+
     private final DatabaseHandler db = new DatabaseHandler("go.odb");
  
     @Path("/user/{username}")
@@ -49,19 +49,36 @@ public class ApiBean {
         res += "\"id\":"+c.getId()+",\"username\":\""+c.getUsername()+"\",";
         res += "\"name\":\""+c.getName()+"\",\"owns\":[";
         for (int i=0;i<c.getOwns().size();i++) {
-            if (i==c.getOwns().size()-1) {
-                res += c.getOwns().get(i);
-            } else {
-                res += c.getOwns().get(i)+",";
-            }
+            res += c.getOwns().get(i);
+            
+            if (i!=c.getOwns().size()-1) res += ",";
         }
         res += "],\"follows\":[";
         for (int i=0;i<c.getFollows().size();i++) {
-            if (i==c.getFollows().size()-1) {
-                res += c.getFollows().get(i);
-            } else {
-                res += c.getFollows().get(i)+",";
-            }
+            res += c.getFollows().get(i);
+            
+            if (i!=c.getFollows().size()-1) res += ",";
+        }
+        res += "]}";
+        
+        return Response.status(200).entity(res).build();
+    }
+    
+    @Path("/popular")
+    @GET
+    @Produces("application/json")
+    public Response getPopularProjects() {
+        String res = "{\"list\":[";
+        List<Project> top = db.getPopularProjects();
+        for (int i=0;i<top.size();i++) {
+            res += "{";
+            res += "\"id\":"+top.get(i).getId()+",\"name\":\""+top.get(i).getName()+"\",";
+            res += "\"progress\":"+moneyFormat(top.get(i).getProgress())+",";
+            res += "\"goal\":"+moneyFormat(top.get(i).getGoal())+",";
+            res += "\"endsOn\":\""+top.get(i).getEndsOn()+"\"";
+            res += "}";
+            
+            if (i!=top.size()-1) res += ",";
         }
         res += "]}";
         
@@ -95,22 +112,26 @@ public class ApiBean {
         List<Double> milestoneKeys = p.getMilestoneKeys();
         
         String res = "{";
-        res += "\"id\":"+p.getId()+",\"username\":\""+p.getName()+"\",";
+        res += "\"id\":"+p.getId()+",\"name\":\""+p.getName()+"\",";
+        res += "\"owner\":"+p.getOwner()+",";
         res += "\"description\":\""+cleanDescription(p.getDescription())+"\",";
         res += "\"milestones\":[";
         for (int i=0;i<p.getAmountOfMilestones();i++) {
             double key = milestoneKeys.get(i);        
-            if (i==p.getAmountOfMilestones()-1) {
-                res += "{"+moneyFormat(key)+":\""+p.getMilestoneText(key)+"\"}";
-            } else {
-                res += "{"+moneyFormat(key)+":\""+p.getMilestoneText(key)+"\"},";
-            }
+            res += "{"+moneyFormat(key)+":\""+p.getMilestoneText(key)+"\"}";
+            
+            if (i!=p.getAmountOfMilestones()-1) res += ",";
         }
         res += "],\"goal\":"+moneyFormat(p.getGoal());
         res += ",\"progress\":"+moneyFormat(p.getProgress())+",";
         res += "\"createdOn\":\""+p.getCreatedOn()+"\",";
-        res += "\"endsOn\":\""+p.getEndsOn()+"\"";      
-        res += "}";
+        res += "\"endsOn\":\""+p.getEndsOn()+"\",\"followers\":[";
+        for (int i=0;i<p.getFollowers().size();i++) {
+            res += p.getFollowers().get(i);
+            
+            if (i!=p.getFollowers().size()-1) res += ",";
+        }
+        res += "]}";
         
         return Response.status(200).entity(res).build();
     }
