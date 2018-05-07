@@ -1,80 +1,100 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://host//GoCommunity/api/data/
 
 # GoCommunity
 
 This is a simple API that allows consumers to retrieve public info about existing projects and users.
 
-## Questions Collection [/questions]
+## Popular Projects [/popular]
 
-### List All Questions [GET]
+### List Most Popular Projects [GET]
+
+Returns an array with the 0-10 currently most popular projects.
 
 + Response 200 (application/json)
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
+            "list": [
+                {
+                    "id": 1,
+                    "name": "Example Project",
+                    "progress": 6222.00,
+                    "goal": 6500.00,
+                    "endsOn": "2018-10-25"
+                }, {
+                    "id": 17,
+                    "name": "Another Example Project",
+                    "progress": 3220.00,
+                    "goal": 125000.00,
+                    "endsOn": "2019-08-06"
+                }
             ]
         }
+        
+## Users [/user/{username}]
 
-+ Response 201 (application/json)
+### Get User Info [GET]
 
-    + Headers
+Returns all available public info for a specific user. 
 
-            Location: /questions/2
+The "username" parameter can be a long (id) or username (String).
 
-    + Body
++ Response 200 (application/json)
 
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
+        {
+            "id": 1,
+            "username": "user1",
+            "name": "John",
+            "owns": [
+                1,
+                6,
+                18
+            ],
+            "follows": [
+                2,
+                11,
+                21,
+                36,
+                40
+            ]
+        }
+        
+## Projects [/project/{name}]
+
+### Get Project Info [GET]
+
+Returns all available public info for a specific project. 
+
+The "name" parameter can be a long (id) or project name (String).
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "name": "Example Project",
+            "owner": 16,
+            "description": "A project.\n\nTesting.",
+            "milestones": [
+                {
+                    "10.00": "A prize."
+                }, {
+                    "25.00": "A bigger prize."
+                }, {
+                    "100.00": "The biggest prize."
+                }
+            ],
+            "goal": 750000.00,
+            "progress": 125.00,
+            "createdOn": "2018-05-17",
+            "endsOn": "2026-10-10",
+            "followers": [
+                12,
+                26,
+                31,
+                52,
+                66,
+                1,
+                3,
+                17
+            ]
+        }
