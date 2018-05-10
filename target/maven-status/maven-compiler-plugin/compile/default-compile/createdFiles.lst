@@ -1,6 +1,10 @@
 db\TestEntityClass_.class
+org\netbeans\rest\application\config\ApplicationConfig.class
+com\mycompany\gocommunity\ApiBean.class
+com\mycompany\gocommunity\ComBean.class
 db\Client_.class
 db\Client.class
 db\Project_.class
 db\Project.class
 db\TestEntityClass.class
+com\mycompany\gocommunity\DatabaseHandler.class

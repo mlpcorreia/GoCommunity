@@ -22,6 +22,10 @@ public class DatabaseTest {
     EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("$objectdb/db/test.odb");
         EntityManager em = emf.createEntityManager();
+        
+    EntityManagerFactory emfprod =
+            Persistence.createEntityManagerFactory("$objectdb/db/go.odb");
+        EntityManager emprod = emfprod.createEntityManager(); 
     
     public DatabaseTest() {
     }
@@ -63,5 +67,20 @@ public class DatabaseTest {
         for (TestEntityClass test: list)
             System.out.println(test);
     }
+    
+    /*@Test
+    public void resetDB() {
+        emprod.getTransaction().begin();
+        Query a = emprod.createQuery("DELETE FROM Project");
+        Query b = emprod.createQuery("DELETE FROM Client");      
+        a.executeUpdate();
+        b.executeUpdate();
+        emprod.getTransaction().commit();
+        
+        em.getTransaction().begin();
+        Query c = em.createQuery("DELETE FROM TestEntityClass");
+        c.executeUpdate();
+        em.getTransaction().commit();
+    }*/
     
 }
