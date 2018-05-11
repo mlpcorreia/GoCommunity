@@ -22,10 +22,6 @@ public class DatabaseTest {
     EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("$objectdb/db/test.odb");
         EntityManager em = emf.createEntityManager();
-        
-    EntityManagerFactory emfprod =
-            Persistence.createEntityManagerFactory("$objectdb/db/go.odb");
-        EntityManager emprod = emfprod.createEntityManager(); 
     
     public DatabaseTest() {
     }
@@ -47,40 +43,27 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testDB() {
-        System.out.println("testDB");
+    public void testInsertDelete() {
+        System.out.println("insert/delete");
         TestEntityClass t = new TestEntityClass("hi");
         TestEntityClass t2 = new TestEntityClass("hello");
-        Query qu1 = em.createQuery("SELECT COUNT(p) FROM TestEntityClass p");
-        long amt = (Long) qu1.getSingleResult() + 2;
         em.getTransaction().begin();
         em.persist(t);
         em.persist(t2);
         em.getTransaction().commit();
-        Query qu2 = em.createQuery("SELECT COUNT(p) FROM TestEntityClass p");
-        assertEquals(new Long(amt), (Long) qu2.getSingleResult());
         TypedQuery<TestEntityClass> query = em.createQuery(
-            "SELECT g FROM TestEntityClass g ORDER BY g.id", TestEntityClass.class);   
+            "SELECT g FROM TestEntityClass g ORDER BY g.id", TestEntityClass.class);
         List<TestEntityClass> list = query.getResultList();
-        assertEquals(new Long(amt), new Long(query.getResultList().size()));
+        assertEquals(2, list.size());
         assertNotEquals(list.get(0), list.get(1));
-        for (TestEntityClass test: list)
-            System.out.println(test);
-    }
-    
-    /*@Test
-    public void resetDB() {
-        emprod.getTransaction().begin();
-        Query a = emprod.createQuery("DELETE FROM Project");
-        Query b = emprod.createQuery("DELETE FROM Client");      
-        a.executeUpdate();
-        b.executeUpdate();
-        emprod.getTransaction().commit();
-        
+        Query q = em.createQuery("DELETE FROM TestEntityClass");
         em.getTransaction().begin();
-        Query c = em.createQuery("DELETE FROM TestEntityClass");
-        c.executeUpdate();
+        q.executeUpdate();
         em.getTransaction().commit();
-    }*/
+        TypedQuery<TestEntityClass> query2 = em.createQuery(
+            "SELECT g FROM TestEntityClass g ORDER BY g.id", TestEntityClass.class);
+        List<TestEntityClass> list2 = query2.getResultList();
+        assertEquals(0, list2.size());
+    }
     
 }

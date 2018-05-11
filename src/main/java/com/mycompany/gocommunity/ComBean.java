@@ -49,6 +49,15 @@ public class ComBean {
         createMilestoneErrorMessage = "";
     }
     
+    public ComBean(String dbfile) {
+        db = new DatabaseHandler(dbfile);
+        loginErrorMessage = "";
+        createAccountErrorMessage = "";
+        createProjectErrorMessage = "";
+        donationErrorMessage = "";
+        createMilestoneErrorMessage = "";
+    }
+    
     public String login() {
         this.user = db.login(username,password);
         

@@ -2,7 +2,6 @@ package com.mycompany.gocommunity;
 
 import db.Client;
 import db.Project;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
