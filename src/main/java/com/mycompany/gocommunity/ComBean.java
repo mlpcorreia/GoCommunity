@@ -3,6 +3,7 @@ package com.mycompany.gocommunity;
 import db.Client;
 import db.Project;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.faces.bean.ApplicationScoped;
@@ -39,6 +40,9 @@ public class ComBean {
     private String createProjectErrorMessage;
     private String donationErrorMessage;
     private String createMilestoneErrorMessage;
+    private String searchErrorMessage;
+    
+    private String search;
     
     public ComBean() {
         db = new DatabaseHandler("go.odb");
@@ -47,6 +51,7 @@ public class ComBean {
         createProjectErrorMessage = "";
         donationErrorMessage = "";
         createMilestoneErrorMessage = "";
+        searchErrorMessage = "";
     }
     
     public ComBean(String dbfile) {
@@ -56,6 +61,7 @@ public class ComBean {
         createProjectErrorMessage = "";
         donationErrorMessage = "";
         createMilestoneErrorMessage = "";
+        searchErrorMessage = "";
     }
     
     public String login() {
@@ -134,6 +140,21 @@ public class ComBean {
             return "newProject.xhtml";
         }
 
+    }
+    
+    public List<Project> searchProjects() {
+        if (search==null || search.equals("")) {
+            searchErrorMessage = "Please insert a search term.";
+            return new ArrayList<>();
+        }
+        
+        searchErrorMessage = "";
+        return db.searchProjects(search);
+    }
+    
+    public String goToSearchedProjectPage(byte id) {
+        activeProject = db.searchProjects(search).get(id);
+        return "project.xhtml";
     }
     
     public void donate() {
@@ -285,12 +306,24 @@ public class ComBean {
         return projEndsString;
     }
     
+    public String getSearch() {
+        return search;
+    }
+    
+    public void setSearch(String search) {
+        this.search = search;
+    }
+    
     public void setName(String name) {
         this.name = name;
     }
     
     public String getName() {
         return name;
+    }
+    
+    public String getSearchErrorMessage() {
+        return searchErrorMessage;
     }
     
     public String getCreateAccountErrorMessage() {
