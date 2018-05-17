@@ -1,10 +1,11 @@
 package com.mycompany.gocommunity;
 
-import com.sun.media.jfxmedia.logging.Logger;
+import java.util.logging.Logger;
 import db.Client;
 import db.Project;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.jdo.JDOHelper;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -18,10 +19,10 @@ import javax.persistence.TypedQuery;
 public class DatabaseHandler {
     
     private final EntityManager em;
-    private final String basicProjectNameQuery = "SELECT u FROM Project u WHERE u.name=:name";
-    private final String basicProjectIdQuery = "SELECT u FROM Project u WHERE u.id=:id";
-    private final String basicClientNameQuery = "SELECT u FROM Client u WHERE u.username=:user";
-    private final String basicClientIdQuery = "SELECT u FROM Client u WHERE u.id=:id";
+    private static final String PROJECTNAMEQUERY = "SELECT u FROM Project u WHERE u.name=:name";
+    private static final String PROJECTIDQUERY = "SELECT u FROM Project u WHERE u.id=:id";
+    private static final String CLIENTNAMEQUERY = "SELECT u FROM Client u WHERE u.username=:user";
+    private static final String CLIENTIDQUERY = "SELECT u FROM Client u WHERE u.id=:id";
     
     public DatabaseHandler(String file) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("$objectdb/db/"+file);
@@ -63,7 +64,7 @@ public class DatabaseHandler {
     
     public Client apiGetUser(long id) {
         TypedQuery<Client> query = em.createQuery(
-                basicClientIdQuery, Client.class);
+                CLIENTIDQUERY, Client.class);
 
         List<Client> res = query.setParameter("id", id).getResultList();
         if (!res.isEmpty()) {
@@ -73,7 +74,7 @@ public class DatabaseHandler {
     
     public Client apiGetUser(String username) {
         TypedQuery<Client> query = em.createQuery(
-            basicClientNameQuery, Client.class);
+            CLIENTNAMEQUERY, Client.class);
         
         List<Client> res = query.setParameter("user", username).getResultList();
         if (!res.isEmpty()) {
@@ -83,7 +84,7 @@ public class DatabaseHandler {
     
     public Project apiGetProject(long id) {
         TypedQuery<Project> query = em.createQuery(
-                basicProjectIdQuery, Project.class);
+                PROJECTIDQUERY, Project.class);
         
         List<Project> res = query.setParameter("id", id).getResultList();
         if (!res.isEmpty()) {
@@ -93,7 +94,7 @@ public class DatabaseHandler {
     
     public Project apiGetProject(String name) {
         TypedQuery<Project> query = em.createQuery(
-                basicProjectNameQuery, Project.class);
+                PROJECTNAMEQUERY, Project.class);
         
         List<Project> res = query.setParameter("name", name).getResultList();
 
@@ -104,7 +105,7 @@ public class DatabaseHandler {
     
     public Project getProject(long id) {
         TypedQuery<Project> query = em.createQuery(
-                basicProjectIdQuery, Project.class);
+                PROJECTIDQUERY, Project.class);
         
         return query.setParameter("id", id).getSingleResult();
     }
@@ -119,7 +120,7 @@ public class DatabaseHandler {
     
     public boolean createAccount(Client user) {
         TypedQuery<Client> query = em.createQuery(
-                basicClientNameQuery, Client.class);
+                CLIENTNAMEQUERY, Client.class);
         
         if (query.setParameter("user", user.getUsername()).getResultList().size()>0) return false;
         
@@ -131,7 +132,7 @@ public class DatabaseHandler {
     
     public long createProject(Project p) {
         TypedQuery<Project> query = em.createQuery(
-               basicProjectNameQuery, Project.class);
+               PROJECTNAMEQUERY, Project.class);
 
         if (query.setParameter("name", p.getName()).getResultList().size()>0) return -1;
         
@@ -140,7 +141,7 @@ public class DatabaseHandler {
         em.getTransaction().commit();
         
         TypedQuery<Project> laterQuery = em.createQuery(
-                basicProjectNameQuery, Project.class);
+                PROJECTNAMEQUERY, Project.class);
         
         return laterQuery.setParameter("name", p.getName()).getSingleResult().getId();
     }
@@ -151,6 +152,7 @@ public class DatabaseHandler {
         int y = em.createQuery("DELETE FROM Project").executeUpdate();
         em.getTransaction().commit();
         
-        Logger.logMsg(Logger.INFO, "Deleted "+x+" clients, "+y+" projects.");
+        Logger.getLogger("GoCommunityLog")
+                .log(Level.INFO, String.format("Deleted %d clients, %d projects.",x,y));
     }
 }

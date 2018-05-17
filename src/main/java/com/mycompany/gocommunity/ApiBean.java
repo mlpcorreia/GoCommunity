@@ -19,7 +19,7 @@ public class ApiBean {
     //url structure is: /GoCommunity/api/data/
 
     private final DatabaseHandler db = new DatabaseHandler("go.odb");
-    private final String idfield = "\"id\":";
+    private static final String IDFIELD = "\"id\":";
  
     @Path("/user/{username}")
     @GET
@@ -48,7 +48,7 @@ public class ApiBean {
         StringBuilder res = new StringBuilder();
         
         res.append("{");
-        res.append(idfield).append(c.getId()).append(",\"username\":\"").append(c.getUsername()).append("\",");
+        res.append(IDFIELD).append(c.getId()).append(",\"username\":\"").append(c.getUsername()).append("\",");
         res.append("\"name\":\"").append(c.getName()).append("\",\"owns\":[");
         for (int i=0;i<c.getOwns().size();i++) {
             res.append(c.getOwns().get(i));
@@ -76,7 +76,7 @@ public class ApiBean {
         List<Project> top = db.getPopularProjects();
         for (int i=0;i<top.size();i++) {
             res.append("{");
-            res.append(idfield).append(top.get(i).getId()).append(",\"name\":\"").append(top.get(i).getName()).append("\",");
+            res.append(IDFIELD).append(top.get(i).getId()).append(",\"name\":\"").append(top.get(i).getName()).append("\",");
             res.append("\"progress\":").append(moneyFormat(top.get(i).getProgress())).append(",");
             res.append("\"goal\":").append(moneyFormat(top.get(i).getGoal())).append(",");
             res.append("\"endsOn\":\"").append(top.get(i).getEndsOn()).append("\"");
@@ -118,7 +118,7 @@ public class ApiBean {
         StringBuilder res = new StringBuilder();
         
         res.append("{");
-        res.append(idfield).append(p.getId()).append(",\"name\":\"").append(p.getName()).append("\",");
+        res.append(IDFIELD).append(p.getId()).append(",\"name\":\"").append(p.getName()).append("\",");
         res.append("\"owner\":").append(p.getOwner()).append(",");
         res.append("\"description\":\"").append(cleanDescription(p.getDescription())).append("\",");
         res.append("\"milestones\":[");
