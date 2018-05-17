@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Start Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    </h:head>
+    <h:body>
+        <h1>Search page</h1>
+        <h:form role="form" style="text-align: center;">
+        <label>Project name (partial or full):</label>
+        <br />
+        <h:inputText class="form-control" value="#{comBean.search}"/> 
+        <br /><br />
+        <h:commandButton value="Submit" action="#{comBean.searchProjects()}"/> 
+        <br /><br/>
+        <label>#{comBean.searchErrorMessage}</label>
+        <br /><br />      
+        <label>Projects found:</label>
+        <br /><br/>
+        <c:choose>
+            <c:when test="#{comBean.searchProjects().size()>0}">
+                <c:forEach var="i" begin="0" end="#{comBean.searchProjects().size()-1}">
+                    #{comBean.searchProjects().get(i).getOverview()}
+                    <h:commandButton value="Project Page" action="#{comBean.goToSearchedProjectPage(i)}"/>
+                    <br/>
+                </c:forEach>
+            </c:when>
+            <c:otherwise>
+                Nothing to show.<br/>
+            </c:otherwise>
+        </c:choose>
+        </h:form>
+    </h:body>
+</html>

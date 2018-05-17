@@ -2,6 +2,7 @@ package com.mycompany.gocommunity;
 
 import db.Client;
 import db.Project;
+import java.util.ArrayList;
 import java.util.List;
 import javax.jdo.JDOHelper;
 import javax.persistence.EntityManager;
@@ -34,6 +35,15 @@ public class DatabaseHandler {
         em.getTransaction().begin();
         aux.addToProgress(amt);
         em.getTransaction().commit();
+    }
+    
+    public List<Project> searchProjects(String search) {
+        TypedQuery<Project> query = em.createQuery(
+            "SELECT u FROM Project u WHERE u.name LIKE '%"+
+                    search+"%'", Project.class);
+        if (query.getResultList().size()>0) {
+            return query.getResultList();
+        } else return new ArrayList<>();
     }
     
     public Client login(String username, String password) {

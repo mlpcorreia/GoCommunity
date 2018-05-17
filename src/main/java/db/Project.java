@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 /**
@@ -37,6 +38,8 @@ public class Project implements Serializable {
     private Date endsOn;
     private Long owner;
     private ArrayList<Long> followers;
+    @OneToMany(mappedBy = "project")
+    private List<Comment> comments;
     
     public Project() {
         
@@ -52,6 +55,7 @@ public class Project implements Serializable {
         this.progress = 0.0;
         this.owner = owner;
         this.followers = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
     
     public String getOverview() {
@@ -156,6 +160,14 @@ public class Project implements Serializable {
     
     public Date getEndsOn() {
         return endsOn;
+    }
+    
+    public void addComment(Comment c) {
+        comments.add(c);
+    }
+    
+    public List<Comment> getComments() {
+        return comments;
     }
 
     @Override

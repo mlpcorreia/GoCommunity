@@ -1,8 +1,10 @@
 package com.mycompany.gocommunity;
 
 import db.Client;
+import db.Comment;
 import db.Project;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.faces.bean.ApplicationScoped;
@@ -39,6 +41,11 @@ public class ComBean {
     private String createProjectErrorMessage;
     private String donationErrorMessage;
     private String createMilestoneErrorMessage;
+    private String searchErrorMessage;
+    private String commentErrorMessage;
+    
+    private String search;
+    private String commentText;
     
     public ComBean() {
         db = new DatabaseHandler("go.odb");
@@ -47,6 +54,8 @@ public class ComBean {
         createProjectErrorMessage = "";
         donationErrorMessage = "";
         createMilestoneErrorMessage = "";
+        searchErrorMessage = "";
+        commentErrorMessage = "";
     }
     
     public ComBean(String dbfile) {
@@ -56,6 +65,8 @@ public class ComBean {
         createProjectErrorMessage = "";
         donationErrorMessage = "";
         createMilestoneErrorMessage = "";
+        searchErrorMessage = "";
+        commentErrorMessage = "";
     }
     
     public String login() {
@@ -134,6 +145,33 @@ public class ComBean {
             return "newProject.xhtml";
         }
 
+    }
+    
+    public List<Project> searchProjects() {
+        if (search==null || search.equals("")) {
+            searchErrorMessage = "Please insert a search term.";
+            return new ArrayList<>();
+        }
+        
+        searchErrorMessage = "";
+        return db.searchProjects(search);
+    }
+    
+    public void addComment() {
+        if (commentText==null || commentText.equals("")) {
+            commentErrorMessage = "Comments cannot be empty!";
+            return;
+        }
+        
+        Comment c = new Comment(user, commentText);
+        activeProject.addComment(c);
+        db.updateField(activeProject, "comments");
+        commentErrorMessage = "";
+    }
+    
+    public String goToSearchedProjectPage(byte id) {
+        activeProject = db.searchProjects(search).get(id);
+        return "project.xhtml";
     }
     
     public void donate() {
@@ -237,6 +275,14 @@ public class ComBean {
         return donation;
     }
     
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
+    }
+    
+    public String getCommentText() {
+        return commentText;
+    }
+    
     public void setProjName(String projName) {
         this.projName = projName;
     }
@@ -285,12 +331,24 @@ public class ComBean {
         return projEndsString;
     }
     
+    public String getSearch() {
+        return search;
+    }
+    
+    public void setSearch(String search) {
+        this.search = search;
+    }
+    
     public void setName(String name) {
         this.name = name;
     }
     
     public String getName() {
         return name;
+    }
+    
+    public String getSearchErrorMessage() {
+        return searchErrorMessage;
     }
     
     public String getCreateAccountErrorMessage() {
@@ -311,6 +369,10 @@ public class ComBean {
     
     public String getLoginErrorMessage() {
         return loginErrorMessage;
+    }
+    
+    public String getCommentErrorMessage() {
+        return commentErrorMessage;
     }
     
     public void setUsername(String username) {

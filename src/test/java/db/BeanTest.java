@@ -2,6 +2,8 @@ package db;
 
 import com.mycompany.gocommunity.ComBean;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -27,9 +29,8 @@ public class BeanTest {
     public BeanTest() {
         EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("$objectdb/db/test.odb");
-        em = emf.createEntityManager();
-        
-    bean = new ComBean("test.odb");
+        em = emf.createEntityManager();        
+    
     }
     
     @BeforeClass
@@ -47,9 +48,21 @@ public class BeanTest {
     @After
     public void tearDown() {
     }
+    
+    /*@Test
+    public void reset() {
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Project");
+        Query q2 = em.createQuery("DELETE FROM Client");
+        q.executeUpdate();
+        q2.executeUpdate();
+        em.getTransaction().commit();
+    }*/
 
     @Test
     public void testClientProject() {
+        bean = new ComBean("test.odb");
+        
         bean.setName("User");
         bean.setUsername("user");
         bean.setPassword("pw");
@@ -94,7 +107,86 @@ public class BeanTest {
         em.getTransaction().commit();
         assertEquals(1,a);
         assertEquals(1,b);
-        
     }
     
+    @Test
+    public void testSearch() {
+        bean = new ComBean("test.odb");
+        
+        bean.setName("User2");
+        bean.setUsername("user2");
+        bean.setPassword("pw");
+        String res = bean.createAccount();
+        assertEquals("main.xhtml",res);
+        
+        bean.setProjName("Name2");
+        bean.setProjDesc("desc");
+        bean.setProjEndsString("2026-12-12");
+        bean.setProjGoalString("500000");
+        String res2 = bean.createProject();
+        assertEquals("main.xhtml",res2);
+        
+        bean.setSearch("x");
+        List<Project> list = bean.searchProjects();
+        assertEquals(0, list.size());
+        bean.setSearch("am");
+        list = bean.searchProjects();
+        assertEquals(1, list.size());
+        assertEquals("desc", list.get(0).getDescription());
+        
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Project");
+        Query q2 = em.createQuery("DELETE FROM Client");
+        int a = q.executeUpdate();
+        int b = q2.executeUpdate();
+        em.getTransaction().commit();
+        assertEquals(1,a);
+        assertEquals(1,b);    
+    }
+    
+    @Test
+    public void testComment() throws ParseException {
+        bean = new ComBean("test.odb");
+        
+        bean.setName("User3");
+        bean.setUsername("user3");
+        bean.setPassword("pw");
+        String res = bean.createAccount();
+        assertEquals("main.xhtml",res);
+        
+        bean.setProjName("Name3");
+        bean.setProjDesc("desc");
+        bean.setProjEndsString("2026-12-12");
+        bean.setProjGoalString("500000");
+        String res2 = bean.createProject();
+        assertEquals("main.xhtml",res2);
+        
+        bean.goToOwnedProjectPage((byte) 0);
+        
+        Comment c1 = new Comment(bean.getUser(), "hi");
+        SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy '-' h:mm a");
+        String dateString = "Tue, 11 May 2010 - 8:10 PM";
+        java.util.Date date = format.parse(dateString);
+        c1.setDate(date);
+        Comment c2 = new Comment(bean.getUser(), "hello");
+        
+        bean.getActiveProject().addComment(c1);
+        bean.getActiveProject().addComment(c2);
+        
+        List<Comment> comments = bean.getActiveProject().getComments();
+        assertEquals(2, comments.size());
+        assertEquals(dateString, comments.get(0).getFormattedDate());
+        assertEquals("User3 (user3)", comments.get(1).getHeader());
+        assertTrue(c2.getDate().after(c1.getDate()));
+        
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Project");
+        Query q2 = em.createQuery("DELETE FROM Client");
+        int a = q.executeUpdate();
+        int b = q2.executeUpdate();
+        em.getTransaction().commit();
+        assertEquals(1,a);
+        assertEquals(1,b); 
+    }
+        
 }
