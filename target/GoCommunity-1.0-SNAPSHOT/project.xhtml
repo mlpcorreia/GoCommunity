@@ -68,6 +68,32 @@
                 <label>#{comBean.createMilestoneErrorMessage}</label>  
                 <br/><br/>
             </c:if>
+            <label>Add comments:</label>
+            <br/><br/>
+                <label>Content:</label>
+                <br/>
+                <h:inputText class="form-control" value="#{comBean.commentText}"/>
+                <h:commandButton value="Add comment" action="#{comBean.addComment()}"/> 
+                <br/>
+                <br/>
+                <label>#{comBean.commentErrorMessage}</label>
+            <br/><br/>
+            <c:choose>
+                <c:when test="#{comBean.activeProject.comments.size()>0}">
+                    <c:forEach var="i" begin="0" end="#{comBean.activeProject.comments.size()-1}">
+                        <label>#{comBean.activeProject.comments.get(i).header}</label>
+                        <br/>
+                        <label>#{comBean.activeProject.comments.get(i).formattedDate}</label>
+                        <br/><br/>
+                        <label>#{comBean.activeProject.comments.get(i).content}</label>
+                        <br/><br/>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    You're the first one to comment!
+                    <br/>
+                </c:otherwise>
+            </c:choose>
             <h:commandButton value="Return to Main Page" action="main.xhtml"/> 
         </h:form>
     </h:body>
