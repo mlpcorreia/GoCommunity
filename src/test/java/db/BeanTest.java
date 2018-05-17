@@ -59,7 +59,7 @@ public class BeanTest {
         em.getTransaction().commit();
     }*/
 
-    @Test
+   @Test
     public void testClientProject() {
         bean = new ComBean("test.odb");
         

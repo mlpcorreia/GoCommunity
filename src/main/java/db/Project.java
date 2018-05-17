@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -59,7 +57,13 @@ public class Project implements Serializable {
     }
     
     public String getOverview() {
-        return String.format(name+" - %.2f€/%.2f€ - Ends on "+endsOn.toString(),progress,goal);
+        StringBuilder res = new StringBuilder();
+        
+        res.append(name);
+        res.append(String.format(" - %.2f€/%.2f€ - Ends on ",progress,goal));
+        res.append(endsOn.toString());
+        
+        return res.toString();
     }
     
     public String printFormattedProgress() {

@@ -19,6 +19,13 @@ import javax.faces.bean.ManagedBean;
 @ApplicationScoped
 public class ComBean {     
     
+    private final String mainPage = "main.xhtml";
+    private final String loginPage = "login.xhtml";
+    private final String newAccountPage = "newAccount.xhtml";
+    private final String newProjectPage = "newProject.xhtml";
+    private final String projectPage = "project.xhtml";
+    private final String searchPage = "search.xhtml";
+    
     private Client user;
     private Project activeProject;
     
@@ -74,10 +81,10 @@ public class ComBean {
         
         if (user!=null) {
             loginErrorMessage = "";
-            return "main.xhtml";
+            return mainPage;
         } else {
             loginErrorMessage = "Username+password combination not found. Please retry.";
-            return "login.xhtml";
+            return loginPage;
         }
     }
     
@@ -87,7 +94,7 @@ public class ComBean {
         if (name==null || username==null || password==null || 
                 name.equals("") || username.equals("") || password.equals("")) {
             createAccountErrorMessage = "Every field is required.";
-            return "newAccount.xhtml";
+            return newAccountPage;
         }
         
         Client newUser = new Client(name, username, password);
@@ -95,10 +102,10 @@ public class ComBean {
         if (db.createAccount(newUser)) {
             createAccountErrorMessage = "";
             this.user = newUser;
-            return "main.xhtml";
+            return mainPage;
         } else {
             createAccountErrorMessage = "This username already exists.";
-            return "newAccount.xhtml";
+            return newAccountPage;
         }
     }
     
@@ -110,7 +117,7 @@ public class ComBean {
                 projEndsString==null || projName.equals("") || projDesc.equals("") ||
                 projGoalString.equals("") || projEndsString.equals("")) {
             createProjectErrorMessage = "Every field is required.";
-            return "newProject.xhtml";
+            return newProjectPage;
         }
         
         double goal;
@@ -121,15 +128,15 @@ public class ComBean {
             end = Date.valueOf(projEndsString);
         } catch (NumberFormatException e) {
             createProjectErrorMessage = "Please insert a valid number in the \"goal\" field.";
-            return "newProject.xhtml";
+            return newProjectPage;
         } catch (IllegalArgumentException e) {
             createProjectErrorMessage = "Please respect the date syntax.";
-            return "newProject.xhtml";
+            return newProjectPage;
         }
         
         if (end.before(new Date(Calendar.getInstance().getTime().getTime()))) {
             createProjectErrorMessage = "Expiration date cannot be earlier than creation date.";
-            return "newProject.xhtml";
+            return newProjectPage;
         }
         
         Project newProject = new Project(projName, projDesc, goal, end, user.getId());
@@ -139,10 +146,10 @@ public class ComBean {
             createProjectErrorMessage = "";
             user.own(id);
             db.updateField(user, "own");
-            return "main.xhtml";
+            return mainPage;
         } else {
             createProjectErrorMessage = "A project with this name already exists.";
-            return "newProject.xhtml";
+            return newProjectPage;
         }
 
     }
@@ -171,7 +178,7 @@ public class ComBean {
     
     public String goToSearchedProjectPage(byte id) {
         activeProject = db.searchProjects(search).get(id);
-        return "project.xhtml";
+        return projectPage;
     }
     
     public void donate() {
@@ -238,17 +245,17 @@ public class ComBean {
     
     public String goToOwnedProjectPage(byte id) {
         activeProject = db.getProject(user.getOwns().get(id));
-        return "project.xhtml";
+        return projectPage;
     }
     
     public String goToFollowedProjectPage(byte id) {
         activeProject = db.getProject(user.getFollows().get(id));
-        return "project.xhtml";
+        return projectPage;
     }
     
     public String goToProjectPage(byte id) {
         activeProject = db.getPopularProjects().get(id);
-        return "project.xhtml";
+        return projectPage;
     }
 
     public Project getProject(int id) {
