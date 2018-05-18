@@ -1,8 +1,11 @@
 package com.mycompany.gocommunity;
 
 import db.Client;
+import db.Comment;
 import db.Project;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -15,6 +18,13 @@ import javax.faces.bean.ManagedBean;
 @ManagedBean
 @ApplicationScoped
 public class ComBean {     
+    
+    private static final String MAINPAGE = "main.xhtml";
+    private static final String LOGINPAGE = "login.xhtml";
+    private static final String NEWACCOUNTPAGE = "newAccount.xhtml";
+    private static final String NEWPROJECTPAGE = "newProject.xhtml";
+    private static final String PROJECTPAGE = "project.xhtml";
+    //private static final String SEARCHPAGE = "search.xhtml";
     
     private Client user;
     private Project activeProject;
@@ -38,6 +48,11 @@ public class ComBean {
     private String createProjectErrorMessage;
     private String donationErrorMessage;
     private String createMilestoneErrorMessage;
+    private String searchErrorMessage;
+    private String commentErrorMessage;
+    
+    private String search;
+    private String commentText;
     
     public ComBean() {
         db = new DatabaseHandler("go.odb");
@@ -46,6 +61,19 @@ public class ComBean {
         createProjectErrorMessage = "";
         donationErrorMessage = "";
         createMilestoneErrorMessage = "";
+        searchErrorMessage = "";
+        commentErrorMessage = "";
+    }
+    
+    public ComBean(String dbfile) {
+        db = new DatabaseHandler(dbfile);
+        loginErrorMessage = "";
+        createAccountErrorMessage = "";
+        createProjectErrorMessage = "";
+        donationErrorMessage = "";
+        createMilestoneErrorMessage = "";
+        searchErrorMessage = "";
+        commentErrorMessage = "";
     }
     
     public String login() {
@@ -53,10 +81,10 @@ public class ComBean {
         
         if (user!=null) {
             loginErrorMessage = "";
-            return "main.xhtml";
+            return MAINPAGE;
         } else {
             loginErrorMessage = "Username+password combination not found. Please retry.";
-            return "login.xhtml";
+            return LOGINPAGE;
         }
     }
     
@@ -66,7 +94,7 @@ public class ComBean {
         if (name==null || username==null || password==null || 
                 name.equals("") || username.equals("") || password.equals("")) {
             createAccountErrorMessage = "Every field is required.";
-            return "newAccount.xhtml";
+            return NEWACCOUNTPAGE;
         }
         
         Client newUser = new Client(name, username, password);
@@ -74,10 +102,10 @@ public class ComBean {
         if (db.createAccount(newUser)) {
             createAccountErrorMessage = "";
             this.user = newUser;
-            return "main.xhtml";
+            return MAINPAGE;
         } else {
             createAccountErrorMessage = "This username already exists.";
-            return "newAccount.xhtml";
+            return NEWACCOUNTPAGE;
         }
     }
     
@@ -89,7 +117,7 @@ public class ComBean {
                 projEndsString==null || projName.equals("") || projDesc.equals("") ||
                 projGoalString.equals("") || projEndsString.equals("")) {
             createProjectErrorMessage = "Every field is required.";
-            return "newProject.xhtml";
+            return NEWPROJECTPAGE;
         }
         
         double goal;
@@ -100,10 +128,15 @@ public class ComBean {
             end = Date.valueOf(projEndsString);
         } catch (NumberFormatException e) {
             createProjectErrorMessage = "Please insert a valid number in the \"goal\" field.";
-            return "newProject.xhtml";
+            return NEWPROJECTPAGE;
         } catch (IllegalArgumentException e) {
             createProjectErrorMessage = "Please respect the date syntax.";
-            return "newProject.xhtml";
+            return NEWPROJECTPAGE;
+        }
+        
+        if (end.before(new Date(Calendar.getInstance().getTime().getTime()))) {
+            createProjectErrorMessage = "Expiration date cannot be earlier than creation date.";
+            return NEWPROJECTPAGE;
         }
         
         Project newProject = new Project(projName, projDesc, goal, end, user.getId());
@@ -113,12 +146,39 @@ public class ComBean {
             createProjectErrorMessage = "";
             user.own(id);
             db.updateField(user, "own");
-            return "main.xhtml";
+            return MAINPAGE;
         } else {
             createProjectErrorMessage = "A project with this name already exists.";
-            return "newAccount.xhtml";
+            return NEWPROJECTPAGE;
         }
 
+    }
+    
+    public List<Project> searchProjects() {
+        if (search==null || search.equals("")) {
+            searchErrorMessage = "Please insert a search term.";
+            return new ArrayList<>();
+        }
+        
+        searchErrorMessage = "";
+        return db.searchProjects(search);
+    }
+    
+    public void addComment() {
+        if (commentText==null || commentText.equals("")) {
+            commentErrorMessage = "Comments cannot be empty!";
+            return;
+        }
+        
+        Comment c = new Comment(user, commentText);
+        activeProject.addComment(c);
+        db.updateField(activeProject, "comments");
+        commentErrorMessage = "";
+    }
+    
+    public String goToSearchedProjectPage(byte id) {
+        activeProject = db.searchProjects(search).get(id);
+        return PROJECTPAGE;
     }
     
     public void donate() {
@@ -185,17 +245,17 @@ public class ComBean {
     
     public String goToOwnedProjectPage(byte id) {
         activeProject = db.getProject(user.getOwns().get(id));
-        return "project.xhtml";
+        return PROJECTPAGE;
     }
     
     public String goToFollowedProjectPage(byte id) {
         activeProject = db.getProject(user.getFollows().get(id));
-        return "project.xhtml";
+        return PROJECTPAGE;
     }
     
     public String goToProjectPage(byte id) {
         activeProject = db.getPopularProjects().get(id);
-        return "project.xhtml";
+        return PROJECTPAGE;
     }
 
     public Project getProject(int id) {
@@ -220,6 +280,14 @@ public class ComBean {
     
     public String getDonation() {
         return donation;
+    }
+    
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
+    }
+    
+    public String getCommentText() {
+        return commentText;
     }
     
     public void setProjName(String projName) {
@@ -270,12 +338,24 @@ public class ComBean {
         return projEndsString;
     }
     
+    public String getSearch() {
+        return search;
+    }
+    
+    public void setSearch(String search) {
+        this.search = search;
+    }
+    
     public void setName(String name) {
         this.name = name;
     }
     
     public String getName() {
         return name;
+    }
+    
+    public String getSearchErrorMessage() {
+        return searchErrorMessage;
     }
     
     public String getCreateAccountErrorMessage() {
@@ -296,6 +376,10 @@ public class ComBean {
     
     public String getLoginErrorMessage() {
         return loginErrorMessage;
+    }
+    
+    public String getCommentErrorMessage() {
+        return commentErrorMessage;
     }
     
     public void setUsername(String username) {

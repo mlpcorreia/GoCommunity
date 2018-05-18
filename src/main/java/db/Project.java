@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 /**
@@ -37,6 +36,8 @@ public class Project implements Serializable {
     private Date endsOn;
     private Long owner;
     private ArrayList<Long> followers;
+    @OneToMany(mappedBy = "project")
+    private List<Comment> comments;
     
     public Project() {
         
@@ -52,10 +53,17 @@ public class Project implements Serializable {
         this.progress = 0.0;
         this.owner = owner;
         this.followers = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
     
     public String getOverview() {
-        return String.format(name+" - %.2f€/%.2f€ - Ends on "+endsOn.toString(),progress,goal);
+        StringBuilder res = new StringBuilder();
+        
+        res.append(name);
+        res.append(String.format(" - %.2f€/%.2f€ - Ends on ",progress,goal));
+        res.append(endsOn.toString());
+        
+        return res.toString();
     }
     
     public String printFormattedProgress() {
@@ -156,6 +164,14 @@ public class Project implements Serializable {
     
     public Date getEndsOn() {
         return endsOn;
+    }
+    
+    public void addComment(Comment c) {
+        comments.add(c);
+    }
+    
+    public List<Comment> getComments() {
+        return comments;
     }
 
     @Override

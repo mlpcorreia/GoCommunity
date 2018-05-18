@@ -2,7 +2,6 @@ package com.mycompany.gocommunity;
 
 import db.Client;
 import db.Project;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,6 +19,7 @@ public class ApiBean {
     //url structure is: /GoCommunity/api/data/
 
     private final DatabaseHandler db = new DatabaseHandler("go.odb");
+    private static final String IDFIELD = "\"id\":";
  
     @Path("/user/{username}")
     @GET
@@ -45,44 +45,48 @@ public class ApiBean {
             return Response.status(404).entity(notFound).build();
         }
         
-        String res = "{";
-        res += "\"id\":"+c.getId()+",\"username\":\""+c.getUsername()+"\",";
-        res += "\"name\":\""+c.getName()+"\",\"owns\":[";
-        for (int i=0;i<c.getOwns().size();i++) {
-            res += c.getOwns().get(i);
-            
-            if (i!=c.getOwns().size()-1) res += ",";
-        }
-        res += "],\"follows\":[";
-        for (int i=0;i<c.getFollows().size();i++) {
-            res += c.getFollows().get(i);
-            
-            if (i!=c.getFollows().size()-1) res += ",";
-        }
-        res += "]}";
+        StringBuilder res = new StringBuilder();
         
-        return Response.status(200).entity(res).build();
+        res.append("{");
+        res.append(IDFIELD).append(c.getId()).append(",\"username\":\"").append(c.getUsername()).append("\",");
+        res.append("\"name\":\"").append(c.getName()).append("\",\"owns\":[");
+        for (int i=0;i<c.getOwns().size();i++) {
+            res.append(c.getOwns().get(i));
+            
+            if (i!=c.getOwns().size()-1) res.append(",");
+        }
+        res.append("],\"follows\":[");
+        for (int i=0;i<c.getFollows().size();i++) {
+            res.append(c.getFollows().get(i));
+            
+            if (i!=c.getFollows().size()-1) res.append(",");
+        }
+        res.append("]}");
+        
+        return Response.status(200).entity(res.toString()).build();
     }
     
     @Path("/popular")
     @GET
     @Produces("application/json")
     public Response getPopularProjects() {
-        String res = "{\"list\":[";
+        StringBuilder res = new StringBuilder();
+        
+        res.append("{\"list\":[");
         List<Project> top = db.getPopularProjects();
         for (int i=0;i<top.size();i++) {
-            res += "{";
-            res += "\"id\":"+top.get(i).getId()+",\"name\":\""+top.get(i).getName()+"\",";
-            res += "\"progress\":"+moneyFormat(top.get(i).getProgress())+",";
-            res += "\"goal\":"+moneyFormat(top.get(i).getGoal())+",";
-            res += "\"endsOn\":\""+top.get(i).getEndsOn()+"\"";
-            res += "}";
+            res.append("{");
+            res.append(IDFIELD).append(top.get(i).getId()).append(",\"name\":\"").append(top.get(i).getName()).append("\",");
+            res.append("\"progress\":").append(moneyFormat(top.get(i).getProgress())).append(",");
+            res.append("\"goal\":").append(moneyFormat(top.get(i).getGoal())).append(",");
+            res.append("\"endsOn\":\"").append(top.get(i).getEndsOn()).append("\"");
+            res.append("}");
             
-            if (i!=top.size()-1) res += ",";
+            if (i!=top.size()-1) res.append(",");
         }
-        res += "]}";
+        res.append("]}");
         
-        return Response.status(200).entity(res).build();
+        return Response.status(200).entity(res.toString()).build();
     }
     
     @Path("/project/{name}")
@@ -111,29 +115,31 @@ public class ApiBean {
         
         List<Double> milestoneKeys = p.getMilestoneKeys();
         
-        String res = "{";
-        res += "\"id\":"+p.getId()+",\"name\":\""+p.getName()+"\",";
-        res += "\"owner\":"+p.getOwner()+",";
-        res += "\"description\":\""+cleanDescription(p.getDescription())+"\",";
-        res += "\"milestones\":[";
+        StringBuilder res = new StringBuilder();
+        
+        res.append("{");
+        res.append(IDFIELD).append(p.getId()).append(",\"name\":\"").append(p.getName()).append("\",");
+        res.append("\"owner\":").append(p.getOwner()).append(",");
+        res.append("\"description\":\"").append(cleanDescription(p.getDescription())).append("\",");
+        res.append("\"milestones\":[");
         for (int i=0;i<p.getAmountOfMilestones();i++) {
             double key = milestoneKeys.get(i);        
-            res += "{"+moneyFormat(key)+":\""+p.getMilestoneText(key)+"\"}";
+            res.append("{").append(moneyFormat(key)).append(":\"").append(p.getMilestoneText(key)).append("\"}");
             
-            if (i!=p.getAmountOfMilestones()-1) res += ",";
+            if (i!=p.getAmountOfMilestones()-1) res.append(",");
         }
-        res += "],\"goal\":"+moneyFormat(p.getGoal());
-        res += ",\"progress\":"+moneyFormat(p.getProgress())+",";
-        res += "\"createdOn\":\""+p.getCreatedOn()+"\",";
-        res += "\"endsOn\":\""+p.getEndsOn()+"\",\"followers\":[";
+        res.append("],\"goal\":").append(moneyFormat(p.getGoal()));
+        res.append(",\"progress\":").append(moneyFormat(p.getProgress())).append(",");
+        res.append("\"createdOn\":\"").append(p.getCreatedOn()).append("\",");
+        res.append("\"endsOn\":\"").append(p.getEndsOn()).append("\",\"followers\":[");
         for (int i=0;i<p.getFollowers().size();i++) {
-            res += p.getFollowers().get(i);
+            res.append(p.getFollowers().get(i));
             
-            if (i!=p.getFollowers().size()-1) res += ",";
+            if (i!=p.getFollowers().size()-1) res.append(",");
         }
-        res += "]}";
+        res.append("]}");
         
-        return Response.status(200).entity(res).build();
+        return Response.status(200).entity(res.toString()).build();
     }
     
     private String moneyFormat(double original) {
