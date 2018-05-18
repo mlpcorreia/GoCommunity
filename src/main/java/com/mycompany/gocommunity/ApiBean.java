@@ -21,7 +21,6 @@ public class ApiBean {
     //url structure is: /GoCommunity/api/data/
 
     private final DatabaseHandler db = new DatabaseHandler("go.odb");
-    private static final String IDFIELD = "\"id\":";
  
     @Path("/user/{username}")
     @GET
