@@ -3,11 +3,13 @@ package com.mycompany.gocommunity;
 import db.Client;
 import db.Project;
 import java.util.List;
+import java.util.ArrayList;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import org.json.JSONObject;
 
 /**
  *
@@ -27,12 +29,11 @@ public class ApiBean {
     public Response getUserInfo(@PathParam("username") String username) {
         
         Client c = null;
-        String invalid = "{\"error\":\"invalid parameter\"}";
-        String notFound = "{\"error\":\"not found\"}";
+        JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
+        JSONObject notFound = createErrorMessage("Not Found!", 404);
         
-        if (username==null || username.equals("")) {
-            return Response.status(404).entity(invalid).build();
-        }
+        if (username==null || username.equals(""))
+            return Response.status(404).entity(invalid.toString()).build();
         
         try {
             long id = Long.parseLong(username);
@@ -41,52 +42,53 @@ public class ApiBean {
             c = db.apiGetUser(username);
         }
         
-        if (c==null) {
-            return Response.status(404).entity(notFound).build();
-        }
+        if (c==null)
+            return Response.status(404).entity(notFound.toString()).build();
         
-        StringBuilder res = new StringBuilder();
+        JSONObject json = new JSONObject();
         
-        res.append("{");
-        res.append(IDFIELD).append(c.getId()).append(",\"username\":\"").append(c.getUsername()).append("\",");
-        res.append("\"name\":\"").append(c.getName()).append("\",\"owns\":[");
-        for (int i=0;i<c.getOwns().size();i++) {
-            res.append(c.getOwns().get(i));
-            
-            if (i!=c.getOwns().size()-1) res.append(",");
-        }
-        res.append("],\"follows\":[");
-        for (int i=0;i<c.getFollows().size();i++) {
-            res.append(c.getFollows().get(i));
-            
-            if (i!=c.getFollows().size()-1) res.append(",");
-        }
-        res.append("]}");
+        json.put("id", c.getId());
+        json.put("username", c.getUsername());
+        json.put("name", c.getName());
         
-        return Response.status(200).entity(res.toString()).build();
+        List<Long> owns = c.getOwns();
+        for(Long tmp: owns)
+            json.accumulate("owns", tmp);
+        
+        List<Long> follows = c.getFollows();
+        for(Long tmp: follows)
+            json.accumulate("follows", tmp);
+        
+        return Response.status(200).entity(json.toString()).build();
     }
     
     @Path("/popular")
     @GET
     @Produces("application/json")
     public Response getPopularProjects() {
-        StringBuilder res = new StringBuilder();
         
-        res.append("{\"list\":[");
         List<Project> top = db.getPopularProjects();
-        for (int i=0;i<top.size();i++) {
-            res.append("{");
-            res.append(IDFIELD).append(top.get(i).getId()).append(",\"name\":\"").append(top.get(i).getName()).append("\",");
-            res.append("\"progress\":").append(moneyFormat(top.get(i).getProgress())).append(",");
-            res.append("\"goal\":").append(moneyFormat(top.get(i).getGoal())).append(",");
-            res.append("\"endsOn\":\"").append(top.get(i).getEndsOn()).append("\"");
-            res.append("}");
-            
-            if (i!=top.size()-1) res.append(",");
-        }
-        res.append("]}");
+        JSONObject error = createErrorMessage("No projects found!",404);
         
-        return Response.status(200).entity(res.toString()).build();
+        if(top.isEmpty())
+            return Response.status(404).entity(error.toString()).build();
+            
+        JSONObject json = new JSONObject();
+        List<JSONObject> projects = new ArrayList<>();
+        for(Project tmp : top){
+            JSONObject item = new JSONObject();
+            item.put("id", tmp.getId());
+            item.put("name", tmp.getName());
+            item.put("progress", moneyFormat(tmp.getProgress()));
+            item.put("goal", moneyFormat(tmp.getGoal()));
+            item.put("endsOn", tmp.getEndsOn());
+            
+            projects.add(item);
+        }
+        
+        json.put("list", projects);
+        
+        return Response.status(200).entity(json.toString()).build();
     }
     
     @Path("/project/{name}")
@@ -95,12 +97,11 @@ public class ApiBean {
     public Response getProjectInfo(@PathParam("name") String name) {
         
         Project p = null;
-        String invalid = "{\"error\":\"invalid parameter\"}";
-        String notFound = "{\"error\":\"not found\"}";
+        JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
+        JSONObject notFound = createErrorMessage("Not Found!", 404);
         
-        if (name==null || name.equals("")) {
-            return Response.status(404).entity(invalid).build();
-        }
+        if (name==null || name.equals(""))
+            return Response.status(404).entity(invalid.toString()).build();
         
         try {
             long id = Long.parseLong(name);
@@ -109,37 +110,33 @@ public class ApiBean {
             p = db.apiGetProject(name);
         }
         
-        if (p==null) {
-            return Response.status(404).entity(notFound).build();
-        }
+        if (p==null)
+            return Response.status(404).entity(notFound.toString()).build();
+        
+        JSONObject json = new JSONObject();
+        
+        json.put("id", p.getId());
+        json.put("name", p.getName());
+        json.put("description", cleanDescription(p.getDescription()));
         
         List<Double> milestoneKeys = p.getMilestoneKeys();
-        
-        StringBuilder res = new StringBuilder();
-        
-        res.append("{");
-        res.append(IDFIELD).append(p.getId()).append(",\"name\":\"").append(p.getName()).append("\",");
-        res.append("\"owner\":").append(p.getOwner()).append(",");
-        res.append("\"description\":\"").append(cleanDescription(p.getDescription())).append("\",");
-        res.append("\"milestones\":[");
-        for (int i=0;i<p.getAmountOfMilestones();i++) {
-            double key = milestoneKeys.get(i);        
-            res.append("{").append(moneyFormat(key)).append(":\"").append(p.getMilestoneText(key)).append("\"}");
-            
-            if (i!=p.getAmountOfMilestones()-1) res.append(",");
+        List<JSONObject> milestones = new ArrayList<>();
+        for(Double key : milestoneKeys){
+            JSONObject item = new JSONObject();
+            item.put(moneyFormat(key), p.getMilestoneText(key));
+            milestones.add(item);
         }
-        res.append("],\"goal\":").append(moneyFormat(p.getGoal()));
-        res.append(",\"progress\":").append(moneyFormat(p.getProgress())).append(",");
-        res.append("\"createdOn\":\"").append(p.getCreatedOn()).append("\",");
-        res.append("\"endsOn\":\"").append(p.getEndsOn()).append("\",\"followers\":[");
-        for (int i=0;i<p.getFollowers().size();i++) {
-            res.append(p.getFollowers().get(i));
-            
-            if (i!=p.getFollowers().size()-1) res.append(",");
-        }
-        res.append("]}");
         
-        return Response.status(200).entity(res.toString()).build();
+        json.put("milestones", milestones);
+        json.put("goal", moneyFormat(p.getGoal()));
+        json.put("createdOn", p.getCreatedOn());
+        json.put("endsOn", p.getEndsOn());
+        
+        List<Long> followers = p.getFollowers();
+        for(Long key : followers)
+            json.accumulate("followers", key);
+
+        return Response.status(200).entity(json.toString()).build();
     }
     
     private String moneyFormat(double original) {
@@ -150,5 +147,17 @@ public class ApiBean {
         return original.replace("\t", "\\t")
                        .replace("\r", "\\r")
                        .replace("\n", "\\n");
+    }
+    
+    private JSONObject createErrorMessage(String message, int code){
+        JSONObject error = new JSONObject();
+        JSONObject tmp = new JSONObject();
+        
+        tmp.put("code", code);
+        tmp.put("message", message);
+        
+        error.put("error", tmp);
+        
+        return error;
     }
 }
