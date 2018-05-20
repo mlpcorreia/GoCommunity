@@ -22,7 +22,7 @@ public class Client implements Serializable {
     private Long id;
     private String name;
     private String username;
-    private String password;
+    private String word;
     private ArrayList<Long> follows;
     private ArrayList<Long> owns;
     
@@ -33,7 +33,7 @@ public class Client implements Serializable {
     public Client(String name, String user, String pw) {
         this.name = name;
         this.username = user;
-        this.password = pw;
+        this.word = pw;
         this.follows = new ArrayList<>();
         this.owns = new ArrayList<>();
     }
@@ -63,11 +63,11 @@ public class Client implements Serializable {
     }
     
     public String getPassword() {
-        return password;
+        return word;
     }
     
     public void setPassword(String password) {
-        this.password = password;
+        this.word = password;
     }
     
     public void follow(long i) {

@@ -24,7 +24,6 @@ public class ComBean {
     private static final String NEWACCOUNTPAGE = "newAccount.xhtml";
     private static final String NEWPROJECTPAGE = "newProject.xhtml";
     private static final String PROJECTPAGE = "project.xhtml";
-    //private static final String SEARCHPAGE = "search.xhtml";
     
     private Client user;
     private Project activeProject;
@@ -89,8 +88,6 @@ public class ComBean {
     }
     
     public String createAccount() {
-        //fix bad characters?
-        //encrypt pword
         if (name==null || username==null || password==null || 
                 name.equals("") || username.equals("") || password.equals("")) {
             createAccountErrorMessage = "Every field is required.";
@@ -110,9 +107,6 @@ public class ComBean {
     }
     
     public String createProject() {
-        //do regex stuff
-        //date is yyyy-mm-dd
-        
         if (projName==null || projDesc==null || projGoalString==null ||
                 projEndsString==null || projName.equals("") || projDesc.equals("") ||
                 projGoalString.equals("") || projEndsString.equals("")) {

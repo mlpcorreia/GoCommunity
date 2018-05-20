@@ -52,11 +52,11 @@ public class DatabaseHandler {
         } else return new ArrayList<>();
     }
     
-    public Client login(String username, String password) {
+    public Client login(String username, String word) {
         TypedQuery<Client> query = em.createQuery(
-            "SELECT u FROM Client u WHERE u.username=:user AND u.password=:pass", Client.class);
+            "SELECT u FROM Client u WHERE u.username=:user AND u.word=:word", Client.class);
         
-        List<Client> res = query.setParameter("user", username).setParameter("pass", password).getResultList();
+        List<Client> res = query.setParameter("user", username).setParameter("word", word).getResultList();
         if (!res.isEmpty()) {
             return res.get(0);
         } else return null;
@@ -122,7 +122,7 @@ public class DatabaseHandler {
         TypedQuery<Client> query = em.createQuery(
                 CLIENTNAMEQUERY, Client.class);
         
-        if (query.setParameter("user", user.getUsername()).getResultList().size()>0) return false;
+        if (!query.setParameter("user", user.getUsername()).getResultList().isEmpty()) return false;
         
         em.getTransaction().begin();
         em.persist(user);
@@ -134,7 +134,7 @@ public class DatabaseHandler {
         TypedQuery<Project> query = em.createQuery(
                PROJECTNAMEQUERY, Project.class);
 
-        if (query.setParameter("name", p.getName()).getResultList().size()>0) return -1;
+        if (!query.setParameter("name", p.getName()).getResultList().isEmpty()) return -1;
         
         em.getTransaction().begin();
         em.persist(p);
@@ -152,7 +152,9 @@ public class DatabaseHandler {
         int y = em.createQuery("DELETE FROM Project").executeUpdate();
         em.getTransaction().commit();
         
-        Logger.getLogger("GoCommunityLog")
-                .log(Level.INFO, String.format("Deleted %d clients, %d projects.",x,y));
+        StringBuilder sb = new StringBuilder();
+        sb.append("Deleted ").append(x).append(" clients, ").append(y).append(" projects.");
+        
+        Logger.getLogger("GoCommunityLog").log(Level.INFO, sb.toString());
     }
 }
