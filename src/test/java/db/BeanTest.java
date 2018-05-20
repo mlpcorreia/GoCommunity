@@ -144,7 +144,7 @@ public class BeanTest {
         assertEquals(1,b);    
     }
     
-    @Test
+   /* @Test
     public void testComment() throws ParseException {
         bean = new ComBean("test.odb");
         
@@ -187,6 +187,6 @@ public class BeanTest {
         em.getTransaction().commit();
         assertEquals(1,a);
         assertEquals(1,b); 
-    }
+    }*/
         
 }
