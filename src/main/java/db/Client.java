@@ -2,12 +2,15 @@ package db;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -25,6 +28,9 @@ public class Client implements Serializable {
     private String word;
     private ArrayList<Long> follows;
     private ArrayList<Long> owns;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date lastBadLogin;
+    private int loginTries;
     
     public Client() {
         
@@ -36,6 +42,8 @@ public class Client implements Serializable {
         this.word = pw;
         this.follows = new ArrayList<>();
         this.owns = new ArrayList<>();
+        this.lastBadLogin = Calendar.getInstance().getTime();
+        this.loginTries = 3;
     }
 
     public Long getId() {
@@ -44,6 +52,26 @@ public class Client implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public void goodLogin() {
+        loginTries = 3;
+    }
+    
+    public void badLogin() {
+        loginTries -= 1;
+        this.lastBadLogin = Calendar.getInstance().getTime();
+    }
+    
+    public boolean canLogIn() {
+        Date now = Calendar.getInstance().getTime();
+        if (loginTries>0) {
+            return true;
+        } else if (now.getTime()-lastBadLogin.getTime()>=(24*60*60*1000)) {
+            //24h lock is over
+            loginTries = 3;
+            return true;
+        } else return false;
     }
     
     public String getName() {

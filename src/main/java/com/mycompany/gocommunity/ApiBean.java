@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.json.JSONObject;
 
@@ -136,6 +137,45 @@ public class ApiBean {
             json.accumulate("followers", key);
 
         return Response.status(200).entity(json.toString()).build();
+    }
+    
+    @Path("/login")
+    @GET
+    @Produces("application/json")
+    public Response getLoginResult(
+            @QueryParam("user") String user,
+            @QueryParam("pword") String pword) {
+        
+        Client c = null;
+        JSONObject notAllowed = createErrorMessage("Not Allowed.", 404);
+        JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
+        JSONObject notFound = createErrorMessage("Not Found!", 404);
+        
+        if (user==null || pword==null) {
+            return Response.status(404).entity(invalid.toString()).build();
+        }
+        
+        c = db.apiGetUser(user);
+        if (c==null) {
+            return Response.status(404).entity(notFound.toString()).build();
+        }
+        
+        int res = db.tryLogin(c, pword);
+        JSONObject json = new JSONObject();
+        //0 = can login, valid
+        //1 = can login, failed
+        //2 = cant login
+        switch (res) {                       
+            case 0:             
+                json.put("status", "true");
+                json.put("id", c.getId());
+                return Response.status(200).entity(json.toString()).build();
+            case 1:
+                json.put("status", "false");
+                return Response.status(200).entity(json.toString()).build();
+            default:
+                return Response.status(404).entity(notAllowed.toString()).build();
+        }
     }
     
     private String moneyFormat(double original) {

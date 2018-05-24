@@ -42,6 +42,24 @@ public class DatabaseHandler {
         em.getTransaction().commit();
     }
     
+    public int tryLogin(Client c, String word) {
+        Client aux = em.find(Client.class, c.getId());
+        if (aux.canLogIn()) { //can login
+            em.getTransaction().begin();
+            if (word.equals(aux.getPassword())) { //can login, valid
+                aux.goodLogin();
+                em.getTransaction().commit();
+                return 0;
+            } else { //can login, failed
+                aux.badLogin();
+                em.getTransaction().commit();
+                return 1;
+            }
+        } else { //cant login
+            return 2;
+        }
+    }
+    
     public List<Project> searchProjects(String search) {
         TypedQuery<Project> query = em.createQuery(
             "SELECT u FROM Project u WHERE u.name LIKE :n", Project.class);
