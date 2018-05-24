@@ -33,7 +33,7 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (username==null || username.equals(""))
-            return Response.status(404).entity(invalid.toString()).build();
+            return Response.status(200).entity(invalid.toString()).build();
         
         try {
             long id = Long.parseLong(username);
@@ -43,7 +43,7 @@ public class ApiBean {
         }
         
         if (c==null)
-            return Response.status(404).entity(notFound.toString()).build();
+            return Response.status(200).entity(notFound.toString()).build();
         
         JSONObject json = new JSONObject();
         
@@ -71,7 +71,7 @@ public class ApiBean {
         JSONObject error = createErrorMessage("No projects found!",404);
         
         if(top.isEmpty())
-            return Response.status(404).entity(error.toString()).build();
+            return Response.status(200).entity(error.toString()).build();
             
         JSONObject json = new JSONObject();
         List<JSONObject> projects = new ArrayList<>();
@@ -101,7 +101,7 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (name==null || name.equals(""))
-            return Response.status(404).entity(invalid.toString()).build();
+            return Response.status(200).entity(invalid.toString()).build();
         
         try {
             long id = Long.parseLong(name);
@@ -111,7 +111,7 @@ public class ApiBean {
         }
         
         if (p==null)
-            return Response.status(404).entity(notFound.toString()).build();
+            return Response.status(200).entity(notFound.toString()).build();
         
         JSONObject json = new JSONObject();
         
@@ -152,12 +152,12 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (user==null || pword==null) {
-            return Response.status(404).entity(invalid.toString()).build();
+            return Response.status(200).entity(invalid.toString()).build();
         }
         
         c = db.apiGetUser(user);
         if (c==null) {
-            return Response.status(404).entity(notFound.toString()).build();
+            return Response.status(200).entity(notFound.toString()).build();
         }
         
         int res = db.tryLogin(c, pword);
@@ -174,7 +174,7 @@ public class ApiBean {
                 json.put("status", "false");
                 return Response.status(200).entity(json.toString()).build();
             default:
-                return Response.status(404).entity(notAllowed.toString()).build();
+                return Response.status(200).entity(notAllowed.toString()).build();
         }
     }
     
