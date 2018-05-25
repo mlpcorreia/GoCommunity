@@ -165,8 +165,7 @@ public class ComBean {
         }
         
         Comment c = new Comment(user, commentText);
-        activeProject.addComment(c);
-        db.updateField(activeProject, "comments");
+        db.updateComment(activeProject, c);
         commentErrorMessage = "";
     }
     

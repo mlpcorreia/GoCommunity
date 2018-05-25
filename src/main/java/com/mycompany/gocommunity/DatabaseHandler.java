@@ -2,6 +2,7 @@ package com.mycompany.gocommunity;
 
 import java.util.logging.Logger;
 import db.Client;
+import db.Comment;
 import db.Project;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,6 +165,15 @@ public class DatabaseHandler {
         return laterQuery.setParameter("name", p.getName()).getSingleResult().getId();
     }
     
+    public void updateComment(Project p, Comment c) {
+        Project auxp = em.find(Project.class, p.getId());
+        em.getTransaction().begin();
+        c.setProject(auxp);
+        em.persist(c);
+        auxp.addComment(c);       
+        em.getTransaction().commit();
+    }
+    
     public void clearDatabase() {
         em.getTransaction().begin();
         int x = em.createQuery("DELETE FROM Client").executeUpdate();
@@ -174,5 +184,5 @@ public class DatabaseHandler {
         sb.append("Deleted ").append(x).append(" clients, ").append(y).append(" projects.");
         
         Logger.getLogger("GoCommunityLog").log(Level.INFO, sb.toString());
-    }
+    }   
 }

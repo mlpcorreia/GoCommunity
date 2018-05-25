@@ -11,6 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -53,10 +54,12 @@ public class ApiBean {
         json.put("name", c.getName());
         
         List<Long> owns = c.getOwns();
+        json.put("owns", new JSONArray());
         for(Long tmp: owns)
             json.accumulate("owns", tmp);
         
         List<Long> follows = c.getFollows();
+        json.put("follows", new JSONArray());
         for(Long tmp: follows)
             json.accumulate("follows", tmp);
         
@@ -82,6 +85,7 @@ public class ApiBean {
             item.put("name", tmp.getName());
             item.put("progress", moneyFormat(tmp.getProgress()));
             item.put("goal", moneyFormat(tmp.getGoal()));
+            json.put("progress", moneyFormat(tmp.getProgress()));
             item.put("endsOn", tmp.getEndsOn());
             
             
@@ -144,6 +148,7 @@ public class ApiBean {
         
         json.put("milestones", milestones);
         json.put("goal", moneyFormat(p.getGoal()));
+        json.put("progress", moneyFormat(p.getProgress()));
         json.put("createdOn", p.getCreatedOn());
         json.put("endsOn", p.getEndsOn());
         
