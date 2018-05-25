@@ -1,6 +1,7 @@
 package com.mycompany.gocommunity;
 
 import db.Client;
+import db.Comment;
 import db.Project;
 import java.util.List;
 import java.util.ArrayList;
@@ -83,6 +84,20 @@ public class ApiBean {
             item.put("goal", moneyFormat(tmp.getGoal()));
             item.put("endsOn", tmp.getEndsOn());
             
+            
+            
+            List<Comment> comments = tmp.getComments();
+            List<JSONObject> commentsJson = new ArrayList<>();
+            for(Comment c : comments) {
+                JSONObject item2 = new JSONObject();
+                item2.put("user", c.getUsername());
+                item2.put("date", c.getDate());
+                item2.put("content",c.getContent());
+                commentsJson.add(item2);
+            }
+            
+            item.put("comments", commentsJson);
+            
             projects.add(item);
         }
         
@@ -135,6 +150,19 @@ public class ApiBean {
         List<Long> followers = p.getFollowers();
         for(Long key : followers)
             json.accumulate("followers", key);
+        
+        List<Comment> comments = p.getComments();
+        List<JSONObject> commentsJson = new ArrayList<>();
+        for(Comment tmp : comments) {
+            JSONObject item = new JSONObject();
+            item.put("user", tmp.getUsername());
+            item.put("date", tmp.getDate());
+            item.put("content",tmp.getContent());
+            commentsJson.add(item);
+        }
+        
+        json.put("comments",commentsJson);
+        
 
         return Response.status(200).entity(json.toString()).build();
     }
