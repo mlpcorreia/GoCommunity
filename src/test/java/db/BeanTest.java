@@ -176,7 +176,7 @@ public class BeanTest {
         List<Comment> comments = bean.getActiveProject().getComments();
         assertEquals(2, comments.size());
         assertEquals(dateString, comments.get(0).getFormattedDate());
-        assertEquals("User3 (user3)", comments.get(1).getHeader());
+        assertEquals("Posted by User3", comments.get(1).getHeader());
         assertTrue(c2.getDate().after(c1.getDate()));
         
         em.getTransaction().begin();

@@ -22,7 +22,6 @@ public class Comment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String username;
     private String userVisibleName;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date creationTime;
@@ -35,7 +34,6 @@ public class Comment implements Serializable {
     }
     
     public Comment(Client c, String content) {
-        username = c.getUsername();
         userVisibleName = c.getName();
         creationTime = Calendar.getInstance().getTime();
         this.content = content;
@@ -61,14 +59,6 @@ public class Comment implements Serializable {
         creationTime = d;
     }
     
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    
-    public String getUsername() {
-        return username;
-    }
-    
     public void setUserVisibleName(String userVisibleName) {
         this.userVisibleName = userVisibleName;
     }
@@ -82,12 +72,17 @@ public class Comment implements Serializable {
         return format.format(creationTime);
     }
     
+    public String getApiFormattedDate() {
+        SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy");
+        return format.format(creationTime);
+    }
+    
     public Date getDate() {
         return creationTime;
     }
     
     public String getHeader() {
-        return userVisibleName+" ("+username+")";
+        return "Posted by "+userVisibleName;
     }
     
     public void setContent(String content) {

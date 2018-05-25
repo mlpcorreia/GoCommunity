@@ -149,6 +149,83 @@ public class DatabaseHandler {
         return true;
     }
     
+    public long apiCreateAccount(Client user) {
+        TypedQuery<Client> query = em.createQuery(
+                CLIENTNAMEQUERY, Client.class);
+        
+        if (!query.setParameter("user", user.getUsername()).getResultList().isEmpty()) return -1;
+        
+        em.getTransaction().begin();
+        em.persist(user);
+        em.getTransaction().commit();
+        
+        TypedQuery<Client> laterQuery = em.createQuery(
+                CLIENTNAMEQUERY, Client.class);
+        
+        return laterQuery.setParameter("user", user.getUsername()).getSingleResult().getId();
+    }
+    
+    public boolean apiDonate(double amt, long pid) {
+        Project aux = em.find(Project.class, pid);
+        if (aux==null) return false;
+        
+        em.getTransaction().begin();
+        aux.addToProgress(amt);
+        em.getTransaction().commit();
+        
+        return true;
+    }
+    
+    public boolean apiAddMilestone(double amt, String desc, long pid) {
+        Project aux = em.find(Project.class, pid);
+        if (aux==null) return false;
+        
+        aux.addMilestone(amt, desc);
+        updateField(aux, "milestones");
+        return true;
+    }
+    
+    public int apiAddComment(long uid, String content, long pid) {
+        Client auxc = em.find(Client.class, uid);
+        if (auxc==null) return -1;
+        
+        Project auxp = em.find(Project.class, pid);
+        if (auxp==null) return -2;
+        
+        Comment c = new Comment(auxc, content);
+        
+        em.getTransaction().begin();
+        c.setProject(auxp);
+        em.persist(c);
+        auxp.addComment(c);       
+        em.getTransaction().commit();
+        return 0;
+    }
+    
+    public long apiCreateProject(Project p) {
+        TypedQuery<Project> query = em.createQuery(
+               PROJECTNAMEQUERY, Project.class);
+        
+        if (!query.setParameter("name", p.getName()).getResultList().isEmpty()) return -1;
+        
+        Client c = em.find(Client.class, p.getOwner());
+        if (c==null) return -2;
+        
+        em.getTransaction().begin();
+        em.persist(p);
+        em.getTransaction().commit();
+        
+        TypedQuery<Project> laterQuery = em.createQuery(
+                PROJECTNAMEQUERY, Project.class);
+        
+        long pid = laterQuery.setParameter("name", p.getName()).getSingleResult().getId();
+        
+        c.own(pid);
+        updateField(c, "own");
+        
+        return pid;
+    }
+    
     public long createProject(Project p) {
         TypedQuery<Project> query = em.createQuery(
                PROJECTNAMEQUERY, Project.class);
