@@ -27,11 +27,7 @@ public class ApiBean {
     
     //url structure is: /GoCommunity/api/data/
 
-    private final DatabaseHandler db = new DatabaseHandler("go.odb");
-    private final String ha = "Access-Control-Allow-Origin";
-    private final String hb = "*";
-    private final String hx = "Access-Control-Allow-Methods";
-    private final String hy = "POST, GET, OPTIONS, PUT";
+    private final DatabaseHandler db = new DatabaseHandler("go.odb");   
  
     @Path("/user/{username}")
     @GET
@@ -43,7 +39,7 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (username==null || username.equals(""))
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         
         try {
             long id = Long.parseLong(username);
@@ -53,7 +49,7 @@ public class ApiBean {
         }
         
         if (c==null)
-            return Response.status(200).entity(notFound.toString()).build();
+            return customResponse(notFound);
         
         JSONObject json = new JSONObject();
         
@@ -75,7 +71,7 @@ public class ApiBean {
         
         json.put("follows", follows);
         
-        return Response.status(200).entity(json.toString()).build();
+        return customResponse(json);
     }
     
     @Path("/popular")
@@ -87,7 +83,7 @@ public class ApiBean {
         JSONObject error = createErrorMessage("No projects found!",404);
         
         if(top.isEmpty())
-            return Response.status(200).entity(error.toString()).build();
+            return customResponse(error);
             
         JSONObject json = new JSONObject();
         List<JSONObject> projects = new ArrayList<>();
@@ -115,7 +111,7 @@ public class ApiBean {
         
         json.put("list", projects);
         
-        return Response.status(200).entity(json.toString()).build();
+        return customResponse(json);
     }
     
     @Path("/project/{name}")
@@ -128,7 +124,7 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (name==null || name.equals(""))
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         
         try {
             long id = Long.parseLong(name);
@@ -138,7 +134,7 @@ public class ApiBean {
         }
         
         if (p==null)
-            return Response.status(200).entity(notFound.toString()).build();
+            return customResponse(notFound);
         
         JSONObject json = new JSONObject();
         
@@ -172,7 +168,7 @@ public class ApiBean {
         json.put("comments",commentsJson);
         
 
-        return Response.status(200).entity(json.toString()).build();
+        return customResponse(json);
     }
     
     @Path("/search/{query}")
@@ -183,7 +179,7 @@ public class ApiBean {
         JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
         
         if (query==null || query.equals(""))
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
               
         List<JSONObject> res = new ArrayList<>();
         
@@ -225,7 +221,7 @@ public class ApiBean {
         JSONObject result = new JSONObject();
         result.put("list", res);
         
-        return Response.status(200).entity(result.toString()).build();
+        return customResponse(result);
         
     }
     
@@ -241,18 +237,18 @@ public class ApiBean {
         JSONObject exists = createErrorMessage("Username already exists.", 404);
         
         if (userVisible==null || username==null || pword==null) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         Client c = new Client(userVisible, username, pword);
         long id = db.apiCreateAccount(c);
         
         if (id==-1) {
-            return Response.status(200).entity(exists.toString()).build();
+            return customResponse(exists);
         } else {
             JSONObject res = new JSONObject();
             res.put("id", id);
-            return Response.status(200).entity(res.toString()).build();
+            return customResponse(res);
         }
     
     }
@@ -273,7 +269,7 @@ public class ApiBean {
         JSONObject dateError = createErrorMessage("Invalid date.", 404);
         
         if (name==null || desc==null || goal==null || date==null || owner==null) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         double goalValue;
@@ -285,26 +281,26 @@ public class ApiBean {
             ownerId = Long.parseLong(owner);
             end = Date.valueOf(date);
         } catch (NumberFormatException e) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         } catch (IllegalArgumentException e) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         if (end.before(new Date(Calendar.getInstance().getTime().getTime()))) {
-            return Response.status(200).entity(dateError.toString()).build();
+            return customResponse(dateError);
         }
         
         Project newProject = new Project(name, desc, goalValue, end, ownerId);
         long id = db.apiCreateProject(newProject);
         
         if (id==-1) {
-            return Response.status(200).entity(exists.toString()).build();
+            return customResponse(exists);
         } else if (id==-2) {
-            return Response.status(200).entity(badUser.toString()).build();
+            return customResponse(badUser);
         } else {
             JSONObject res = new JSONObject();
             res.put("id", id);
-            return Response.status(200).entity(res.toString()).build();
+            return customResponse(res);
         }
         
     }
@@ -320,7 +316,7 @@ public class ApiBean {
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
         if (amt==null || pid==null) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         double amtValue;
@@ -330,7 +326,7 @@ public class ApiBean {
             amtValue = Double.parseDouble(amt);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         boolean donate = db.apiDonate(amtValue, pidValue);
@@ -338,9 +334,9 @@ public class ApiBean {
         if (donate) {
             JSONObject res = new JSONObject();
             res.put("status", "success");
-            return Response.status(200).entity(res.toString()).build();
+            return customResponse(res);
         } else {
-            return Response.status(200).entity(badProject.toString()).build();
+            return customResponse(badProject);
         }
     }
     
@@ -356,7 +352,7 @@ public class ApiBean {
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
         if (amt==null || desc==null || pid==null) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         double amtValue;
@@ -366,7 +362,7 @@ public class ApiBean {
             amtValue = Double.parseDouble(amt);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         boolean add = db.apiAddMilestone(amtValue, desc, pidValue);
@@ -374,9 +370,9 @@ public class ApiBean {
         if (add) {
             JSONObject res = new JSONObject();
             res.put("status", "success");
-            return Response.status(200).entity(res.toString()).build();
+            return customResponse(res);
         } else {
-            return Response.status(200).entity(badProject.toString()).build();
+            return customResponse(badProject);
         }
     }
     
@@ -393,7 +389,7 @@ public class ApiBean {
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         
         if (content==null || uid==null || pid==null) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         long uidValue;
@@ -403,7 +399,7 @@ public class ApiBean {
             uidValue = Long.parseLong(uid);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         int add = db.apiAddComment(uidValue, content, pidValue);
@@ -412,11 +408,11 @@ public class ApiBean {
             case 0:
                 JSONObject res = new JSONObject();
                 res.put("status", "success");
-                return Response.status(200).entity(res.toString()).build();
+                return customResponse(res);
             case -1:
-                return Response.status(200).entity(badUser.toString()).build();
+                return customResponse(badUser);
             default:
-                return Response.status(200).entity(badProject.toString()).build();
+                return customResponse(badProject);
         }
     }
     
@@ -433,12 +429,12 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (user==null || pword==null) {
-            return Response.status(200).header(ha, hb).header(hx, hy).entity(invalid.toString()).build();
+            return customResponse(invalid);
         }
         
         c = db.apiGetUser(user);
         if (c==null) {
-            return Response.status(200).header(ha, hb).header(hx, hy).entity(notFound.toString()).build();
+            return customResponse(notFound);
         }
         
         int res = db.tryLogin(c, pword);
@@ -450,13 +446,21 @@ public class ApiBean {
             case 0:             
                 json.put("status", "true");
                 json.put("id", c.getId());
-                return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
+                return customResponse(json);
             case 1:
                 json.put("status", "false");
-                return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
+                return customResponse(json);
             default:
-                return Response.status(200).header(ha, hb).header(hx, hy).entity(notAllowed.toString()).build();
+                return customResponse(notAllowed);
         }
+    }
+    
+    private Response customResponse(JSONObject json) {
+        String ha = "Access-Control-Allow-Origin";
+        String hb = "*";
+        String hx = "Access-Control-Allow-Methods";
+        String hy = "POST, GET, OPTIONS, PUT"; 
+        return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
     }
     
     private String moneyFormat(double original) {
