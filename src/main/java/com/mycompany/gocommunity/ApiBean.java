@@ -28,6 +28,10 @@ public class ApiBean {
     //url structure is: /GoCommunity/api/data/
 
     private final DatabaseHandler db = new DatabaseHandler("go.odb");
+    private final String ha = "Access-Control-Allow-Origin";
+    private final String hb = "*";
+    private final String hx = "Access-Control-Allow-Methods";
+    private final String hy = "POST, GET, OPTIONS, PUT";
  
     @Path("/user/{username}")
     @GET
@@ -429,12 +433,12 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (user==null || pword==null) {
-            return Response.status(200).entity(invalid.toString()).build();
+            return Response.status(200).header(ha, hb).header(hx, hy).entity(invalid.toString()).build();
         }
         
         c = db.apiGetUser(user);
         if (c==null) {
-            return Response.status(200).entity(notFound.toString()).build();
+            return Response.status(200).header(ha, hb).header(hx, hy).entity(notFound.toString()).build();
         }
         
         int res = db.tryLogin(c, pword);
@@ -446,12 +450,12 @@ public class ApiBean {
             case 0:             
                 json.put("status", "true");
                 json.put("id", c.getId());
-                return Response.status(200).entity(json.toString()).build();
+                return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
             case 1:
                 json.put("status", "false");
-                return Response.status(200).entity(json.toString()).build();
+                return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
             default:
-                return Response.status(200).entity(notAllowed.toString()).build();
+                return Response.status(200).header(ha, hb).header(hx, hy).entity(notAllowed.toString()).build();
         }
     }
     
