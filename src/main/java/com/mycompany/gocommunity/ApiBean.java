@@ -91,6 +91,17 @@ public class ApiBean {
             JSONObject item = new JSONObject();
             item.put("id", tmp.getId());
             item.put("name", tmp.getName());
+            item.put("description", cleanDescription(tmp.getDescription()));
+            
+            List<Double> milestoneKeys = tmp.getMilestoneKeys();
+            List<JSONObject> milestones = new ArrayList<>();
+            for(Double key : milestoneKeys){
+                JSONObject mitem = new JSONObject();
+                mitem.put(moneyFormat(key), tmp.getMilestoneText(key));
+                milestones.add(mitem);
+        }
+        
+            item.put("milestones", milestones);
             item.put("progress", moneyFormatAsDouble(tmp.getProgress()));
             item.put("goal", moneyFormatAsDouble(tmp.getGoal()));
             item.put("endsOn", tmp.getEndsOn());          
@@ -225,6 +236,55 @@ public class ApiBean {
         
     }
     
+    @Path("/follow")
+    @GET
+    @Produces("application/json")
+    public Response changeStance(
+            @QueryParam("uid") String uid,
+            @QueryParam("pid") String pid) throws JSONException {
+        
+        JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
+        JSONObject badProject = createErrorMessage("Project does not exist.", 404);
+        JSONObject badUser = createErrorMessage("User does not exist.", 404);
+        
+        if (uid==null || pid==null || uid.equals("") || pid.equals("")) {
+            return customResponse(invalid);
+        }
+        
+        long uidValue;
+        long pidValue;
+        
+        try {
+            uidValue = Long.parseLong(uid);
+            pidValue = Long.parseLong(pid);
+        } catch (NumberFormatException e) {
+            return customResponse(invalid);
+        }
+        
+        //-2 = bad project
+        //-1 = bad user
+        //0 = unfollow
+        //1 = follow
+        int res = db.apiChangeStance(uidValue, pidValue);
+        JSONObject json = new JSONObject();
+        
+        switch (res) {
+            case -2:
+                return customResponse(badProject);
+            case -1:
+                return customResponse(badUser);
+            case 0:              
+                json.put("status", "unfollowed");
+                return customResponse(json);
+            default:
+                json.put("status", "followed");
+                return customResponse(json);
+        }
+        
+        
+        
+    }
+    
     @Path("/createAccount")
     @GET
     @Produces("application/json")
@@ -268,7 +328,9 @@ public class ApiBean {
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         JSONObject dateError = createErrorMessage("Invalid date.", 404);
         
-        if (name==null || desc==null || goal==null || date==null || owner==null) {
+        if (name==null || desc==null || goal==null || date==null || owner==null ||
+                name.equals("") || desc.equals("") || goal.equals("") ||
+                date.equals("") || owner.equals("")) {
             return customResponse(invalid);
         }
         
@@ -315,7 +377,7 @@ public class ApiBean {
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
-        if (amt==null || pid==null) {
+        if (amt==null || pid==null || amt.equals("") || pid.equals("")) {
             return customResponse(invalid);
         }
         
@@ -351,7 +413,8 @@ public class ApiBean {
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
-        if (amt==null || desc==null || pid==null) {
+        if (amt==null || desc==null || pid==null || amt.equals("") ||
+                desc.equals("") || pid.equals("")) {
             return customResponse(invalid);
         }
         
@@ -388,7 +451,8 @@ public class ApiBean {
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         
-        if (content==null || uid==null || pid==null) {
+        if (content==null || uid==null || pid==null || content.equals("") ||
+                uid.equals("") || pid.equals("")) {
             return customResponse(invalid);
         }
         
@@ -428,7 +492,7 @@ public class ApiBean {
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
-        if (user==null || pword==null) {
+        if (user==null || pword==null || user.equals("") || pword.equals("")) {
             return customResponse(invalid);
         }
         

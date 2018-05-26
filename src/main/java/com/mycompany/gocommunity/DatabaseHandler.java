@@ -81,6 +81,27 @@ public class DatabaseHandler {
         } else return null;
     }
     
+    public int apiChangeStance(long uid, long pid) {
+        Client c = em.find(Client.class, uid);
+        if (c==null) return -1;
+        Project p = em.find(Project.class, pid);
+        if (p==null) return -2;
+        
+        if (c.getFollows().contains(pid)) { //unfollow
+            c.unfollow(pid);
+            updateField(c, "follow");
+            p.unfollowedBy(uid);
+            updateField(p, "followers");
+            return 0;
+        } else { //follow
+            c.follow(pid);
+            updateField(c, "follow");
+            p.followedBy(uid);
+            updateField(p, "followers");
+            return 1;
+        }
+    }
+    
     public Client apiGetUser(long id) {
         TypedQuery<Client> query = em.createQuery(
                 CLIENTIDQUERY, Client.class);
