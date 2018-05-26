@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Calendar;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,7 +40,7 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (username==null || username.equals(""))
-            return customResponse(invalid);
+            return getResponse(invalid);
         
         try {
             long id = Long.parseLong(username);
@@ -49,7 +50,7 @@ public class ApiBean {
         }
         
         if (c==null)
-            return customResponse(notFound);
+            return getResponse(notFound);
         
         JSONObject json = new JSONObject();
         
@@ -71,7 +72,7 @@ public class ApiBean {
         
         json.put("follows", follows);
         
-        return customResponse(json);
+        return getResponse(json);
     }
     
     @Path("/popular")
@@ -83,7 +84,7 @@ public class ApiBean {
         JSONObject error = createErrorMessage("No projects found!",404);
         
         if(top.isEmpty())
-            return customResponse(error);
+            return getResponse(error);
             
         JSONObject json = new JSONObject();
         List<JSONObject> projects = new ArrayList<>();
@@ -91,6 +92,7 @@ public class ApiBean {
             JSONObject item = new JSONObject();
             item.put("id", tmp.getId());
             item.put("name", tmp.getName());
+            item.put("owner", tmp.getOwner());
             item.put("description", cleanDescription(tmp.getDescription()));
             
             List<Double> milestoneKeys = tmp.getMilestoneKeys();
@@ -104,7 +106,9 @@ public class ApiBean {
             item.put("milestones", milestones);
             item.put("progress", moneyFormatAsDouble(tmp.getProgress()));
             item.put("goal", moneyFormatAsDouble(tmp.getGoal()));
-            item.put("endsOn", tmp.getEndsOn());          
+            item.put("createdOn", tmp.getCreatedOn());
+            item.put("endsOn", tmp.getEndsOn());  
+            
             
             List<JSONObject> commentsJson = new ArrayList<>();
             for(Comment c : tmp.getComments()) {
@@ -122,7 +126,7 @@ public class ApiBean {
         
         json.put("list", projects);
         
-        return customResponse(json);
+        return getResponse(json);
     }
     
     @Path("/project/{name}")
@@ -135,7 +139,7 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (name==null || name.equals(""))
-            return customResponse(invalid);
+            return getResponse(invalid);
         
         try {
             long id = Long.parseLong(name);
@@ -145,12 +149,13 @@ public class ApiBean {
         }
         
         if (p==null)
-            return customResponse(notFound);
+            return getResponse(notFound);
         
         JSONObject json = new JSONObject();
         
         json.put("id", p.getId());
         json.put("name", p.getName());
+        json.put("owner", p.getOwner());
         json.put("description", cleanDescription(p.getDescription()));
         
         List<Double> milestoneKeys = p.getMilestoneKeys();
@@ -179,7 +184,7 @@ public class ApiBean {
         json.put("comments",commentsJson);
         
 
-        return customResponse(json);
+        return getResponse(json);
     }
     
     @Path("/search/{query}")
@@ -190,7 +195,7 @@ public class ApiBean {
         JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
         
         if (query==null || query.equals(""))
-            return customResponse(invalid);
+            return getResponse(invalid);
               
         List<JSONObject> res = new ArrayList<>();
         
@@ -200,6 +205,7 @@ public class ApiBean {
             
             json.put("id", p.getId());
             json.put("name", p.getName());
+            json.put("owner", p.getOwner());
             json.put("description", cleanDescription(p.getDescription()));
             
             List<Double> milestoneKeys = p.getMilestoneKeys();
@@ -232,7 +238,7 @@ public class ApiBean {
         JSONObject result = new JSONObject();
         result.put("list", res);
         
-        return customResponse(result);
+        return getResponse(result);
         
     }
     
@@ -246,9 +252,10 @@ public class ApiBean {
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
+        JSONObject isOwner = createErrorMessage("User is project owner.", 404);
         
         if (uid==null || pid==null || uid.equals("") || pid.equals("")) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         long uidValue;
@@ -258,9 +265,10 @@ public class ApiBean {
             uidValue = Long.parseLong(uid);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
+        //-3 = is owner
         //-2 = bad project
         //-1 = bad user
         //0 = unfollow
@@ -269,16 +277,18 @@ public class ApiBean {
         JSONObject json = new JSONObject();
         
         switch (res) {
+            case -3:
+                return getResponse(isOwner);
             case -2:
-                return customResponse(badProject);
+                return getResponse(badProject);
             case -1:
-                return customResponse(badUser);
+                return getResponse(badUser);
             case 0:              
                 json.put("status", "unfollowed");
-                return customResponse(json);
+                return getResponse(json);
             default:
                 json.put("status", "followed");
-                return customResponse(json);
+                return getResponse(json);
         }
         
         
@@ -286,8 +296,8 @@ public class ApiBean {
     }
     
     @Path("/createAccount")
-    @GET
-    @Produces("application/json")
+    @POST
+    @Consumes("application/json")
     public Response createAccount(
             @QueryParam("user") String userVisible,
             @QueryParam("username") String username,
@@ -297,18 +307,18 @@ public class ApiBean {
         JSONObject exists = createErrorMessage("Username already exists.", 404);
         
         if (userVisible==null || username==null || pword==null) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         Client c = new Client(userVisible, username, pword);
         long id = db.apiCreateAccount(c);
         
         if (id==-1) {
-            return customResponse(exists);
+            return getResponse(exists);
         } else {
             JSONObject res = new JSONObject();
             res.put("id", id);
-            return customResponse(res);
+            return getResponse(res);
         }
     
     }
@@ -331,7 +341,7 @@ public class ApiBean {
         if (name==null || desc==null || goal==null || date==null || owner==null ||
                 name.equals("") || desc.equals("") || goal.equals("") ||
                 date.equals("") || owner.equals("")) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         double goalValue;
@@ -343,26 +353,26 @@ public class ApiBean {
             ownerId = Long.parseLong(owner);
             end = Date.valueOf(date);
         } catch (NumberFormatException e) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         } catch (IllegalArgumentException e) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         if (end.before(new Date(Calendar.getInstance().getTime().getTime()))) {
-            return customResponse(dateError);
+            return getResponse(dateError);
         }
         
         Project newProject = new Project(name, desc, goalValue, end, ownerId);
         long id = db.apiCreateProject(newProject);
         
         if (id==-1) {
-            return customResponse(exists);
+            return getResponse(exists);
         } else if (id==-2) {
-            return customResponse(badUser);
+            return getResponse(badUser);
         } else {
             JSONObject res = new JSONObject();
             res.put("id", id);
-            return customResponse(res);
+            return getResponse(res);
         }
         
     }
@@ -378,7 +388,7 @@ public class ApiBean {
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
         if (amt==null || pid==null || amt.equals("") || pid.equals("")) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         double amtValue;
@@ -388,7 +398,7 @@ public class ApiBean {
             amtValue = Double.parseDouble(amt);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         boolean donate = db.apiDonate(amtValue, pidValue);
@@ -396,9 +406,9 @@ public class ApiBean {
         if (donate) {
             JSONObject res = new JSONObject();
             res.put("status", "success");
-            return customResponse(res);
+            return getResponse(res);
         } else {
-            return customResponse(badProject);
+            return getResponse(badProject);
         }
     }
     
@@ -415,7 +425,7 @@ public class ApiBean {
         
         if (amt==null || desc==null || pid==null || amt.equals("") ||
                 desc.equals("") || pid.equals("")) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         double amtValue;
@@ -425,7 +435,7 @@ public class ApiBean {
             amtValue = Double.parseDouble(amt);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         boolean add = db.apiAddMilestone(amtValue, desc, pidValue);
@@ -433,9 +443,9 @@ public class ApiBean {
         if (add) {
             JSONObject res = new JSONObject();
             res.put("status", "success");
-            return customResponse(res);
+            return getResponse(res);
         } else {
-            return customResponse(badProject);
+            return getResponse(badProject);
         }
     }
     
@@ -453,7 +463,7 @@ public class ApiBean {
         
         if (content==null || uid==null || pid==null || content.equals("") ||
                 uid.equals("") || pid.equals("")) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         long uidValue;
@@ -463,7 +473,7 @@ public class ApiBean {
             uidValue = Long.parseLong(uid);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         int add = db.apiAddComment(uidValue, content, pidValue);
@@ -472,11 +482,11 @@ public class ApiBean {
             case 0:
                 JSONObject res = new JSONObject();
                 res.put("status", "success");
-                return customResponse(res);
+                return getResponse(res);
             case -1:
-                return customResponse(badUser);
+                return getResponse(badUser);
             default:
-                return customResponse(badProject);
+                return getResponse(badProject);
         }
     }
     
@@ -493,12 +503,12 @@ public class ApiBean {
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
         if (user==null || pword==null || user.equals("") || pword.equals("")) {
-            return customResponse(invalid);
+            return getResponse(invalid);
         }
         
         c = db.apiGetUser(user);
         if (c==null) {
-            return customResponse(notFound);
+            return getResponse(notFound);
         }
         
         int res = db.tryLogin(c, pword);
@@ -510,22 +520,30 @@ public class ApiBean {
             case 0:             
                 json.put("status", "true");
                 json.put("id", c.getId());
-                return customResponse(json);
+                return getResponse(json);
             case 1:
                 json.put("status", "false");
-                return customResponse(json);
+                return getResponse(json);
             default:
-                return customResponse(notAllowed);
+                return getResponse(notAllowed);
         }
     }
     
-    private Response customResponse(JSONObject json) {
+    private Response getResponse(JSONObject json) {
         String ha = "Access-Control-Allow-Origin";
         String hb = "*";
         String hx = "Access-Control-Allow-Methods";
         String hy = "POST, GET, OPTIONS, PUT"; 
         return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
     }
+    
+    /*private Response postResponse(JSONObject json) {
+        String ha = "Access-Control-Allow-Origin";
+        String hb = "*";
+        String hx = "Access-Control-Allow-Methods";
+        String hy = "POST, GET, OPTIONS, PUT"; 
+        return Response.status(201).header(ha, hb).header(hx, hy).entity(json.toString()).build();
+    }*/
     
     private String moneyFormat(double original) {
         return String.format("%.2f", original);

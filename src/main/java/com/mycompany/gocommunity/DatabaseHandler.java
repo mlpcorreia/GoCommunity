@@ -83,9 +83,16 @@ public class DatabaseHandler {
     
     public int apiChangeStance(long uid, long pid) {
         Client c = em.find(Client.class, uid);
-        if (c==null) return -1;
+        if (c==null) {
+            return -1;
+        }
         Project p = em.find(Project.class, pid);
-        if (p==null) return -2;
+        if (p==null) {
+            return -2;
+        }
+        if (c.getOwns().contains(pid)) {
+            return -3;
+        }
         
         if (c.getFollows().contains(pid)) { //unfollow
             c.unfollow(pid);
