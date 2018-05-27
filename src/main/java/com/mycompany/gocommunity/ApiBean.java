@@ -81,9 +81,6 @@ public class ApiBean {
         
         List<Project> top = db.getPopularProjects();
         JSONObject error = createErrorMessage("No projects found!",404);
-        
-        if(top.isEmpty())
-            return getResponse(error);
             
         JSONObject json = new JSONObject();
         List<JSONObject> projects = new ArrayList<>();
@@ -242,19 +239,30 @@ public class ApiBean {
     }
     
     @Path("/follow")
-    @GET
+    @POST
+    @Consumes("text/plain")
     @Produces("application/json")
-    public Response changeStance(
-            @QueryParam("uid") String uid,
-            @QueryParam("pid") String pid) throws JSONException {
+    public Response changeStance(String body) throws JSONException {
+        
+        JSONObject main;
+        String uid;
+        String pid;
         
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         JSONObject isOwner = createErrorMessage("User is project owner.", 404);
         
+        try {
+            main = new JSONObject(body);
+            uid = main.getString("user");
+            pid = main.getString("project");
+        } catch (JSONException e) {
+            return postResponse(invalid);   
+        }
+        
         if (uid==null || pid==null || uid.equals("") || pid.equals("")) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         long uidValue;
@@ -264,7 +272,7 @@ public class ApiBean {
             uidValue = Long.parseLong(uid);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         //-3 = is owner
@@ -277,17 +285,17 @@ public class ApiBean {
         
         switch (res) {
             case -3:
-                return getResponse(isOwner);
+                return postResponse(isOwner);
             case -2:
-                return getResponse(badProject);
+                return postResponse(badProject);
             case -1:
-                return getResponse(badUser);
+                return postResponse(badUser);
             case 0:              
                 json.put("status", "unfollowed");
-                return getResponse(json);
+                return postResponse(json);
             default:
                 json.put("status", "followed");
-                return getResponse(json);
+                return postResponse(json);
         }
         
         
@@ -295,52 +303,78 @@ public class ApiBean {
     }
     
     @Path("/createAccount")
-    @GET
+    @POST
+    @Consumes("text/plain")
     @Produces("application/json")
-    public Response createAccount(
-            @QueryParam("user") String userVisible,
-            @QueryParam("username") String username,
-            @QueryParam("pword") String pword) throws JSONException {
+    public Response createAccount(String body) throws JSONException {
+
+        JSONObject main;
+        String userVisible;
+        String username;
+        String pword;
         
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject exists = createErrorMessage("Username already exists.", 404);
         
+        try {
+            main = new JSONObject(body);
+            userVisible = main.getString("user");
+            username = main.getString("username");
+            pword = main.getString("pword");
+        } catch (JSONException e) {
+            return postResponse(invalid);   
+        }
+        
         if (userVisible==null || username==null || pword==null) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         Client c = new Client(userVisible, username, pword);
         long id = db.apiCreateAccount(c);
         
         if (id==-1) {
-            return getResponse(exists);
+            return postResponse(exists);
         } else {
             JSONObject res = new JSONObject();
             res.put("id", id);
-            return getResponse(res);
+            return postResponse(res);
         }
-    
+
     }
     
     @Path("/createProject")
-    @GET
+    @POST
+    @Consumes("text/plain")
     @Produces("application/json")
-    public Response createProject(
-            @QueryParam("name") String name,
-            @QueryParam("desc") String desc,
-            @QueryParam("goal") String goal,
-            @QueryParam("date") String date,
-            @QueryParam("owner") String owner) throws JSONException {
+    public Response createProject(String body) throws JSONException {
+        
+        JSONObject main;
+        String name;
+        String desc;
+        String goal;
+        String date;
+        String owner;
         
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject exists = createErrorMessage("Name already exists.", 404);
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         JSONObject dateError = createErrorMessage("Invalid date.", 404);
         
+        try {
+            main = new JSONObject(body);
+            name = main.getString("name");
+            desc = main.getString("desc");
+            goal = main.getString("goal");
+            date = main.getString("date");
+            owner = main.getString("owner");
+        } catch (JSONException e) {
+            return postResponse(invalid);   
+        }
+        
         if (name==null || desc==null || goal==null || date==null || owner==null ||
                 name.equals("") || desc.equals("") || goal.equals("") ||
                 date.equals("") || owner.equals("")) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         double goalValue;
@@ -352,42 +386,53 @@ public class ApiBean {
             ownerId = Long.parseLong(owner);
             end = Date.valueOf(date);
         } catch (NumberFormatException e) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         } catch (IllegalArgumentException e) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         if (end.before(new Date(Calendar.getInstance().getTime().getTime()))) {
-            return getResponse(dateError);
+            return postResponse(dateError);
         }
         
         Project newProject = new Project(name, desc, goalValue, end, ownerId);
         long id = db.apiCreateProject(newProject);
         
         if (id==-1) {
-            return getResponse(exists);
+            return postResponse(exists);
         } else if (id==-2) {
-            return getResponse(badUser);
+            return postResponse(badUser);
         } else {
             JSONObject res = new JSONObject();
             res.put("id", id);
-            return getResponse(res);
+            return postResponse(res);
         }
         
     }
     
     @Path("/donate")
-    @GET
+    @POST
+    @Consumes("text/plain")
     @Produces("application/json")
-    public Response donate(
-            @QueryParam("amt") String amt,
-            @QueryParam("pid") String pid) throws JSONException {
+    public Response donate(String body) throws JSONException {
+        
+        JSONObject main;
+        String amt;
+        String pid;
         
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
+        try {
+            main = new JSONObject(body);
+            amt = main.getString("amount");
+            pid = main.getString("project");
+        } catch (JSONException e) {
+            return postResponse(invalid);   
+        }
+        
         if (amt==null || pid==null || amt.equals("") || pid.equals("")) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         double amtValue;
@@ -397,7 +442,7 @@ public class ApiBean {
             amtValue = Double.parseDouble(amt);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         boolean donate = db.apiDonate(amtValue, pidValue);
@@ -405,26 +450,38 @@ public class ApiBean {
         if (donate) {
             JSONObject res = new JSONObject();
             res.put("status", "success");
-            return getResponse(res);
+            return postResponse(res);
         } else {
-            return getResponse(badProject);
+            return postResponse(badProject);
         }
     }
     
     @Path("/addMilestone")
-    @GET
+    @POST
+    @Consumes("text/plain")
     @Produces("application/json")
-    public Response addMilestone(
-            @QueryParam("amt") String amt,
-            @QueryParam("desc") String desc,
-            @QueryParam("pid") String pid) throws JSONException {
+    public Response addMilestone(String body) throws JSONException {
+
+        JSONObject main;
+        String amt;
+        String desc;
+        String pid;     
         
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
+        try {
+            main = new JSONObject(body);
+            amt = main.getString("amount");
+            desc = main.getString("desc");
+            pid = main.getString("project");
+        } catch (JSONException e) {
+            return postResponse(invalid);   
+        }
+        
         if (amt==null || desc==null || pid==null || amt.equals("") ||
                 desc.equals("") || pid.equals("")) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         double amtValue;
@@ -434,7 +491,7 @@ public class ApiBean {
             amtValue = Double.parseDouble(amt);
             pidValue = Long.parseLong(pid);
         } catch (NumberFormatException e) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         boolean add = db.apiAddMilestone(amtValue, desc, pidValue);
@@ -442,27 +499,39 @@ public class ApiBean {
         if (add) {
             JSONObject res = new JSONObject();
             res.put("status", "success");
-            return getResponse(res);
+            return postResponse(res);
         } else {
-            return getResponse(badProject);
+            return postResponse(badProject);
         }
     }
     
     @Path("/addComment")
-    @GET
+    @POST
+    @Consumes("text/plain")
     @Produces("application/json")
-    public Response addComment(
-            @QueryParam("content") String content,
-            @QueryParam("uid") String uid,
-            @QueryParam("pid") String pid) throws JSONException {
+    public Response addComment(String body) throws JSONException {
+        
+        JSONObject main;
+        String content;
+        String uid;
+        String pid;  
         
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         
+        try {
+            main = new JSONObject(body);
+            content = main.getString("content");
+            uid = main.getString("user");
+            pid = main.getString("project");
+        } catch (JSONException e) {
+            return postResponse(invalid);   
+        }
+        
         if (content==null || uid==null || pid==null || content.equals("") ||
                 uid.equals("") || pid.equals("")) {
-            return getResponse(invalid);
+            return postResponse(invalid);
         }
         
         long uidValue;
@@ -481,11 +550,11 @@ public class ApiBean {
             case 0:
                 JSONObject res = new JSONObject();
                 res.put("status", "success");
-                return getResponse(res);
+                return postResponse(res);
             case -1:
-                return getResponse(badUser);
+                return postResponse(badUser);
             default:
-                return getResponse(badProject);
+                return postResponse(badProject);
         }
     }
     
@@ -536,14 +605,14 @@ public class ApiBean {
         return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
     }
     
-    /*private Response postResponse(JSONObject json) {
+    private Response postResponse(JSONObject json) {
         String ha = "Access-Control-Allow-Origin";
         String hb = "*";
         String hx = "Access-Control-Allow-Methods";
         String hy = "POST, GET, OPTIONS, PUT"; 
         return Response.status(201).header(ha, hb).header(hx, hy).entity(json.toString()).build();
-    }*/
-    
+    }
+   
     private String moneyFormat(double original) {
         return String.format("%.2f", original);
     }
