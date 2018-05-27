@@ -55,7 +55,6 @@ public class ApiBean {
         JSONObject json = new JSONObject();
         
         json.put("id", c.getId());
-        json.put("username", c.getUsername());
         json.put("name", c.getName());
         
         List<Long> owns = c.getOwns();
@@ -296,8 +295,8 @@ public class ApiBean {
     }
     
     @Path("/createAccount")
-    @POST
-    @Consumes("application/json")
+    @GET
+    @Produces("application/json")
     public Response createAccount(
             @QueryParam("user") String userVisible,
             @QueryParam("username") String username,
