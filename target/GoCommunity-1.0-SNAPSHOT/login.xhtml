@@ -3,29 +3,74 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html">
-    <h:head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    </h:head>
-    <h:body>
-        <h1>Login page</h1>
-        <h:form role="form" style="text-align: center;">
-        <label>Name:</label>
-        <br />
-        <h:inputText class="form-control" value="#{comBean.username}"/> 
-        <br /><br/>
-        <label>Password:</label>
-        <br />
-        <h:inputText class="form-control" value="#{comBean.password}"/> 
-        <br /><br/>
-        <h:commandButton value="Submit" action="#{comBean.login()}"/> 
-        <br /><br/>
-        <label>#{comBean.loginErrorMessage}</label>      
-        <br /><br/><br /><br/>
-        <label>No account yet? Create one for free!</label>
-        <br /><br/>
-        <h:commandButton value="Create Account" action="newAccount.xhtml"/> 
-        </h:form>
-    </h:body>
+	xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <h:head>
+    <title>GoCommunity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- styles -->
+    <link href="css/styles.css" rel="stylesheet"/>
+      </h:head>
+  <h:body class="login-bg">
+  	<div class="header">
+	     <div class="container">
+	        <div class="row">
+	           <div class="col-md-12">
+	              <!-- Logo -->
+	              <div class="logo">
+	                 <h1><a href="index.html">Welcome to GoCommunity</a></h1>
+	              </div>
+	           </div>
+	        </div>
+	     </div>
+	</div>
+
+	<div class="page-content container">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+                            <h:form role="form">
+				<div class="login-wrapper">
+			        <div class="box">
+			            <div class="content-wrap">                                       
+			                <h6>Sign In</h6>
+                                        <label>Username</label>
+			                <h:inputText class="form-control" value="#{comBean.username}"/> 
+                                        <label>Password</label>
+			                <h:inputText class="form-control" value="#{comBean.password}"/> 
+                                        <c:choose>
+                                            <c:when test="#{!comBean.isEmptyString(comBean.loginErrorMessage)}">
+                                        <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
+                                            #{comBean.loginErrorMessage}
+                                        </label>
+                                        </c:when>
+                                            <c:otherwise>  
+                                            </c:otherwise>
+                                        </c:choose>
+			                <div class="action">
+                                            <h:commandButton class="btn btn-primary signup" value="Submit" action="#{comBean.login()}"/> 
+			                </div>
+                                            
+			            </div>
+			        </div>
+
+			        <div class="already">
+			            <p>Don't have an account yet?</p>
+			            <a href="newAccount.xhtml">Sign Up</a>
+			        </div>
+			    </div>
+                            </h:form>
+			</div>
+		</div>
+	</div>
+
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
+  </h:body>
 </html>

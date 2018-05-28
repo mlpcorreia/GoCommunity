@@ -82,7 +82,7 @@ public class ComBean {
             loginErrorMessage = "";
             return MAINPAGE;
         } else {
-            loginErrorMessage = "Username+password combination not found. Please retry.";
+            loginErrorMessage = "Account not found.";
             return LOGINPAGE;
         }
     }
@@ -101,7 +101,7 @@ public class ComBean {
             this.user = newUser;
             return MAINPAGE;
         } else {
-            createAccountErrorMessage = "This username already exists.";
+            createAccountErrorMessage = "Username already exists.";
             return NEWACCOUNTPAGE;
         }
     }
@@ -226,6 +226,10 @@ public class ComBean {
         db.updateField(user, "follow");
         activeProject.unfollowedBy(user.getId());
         db.updateField(activeProject, "followers");
+    }
+    
+    public boolean isEmptyString(String s) {
+        return s.equals("");
     }
     
     public boolean isVisitingFollowedProject() {

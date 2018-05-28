@@ -5,96 +5,237 @@
 	xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-    <h:head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    </h:head>
-    <h:body>
-        <h1>Project page</h1>
-        <h:form role="form" style="text-align: center;">
-            <label><b>#{comBean.activeProject.name}</b></label>
-            <c:if test="#{!comBean.visitingOwnedProject}">
-                <br /><br />
-                <c:choose>
-                    <c:when test="#{comBean.visitingFollowedProject}">
-                        <h:commandButton value="Unfollow" action="#{comBean.unfollow()}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <h:commandButton value="Follow" action="#{comBean.follow()}"/>
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
-            <br /><br />
-            <h:inputText class="form-control" value="#{comBean.donation}"/> 
-            <h:commandButton value="Donate" action="#{comBean.donate()}"/>
-            <br/>
-            <label>#{comBean.donationErrorMessage}</label>   
-            <br/><br/>      
-            <label>Description:</label>
-            <br />
-            <label>#{comBean.activeProject.description}</label>
-            <br /><br/>
-            <label>Status:</label>
-            <br/>
-            <label>#{comBean.activeProject.printFormattedProgress()} / #{comBean.activeProject.printFormattedGoal()}</label>
-            <br /><br/>
-            <label>Running from #{comBean.activeProject.createdOn} to #{comBean.activeProject.endsOn}</label>
-            <br/><br/>
-            <c:choose>
-                <c:when test="#{comBean.activeProject.amountOfMilestones>0}">
-                    <c:forEach var="i" begin="0" end="#{comBean.activeProject.amountOfMilestones-1}">
-                        #{comBean.activeProject.milestoneKeys.get(i)}€ - #{comBean.activeProject.getMilestoneText(comBean.activeProject.milestoneKeys.get(i))}
-                        <br/>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    No milestones set.
-                    <br/>
-                </c:otherwise>
-            </c:choose>
-            <c:if test="#{comBean.visitingOwnedProject}">
-                <label>Add milestone:</label>
-                <br/><br/>
-                <label>Milestone value (€):</label>
-                <br/>
-                <h:inputText class="form-control" value="#{comBean.milestoneKey}"/>
-                <br/><br/>
-                <label>Milestone description:</label>
-                <br/>
-                <h:inputText class="form-control" value="#{comBean.milestoneText}"/>
-                <br/><br/>
-                <h:commandButton value="Add" action="#{comBean.addMilestone()}"/>
-                <br/>
-                <label>#{comBean.createMilestoneErrorMessage}</label>  
-                <br/><br/>
-            </c:if>
-            <label>Add comments:</label>
-            <br/><br/>
-                <label>Content:</label>
-                <br/>
-                <h:inputText class="form-control" value="#{comBean.commentText}"/>
-                <h:commandButton value="Add comment" action="#{comBean.addComment()}"/> 
-                <br/>
-                <br/>
-                <label>#{comBean.commentErrorMessage}</label>
-            <br/><br/>
-            <c:choose>
-                <c:when test="#{comBean.activeProject.comments.size()>0}">
-                    <c:forEach var="i" begin="0" end="#{comBean.activeProject.comments.size()-1}">
-                        <label>#{comBean.activeProject.comments.get(i).header}</label>
-                        <br/>
-                        <label>#{comBean.activeProject.comments.get(i).formattedDate}</label>
-                        <br/><br/>
-                        <label>#{comBean.activeProject.comments.get(i).content}</label>
-                        <br/><br/>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    You're the first one to comment!
-                    <br/>
-                </c:otherwise>
-            </c:choose>
-            <h:commandButton value="Return to Main Page" action="main.xhtml"/> 
-        </h:form>
-    </h:body>
+  <h:head>
+    <title>GoCommunity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- styles -->
+    <link href="css/styles.css" rel="stylesheet"/>
+  </h:head>
+  <h:body>
+  	<div class="header">
+	     <div class="container">
+	        <div class="row">
+	           <div class="col-md-5">
+	              <!-- Logo -->
+	              <div class="logo">
+	                 <h1><a href="main.xhtml">GoCommunity</a></h1>
+	              </div>
+	           </div>
+	          
+	           <div class="col-md-6">
+	              <div class="navbar navbar-inverse" role="banner">
+	                  <nav class="collapse navbar-collapse bs-navbar-collapse navbar-right" role="navigation">
+	                    <ul class="nav navbar-nav">
+	                          <li><a href="login.xhtml">Logout</a></li>
+	                        </ul>
+	                  </nav>
+	              </div>
+	           </div>
+	        </div>
+	     </div>
+	</div>
+
+    <div class="page-content">
+    	<div class="row">
+		  <div class="col-md-2">
+		  	<div class="sidebar content-box" style="display: block;">
+                <ul class="nav">
+                    <!-- Main menu -->
+                    <li><a href="main.xhtml"><i class="glyphicon glyphicon-home"></i> Dashboard</a></li>
+                    <li><a href="newProject.xhtml"><i class="glyphicon glyphicon-edit"></i>New Project</a></li>
+                    <li><a href="search.xhtml"><i class="glyphicon glyphicon-search"></i>Search Projects</a></li>
+                </ul>
+             </div>
+		  </div>
+		  <div class="col-md-10">
+		  	<div class="row">
+		  		<div class="col-md-10">
+	  					<div class="content-box-large">
+			  				<div class="panel-heading">
+					            <div class="panel-title" style="padding-left: 0px;"><b>#{comBean.activeProject.name}</b>
+                                                        <h:form>
+                                                    <c:if test="#{!comBean.visitingOwnedProject}">
+                                                                        <br/>
+                                                                        <c:choose>
+                                                                            <c:when test="#{comBean.visitingFollowedProject}">
+                                                                                <h:commandButton class="btn btn-primary" value="Unfollow" action="#{comBean.unfollow()}"/>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <h:commandButton class="btn btn-primary" value="Follow" action="#{comBean.follow()}"/>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </c:if>
+                                                        </h:form>
+                                                    </div>
+					          
+					           
+					        </div>
+			  				<div class="panel-body">
+			  					<h:form class="form-horizontal" role="form">
+                                                                    
+								  <div class="form-group">
+								    <div class="col-sm-8" style="max-width: 38%;">
+                                                                        <label>Please enter the amount you'd like to donate (€)"</label>
+								    <h:inputText class="form-control" value="#{comBean.donation}"/> 
+                                                                    </div>
+									 <h:commandButton class="btn btn-primary" style="margin-top: 22px;" value="Donate" action="#{comBean.donate()}"/>
+                                                                         <c:choose>
+                                                                            <c:when test="#{!comBean.isEmptyString(comBean.donationErrorMessage)}">
+                                                                        <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
+                                                                            #{comBean.donationErrorMessage}
+                                                                        </label>
+                                                                        </c:when>
+                                                                            <c:otherwise>  
+                                                                            </c:otherwise>
+                                                                        </c:choose> 
+								  </div>
+								    <div class="form-group">
+								    <label class="col-sm-2 control-label">Description:</label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+								      <label>#{comBean.activeProject.description}</label>
+								    </div>
+									</div>
+								   <div class="form-group">
+								    <label class="col-sm-2 control-label">Status:</label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+								      <label>#{comBean.activeProject.printFormattedProgress()} / #{comBean.activeProject.printFormattedGoal()}</label>
+								    </div>
+									</div>
+								    <div class="form-group">
+								    <label class="col-sm-2 control-label">Lifespan:</label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+								      <label>Running from #{comBean.activeProject.createdOn} to #{comBean.activeProject.endsOn}</label>
+								    </div>
+									</div>
+                                                                    <div class="form-group">
+								    <label class="col-sm-2 control-label">Milestones:</label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+								      <c:choose>
+                                                                        <c:when test="#{comBean.activeProject.amountOfMilestones>0}">
+                                                                            <c:forEach var="i" begin="0" end="#{comBean.activeProject.amountOfMilestones-1}">
+                                                                                #{comBean.activeProject.milestoneKeys.get(i)}€ - #{comBean.activeProject.getMilestoneText(comBean.activeProject.milestoneKeys.get(i))}
+                                                                                <br/>
+                                                                            </c:forEach>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            No milestones set.
+                                                                            <br/>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+								    </div>
+									</div>
+                                                                    <c:if test="#{comBean.visitingOwnedProject}">
+                                                                        <div class="form-group">
+								    <label class="col-sm-2 control-label">Add a milestone:</label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+                                                                        <label>Milestone value (€)</label>
+								      <h:inputText class="form-control" value="#{comBean.milestoneKey}"/>
+								    </div>
+									</div>
+									<div class="form-group">
+								    <label class="col-sm-2 control-label"></label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+                                                                        <label>Milestone description</label>
+								      <h:inputTextarea class="form-control" value="#{comBean.milestoneText}"/>
+								    </div>
+									</div>
+                                                                        
+									<div class="form-group">
+								    <div class="col-sm-offset-2 col-sm-10">
+                                                                        
+									<h:commandButton class="btn btn-primary" value="Add milestone" action="#{comBean.addMilestone()}"/>
+								    
+                                                                    </div>
+                                                                            <c:choose>
+                                                                            <c:when test="#{!comBean.isEmptyString(comBean.createMilestoneErrorMessage)}">
+                                                                        <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
+                                                                            #{comBean.createMilestoneErrorMessage}
+                                                                        </label>
+                                                                        </c:when>
+                                                                            <c:otherwise>  
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                        </div>
+                                                                    </c:if>
+                                                                    <div class="form-group">
+								    <label class="col-sm-2 control-label">Comments:</label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+								      <c:choose>
+                                                                        <c:when test="#{comBean.activeProject.comments.size()>0}">
+                                                                            <c:forEach var="i" begin="0" end="#{comBean.activeProject.comments.size()-1}">
+                                                                                <label>#{comBean.activeProject.comments.get(i).header} on #{comBean.activeProject.comments.get(i).formattedDate}</label>
+                                                                                <br/>
+                                                                                <label>#{comBean.activeProject.comments.get(i).content}</label>
+                                                                                <br/><br/>
+                                                                            </c:forEach>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            You're the first one to comment!
+                                                                            <br/>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+								    </div>
+									</div>
+								  <div class="form-group">
+								    <label class="col-sm-2 control-label">Add a comment:</label>
+								    <div class="col-sm-10" style="padding-top: 7px;">
+                                                                        <label>Content</label>
+								      <h:inputTextarea class="form-control" value="#{comBean.commentText}"/>
+								    </div>
+                                                                    
+									</div>
+                                                                    <div class="form-group">
+									<div class="col-sm-offset-2 col-sm-10">
+									
+									<h:commandButton class="btn btn-primary" value="Add comment" action="#{comBean.addComment()}"/>
+								    </div>
+                                                                        <c:choose>
+                                                                            <c:when test="#{!comBean.isEmptyString(comBean.commentErrorMessage)}">
+                                                                        <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
+                                                                            #{comBean.commentErrorMessage}
+                                                                        </label>
+                                                                        </c:when>
+                                                                            <c:otherwise>  
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                        
+								  </div>
+                                                                    
+                                                                    
+								  <br></br>
+								  <br></br>
+								  <br></br>
+								</h:form>
+			  				</div>
+			  			</div>
+				</div>
+		  	</div>
+
+	
+
+
+		  	
+		</div>
+		
+    </div>
+    </div>
+
+    <footer>
+         <div class="container">
+         
+            <div class="copy text-center">
+               Copyright 2018 <a href='#'>GoCommunity</a> Group
+            </div>
+            
+         </div>
+      </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
+  </h:body>
 </html>

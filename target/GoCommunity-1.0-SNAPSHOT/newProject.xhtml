@@ -3,33 +3,132 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html">
-    <h:head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    </h:head>
-    <h:body>
-        <h1>Project creation page</h1>
-        <h:form role="form" style="text-align: center;">
-        <label>Name:</label>
-        <br />
-        <h:inputText class="form-control" value="#{comBean.projName}"/> 
-        <br /><br />
-        <label>Description:</label>
-        <br />
-        <h:inputTextarea class="form-control" value="#{comBean.projDesc}"/>
-        <br /><br/>
-        <label>Goal (€):</label>
-        <br />
-        <h:inputText class="form-control" value="#{comBean.projGoalString}"/> 
-        <br /><br/>
-        <label>Ends on (YYYY-MM-DD):</label>
-        <br />
-        <h:inputText class="form-control" value="#{comBean.projEndsString}"/> 
-        <br /><br/>
-        <h:commandButton value="Submit" action="#{comBean.createProject()}"/> 
-        <br /><br/>
-        <label>#{comBean.createProjectErrorMessage}</label>
-        </h:form>
-    </h:body>
+	xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <h:head>
+    <title>GoCommunity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- styles -->
+    <link href="css/styles.css" rel="stylesheet"/>
+  </h:head>
+  <h:body>
+  	<div class="header">
+	     <div class="container">
+	        <div class="row">
+	           <div class="col-md-5">
+	              <!-- Logo -->
+	              <div class="logo">
+	                 <h1><a href="main.xhtml">GoCommunity</a></h1>
+	              </div>
+	           </div>
+	          
+	           <div class="col-md-6">
+	              <div class="navbar navbar-inverse" role="banner">
+	                  <nav class="collapse navbar-collapse bs-navbar-collapse navbar-right" role="navigation">
+	                    <ul class="nav navbar-nav">
+	                          <li><a href="login.xhtml">Logout</a></li>
+	                        </ul>
+
+	                  </nav>
+	              </div>
+	           </div>
+	        </div>
+	     </div>
+	</div>
+
+    <div class="page-content">
+    	<div class="row">
+		  <div class="col-md-2">
+		  	<div class="sidebar content-box" style="display: block;">
+                <ul class="nav">
+                    <!-- Main menu -->
+                    <li><a href="main.xhtml"><i class="glyphicon glyphicon-home"></i> Dashboard</a></li>
+                    <li class="current"><a href="newProject.xhtml"><i class="glyphicon glyphicon-edit"></i>New Project</a></li>
+                    <li><a href="search.xhtml"><i class="glyphicon glyphicon-search"></i>Search Projects</a></li>
+                </ul>
+             </div>
+		  </div>
+		  <div class="col-md-10">
+		  	<div class="row">
+		  		<div class="col-md-10">
+	  					<div class="content-box-large">
+			  				<div class="panel-heading">
+					            <div class="panel-title"><b>New Project</b></div>
+					          
+					           
+					        </div>
+			  				<div class="panel-body">
+			  					<h:form class="form-horizontal" role="form">
+								  <div class="form-group">
+								    <label class="col-sm-2 control-label">Project's name</label>
+								    <div class="col-sm-10">
+								      <h:inputText class="form-control" value="#{comBean.projName}"/>
+								    </div>
+								  </div>
+								    <div class="form-group">
+								    <label class="col-sm-2 control-label">Brief description</label>
+								    <div class="col-sm-10">
+								      <h:inputTextarea class="form-control" value="#{comBean.projDesc}"/>
+								    </div>
+								  </div>
+								  <div class="form-group">
+								    <label class="col-sm-2 control-label">Goal (€)</label>
+								    <div class="col-sm-10">
+								      <h:inputText class="form-control" value="#{comBean.projGoalString}"/> 
+								    </div>
+								  </div>
+								   <div class="form-group">
+								    <label class="col-sm-2 control-label">Ends on (YYYY-MM-DD format)</label>
+								    <div class="col-sm-10">
+								      <h:inputText class="form-control" value="#{comBean.projEndsString}"/> 
+								    </div>
+								  </div>
+								<c:choose>
+                                                                            <c:when test="#{!comBean.isEmptyString(comBean.createProjectErrorMessage)}">
+                                                                        <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
+                                                                            #{comBean.createProjectErrorMessage}
+                                                                        </label>
+                                                                        </c:when>
+                                                                            <c:otherwise>  
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+								  
+								  <div class="form-group">
+								    <div class="col-sm-offset-2 col-sm-10" style="width:100%;margin-left:0px;">
+								    <h:commandButton style="margin-left:auto;margin-right:auto;display:block;" class="btn btn-primary" value="Create New Project" action="#{comBean.createProject()}"/> 
+                                                                        </div>
+								  </div>
+								</h:form>
+			  				</div>
+			  			</div>
+				</div>
+		  	</div>
+
+	
+
+
+		  	
+		</div>
+		
+    </div>
+    </div>
+
+    <footer>
+         <div class="container">
+         
+            <div class="copy text-center">
+               Copyright 2018 <a href='#'>GoCommunity</a>
+            </div>
+            
+         </div>
+      </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
+  </h:body>
 </html>
