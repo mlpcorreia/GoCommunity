@@ -7,6 +7,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Calendar;
+import javax.json.JsonException;
+import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -240,11 +242,9 @@ public class ApiBean {
     
     @Path("/follow")
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("application/json")
-    public Response changeStance(String body) throws JSONException {
-        
-        JSONObject main;
+    public Response changeStance(JsonObject body) throws JSONException {  
         String uid;
         String pid;
         
@@ -253,11 +253,10 @@ public class ApiBean {
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         JSONObject isOwner = createErrorMessage("User is project owner.", 404);
         
-        try {
-            main = new JSONObject(body);
-            uid = main.getString("user");
-            pid = main.getString("project");
-        } catch (JSONException e) {
+        try { 
+            uid = body.getString("user");
+            pid = body.getString("project");
+        } catch (JsonException e) {
             return postResponse(invalid);   
         }
         
@@ -304,11 +303,9 @@ public class ApiBean {
     
     @Path("/createAccount")
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("application/json")
-    public Response createAccount(String body) throws JSONException {
-
-        JSONObject main;
+    public Response createAccount(JsonObject body) throws JSONException {
         String userVisible;
         String username;
         String pword;
@@ -317,11 +314,10 @@ public class ApiBean {
         JSONObject exists = createErrorMessage("Username already exists.", 404);
         
         try {
-            main = new JSONObject(body);
-            userVisible = main.getString("user");
-            username = main.getString("username");
-            pword = main.getString("pword");
-        } catch (JSONException e) {
+            userVisible = body.getString("user");
+            username = body.getString("username");
+            pword = body.getString("pword");
+        } catch (JsonException e) {
             return postResponse(invalid);   
         }
         
@@ -344,11 +340,9 @@ public class ApiBean {
     
     @Path("/createProject")
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("application/json")
-    public Response createProject(String body) throws JSONException {
-        
-        JSONObject main;
+    public Response createProject(JsonObject body) throws JSONException {
         String name;
         String desc;
         String goal;
@@ -361,13 +355,12 @@ public class ApiBean {
         JSONObject dateError = createErrorMessage("Invalid date.", 404);
         
         try {
-            main = new JSONObject(body);
-            name = main.getString("name");
-            desc = main.getString("desc");
-            goal = main.getString("goal");
-            date = main.getString("date");
-            owner = main.getString("owner");
-        } catch (JSONException e) {
+            name = body.getString("name");
+            desc = body.getString("desc");
+            goal = body.getString("goal");
+            date = body.getString("date");
+            owner = body.getString("owner");
+        } catch (JsonException e) {
             return postResponse(invalid);   
         }
         
@@ -412,11 +405,9 @@ public class ApiBean {
     
     @Path("/donate")
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("application/json")
-    public Response donate(String body) throws JSONException {
-        
-        JSONObject main;
+    public Response donate(JsonObject body) throws JSONException {
         String amt;
         String pid;
         
@@ -424,10 +415,9 @@ public class ApiBean {
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
         try {
-            main = new JSONObject(body);
-            amt = main.getString("amount");
-            pid = main.getString("project");
-        } catch (JSONException e) {
+            amt = body.getString("amount");
+            pid = body.getString("project");
+        } catch (JsonException e) {
             return postResponse(invalid);   
         }
         
@@ -458,11 +448,9 @@ public class ApiBean {
     
     @Path("/addMilestone")
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("application/json")
-    public Response addMilestone(String body) throws JSONException {
-
-        JSONObject main;
+    public Response addMilestone(JsonObject body) throws JSONException {
         String amt;
         String desc;
         String pid;     
@@ -471,11 +459,10 @@ public class ApiBean {
         JSONObject badProject = createErrorMessage("Project does not exist.", 404);
         
         try {
-            main = new JSONObject(body);
-            amt = main.getString("amount");
-            desc = main.getString("desc");
-            pid = main.getString("project");
-        } catch (JSONException e) {
+            amt = body.getString("amount");
+            desc = body.getString("desc");
+            pid = body.getString("project");
+        } catch (JsonException e) {
             return postResponse(invalid);   
         }
         
@@ -507,11 +494,9 @@ public class ApiBean {
     
     @Path("/addComment")
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("application/json")
-    public Response addComment(String body) throws JSONException {
-        
-        JSONObject main;
+    public Response addComment(JsonObject body) throws JSONException {
         String content;
         String uid;
         String pid;  
@@ -521,11 +506,10 @@ public class ApiBean {
         JSONObject badUser = createErrorMessage("User does not exist.", 404);
         
         try {
-            main = new JSONObject(body);
-            content = main.getString("content");
-            uid = main.getString("user");
-            pid = main.getString("project");
-        } catch (JSONException e) {
+            content = body.getString("content");
+            uid = body.getString("user");
+            pid = body.getString("project");
+        } catch (JsonException e) {
             return postResponse(invalid);   
         }
         
