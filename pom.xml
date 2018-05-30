@@ -109,8 +109,8 @@
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 						</configuration>
 					</execution>
-				</executions>
-		        <executions>
+				
+		        
         <!-- The Executions required by unit tests are omitted. -->
         <!--
             Prepares the property pointing to the JaCoCo runtime agent which
