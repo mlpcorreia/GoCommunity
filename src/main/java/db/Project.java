@@ -97,10 +97,6 @@ public class Project implements Serializable {
         this.owner=owner;
     }
     
-    public void setProgress(double d) {
-        this.progress = d;
-    }
-    
     public void followedBy(long i) {
         if (!followers.contains(i))
             followers.add(i);

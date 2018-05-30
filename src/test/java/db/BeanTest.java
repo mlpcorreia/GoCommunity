@@ -58,31 +58,259 @@ public class BeanTest {
         q2.executeUpdate();
         em.getTransaction().commit();
     }*/
+    
+   @Test
+   public void testBeanEquality() {
+       ComBean b = new ComBean();
+       ComBean c = new ComBean("g.odb");
+       assertNotEquals(b,c);
+   }
+   
+   @Test
+   public void testLogin() {
+        bean = new ComBean("test.odb");
+       
+        bean.setName("User");
+        bean.setUsername("user");
+        bean.setPassword("pw");
+        assertEquals("main.xhtml",bean.createAccount());
+        
+        assertEquals("main.xhtml",bean.login());
+        bean.setUsername("user2");
+        assertEquals("login.xhtml",bean.login());
+        assertEquals("Account not found.",bean.getLoginErrorMessage());
+        
+        killClients();
+   }
+   
+   @Test
+   public void testCreateAccount() {
+       bean = new ComBean("test.odb");
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("User",bean.getName());
+       assertEquals("user",bean.getUsername());
+       assertEquals("pw",bean.getPassword());
+       assertEquals("main.xhtml",bean.createAccount());
+       
+       bean.setUsername("");
+       assertEquals("newAccount.xhtml",bean.createAccount());
+       assertEquals("Every field is required.",bean.getCreateAccountErrorMessage());
+       bean.setUsername("user");
+       assertEquals("newAccount.xhtml",bean.createAccount());
+       assertEquals("Username already exists.",bean.getCreateAccountErrorMessage());
+       
+       killClients();
+   }
+   
+   @Test
+   public void testCreateProject() {
+       bean = new ComBean("test.odb");
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("main.xhtml",bean.createAccount());
+       
+       bean.setProjName("Name");
+       bean.setProjDesc("desc");
+       bean.setProjEndsString("2026-12-12");
+       bean.setProjGoalString("");
+       assertEquals("Name",bean.getProjName());
+       assertEquals("desc",bean.getProjDesc());
+       assertEquals("2026-12-12",bean.getProjEndsString());
+       assertEquals("",bean.getProjGoalString());
+       
+       assertEquals("newProject.xhtml",bean.createProject());
+       assertEquals("Every field is required.",bean.getCreateProjectErrorMessage());
+       bean.setProjGoalString("x");
+       assertEquals("newProject.xhtml",bean.createProject());
+       assertEquals("Please insert a valid number in the \"goal\" field.",bean.getCreateProjectErrorMessage());
+       bean.setProjGoalString("200");
+       bean.setProjEndsString("2026-12-12x");
+       assertEquals("newProject.xhtml",bean.createProject());
+       assertEquals("Please respect the date syntax.",bean.getCreateProjectErrorMessage());
+       bean.setProjEndsString("2006-12-12");
+       assertEquals("newProject.xhtml",bean.createProject());
+       assertEquals("Expiration date cannot be earlier than creation date.",bean.getCreateProjectErrorMessage());
+       bean.setProjEndsString("2026-12-12");
+       assertEquals("main.xhtml",bean.createProject());
+       assertEquals("newProject.xhtml",bean.createProject());
+       assertEquals("A project with this name already exists.",bean.getCreateProjectErrorMessage());
+       
+       killAll();
+   }
+   
+   @Test
+   public void testSearchProjects() {
+       bean = new ComBean("test.odb");
+       
+       bean.setSearch("");
+       assertEquals("",bean.getSearch());
+       assertEquals(0,bean.searchProjects().size());
+       assertEquals("Please insert a search term.",bean.getSearchErrorMessage());
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("main.xhtml",bean.createAccount());
+       
+       bean.setProjName("Name");
+       bean.setProjDesc("desc");
+       bean.setProjEndsString("2026-12-12");
+       bean.setProjGoalString("500");
+       assertEquals("main.xhtml",bean.createProject());
+       
+       bean.setSearch("am");     
+       assertEquals(1,bean.searchProjects().size());
+       assertTrue(bean.isEmptyString(bean.getSearchErrorMessage()));
+       
+       assertEquals("project.xhtml",bean.goToSearchedProjectPage((byte) 0));
+       
+       killAll();
+   }
+   
+   @Test
+   public void testComment() {
+       bean = new ComBean("test.odb");
+       
+       bean.setCommentText("");
+       assertEquals("",bean.getCommentText());
+       bean.addComment();
+       assertEquals("Comments cannot be empty!",bean.getCommentErrorMessage());
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("main.xhtml",bean.createAccount());
+       bean.setProjName("Name");
+       bean.setProjDesc("desc");
+       bean.setProjEndsString("2026-12-12");
+       bean.setProjGoalString("500");
+       assertEquals("main.xhtml",bean.createProject());
+       bean.goToOwnedProjectPage((byte) 0);
+       bean.setCommentText("test");
+       bean.addComment();
+       assertEquals(1,bean.getActiveProject().getComments().size());
+       
+       killAllWithCmt();
+   }
+   
+   @Test
+   public void testDonate() {
+       bean = new ComBean("test.odb");
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("main.xhtml",bean.createAccount());
+       
+       bean.setProjName("Name");
+       bean.setProjDesc("desc");
+       bean.setProjEndsString("2026-12-12");
+       bean.setProjGoalString("500");
+       assertEquals("main.xhtml",bean.createProject());
+       
+       bean.goToOwnedProjectPage((byte) 0);
+       
+       bean.setDonation("");
+       assertEquals("",bean.getDonation());
+       bean.donate();
+       assertEquals("Please insert a monetary value.",bean.getDonationErrorMessage());
+       bean.setDonation("x");
+       bean.donate();
+       assertEquals("Please insert a valid number in the \"donation\" field.",bean.getDonationErrorMessage());
+       
+       bean.setDonation("20");
+       bean.donate();
+       assertEquals(20,bean.getActiveProject().getProgress(),0.01);
+       
+       killAll();
+   }    
+   
+   @Test
+   public void testMilestone() {
+       bean = new ComBean("test.odb");
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("main.xhtml",bean.createAccount());
+       
+       bean.setProjName("Name");
+       bean.setProjDesc("desc");
+       bean.setProjEndsString("2026-12-12");
+       bean.setProjGoalString("500");
+       assertEquals("main.xhtml",bean.createProject());
+       
+       bean.goToOwnedProjectPage((byte) 0);
+       
+       bean.setMilestoneKey("");
+       bean.setMilestoneText("text");
+       assertEquals("",bean.getMilestoneKey());
+       assertEquals("text",bean.getMilestoneText());    
+       bean.addMilestone();
+       assertEquals("Both fields are required.",bean.getCreateMilestoneErrorMessage());
+       bean.setMilestoneKey("x");
+       bean.addMilestone();
+       assertEquals("Please insert a valid number in the \"value\" field.",bean.getCreateMilestoneErrorMessage());
+       
+       bean.setMilestoneKey("5.05");
+       bean.addMilestone();
+       assertEquals(1,bean.getActiveProject().getAmountOfMilestones());
+       
+       killAll();
+   } 
+   
+   @Test
+   public void testStance() {
+       bean = new ComBean("test.odb");
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("main.xhtml",bean.createAccount());
+       
+       bean.setProjName("Name");
+       bean.setProjDesc("desc");
+       bean.setProjEndsString("2026-12-12");
+       bean.setProjGoalString("500");
+       assertEquals("main.xhtml",bean.createProject());
+
+       assertEquals("project.xhtml",bean.goToOwnedProjectPage((byte) 0));
+       
+       bean.follow();
+       assertEquals(1,bean.getUser().getFollows().size());
+       assertTrue(bean.isVisitingFollowedProject());
+       assertEquals("project.xhtml",bean.goToFollowedProjectPage((byte) 0));
+       bean.unfollow();
+       assertEquals(0,bean.getUser().getFollows().size());
+       assertFalse(bean.isVisitingFollowedProject());
+       
+       assertTrue(bean.isVisitingOwnedProject());
+       
+       killAll();
+   }
 
    @Test
-    public void testClientProject() {
+   public void testClientProject() {
         bean = new ComBean("test.odb");
         
         bean.setName("User");
         bean.setUsername("user");
         bean.setPassword("pw");
-        String res = bean.createAccount();
-        System.out.println("client: "+bean.getCreateAccountErrorMessage());
-        assertEquals("main.xhtml",res);
+        assertEquals("main.xhtml",bean.createAccount());
         
         bean.setProjName("Name");
         bean.setProjDesc("desc");
         bean.setProjEndsString("2026-12-12");
 
-        
-        String res2 = bean.createProject();
-        System.out.println("project: "+bean.getCreateProjectErrorMessage());
-        assertEquals("newProject.xhtml",res2);
+        assertEquals("newProject.xhtml",bean.createProject());
         
         bean.setProjGoalString("500000");
-        String res3 = bean.createProject();
-        System.out.println("project: "+bean.getCreateProjectErrorMessage());
-        assertEquals("main.xhtml",res3);
+        assertEquals("main.xhtml",bean.createProject());
         assertEquals(1,bean.getUser().getOwns().size());
         
         bean.goToOwnedProjectPage((byte) 0);
@@ -99,14 +327,7 @@ public class BeanTest {
         bean.donate();
         assertEquals(2450.25, bean.getActiveProject().getProgress(), 0.001);
         
-        em.getTransaction().begin();
-        Query q = em.createQuery("DELETE FROM Project");
-        Query q2 = em.createQuery("DELETE FROM Client");
-        int a = q.executeUpdate();
-        int b = q2.executeUpdate();
-        em.getTransaction().commit();
-        assertEquals(1,a);
-        assertEquals(1,b);
+        killAll();
     }
     
     @Test
@@ -123,8 +344,7 @@ public class BeanTest {
         bean.setProjDesc("desc");
         bean.setProjEndsString("2026-12-12");
         bean.setProjGoalString("500000");
-        String res2 = bean.createProject();
-        assertEquals("main.xhtml",res2);
+        assertEquals("main.xhtml",bean.createProject());
         
         bean.setSearch("x");
         List<Project> list = bean.searchProjects();
@@ -134,18 +354,37 @@ public class BeanTest {
         assertEquals(1, list.size());
         assertEquals("desc", list.get(0).getDescription());
         
-        em.getTransaction().begin();
-        Query q = em.createQuery("DELETE FROM Project");
-        Query q2 = em.createQuery("DELETE FROM Client");
-        int a = q.executeUpdate();
-        int b = q2.executeUpdate();
-        em.getTransaction().commit();
-        assertEquals(1,a);
-        assertEquals(1,b);    
+        killAll();   
     }
     
     @Test
-    public void testComment() throws ParseException {
+    public void testPopularLogic() {
+       bean = new ComBean("test.odb");
+       
+       bean.setName("User");
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("main.xhtml",bean.createAccount());
+       
+       bean.setProjName("Name");
+       bean.setProjDesc("desc");
+       bean.setProjEndsString("2026-12-12");
+       bean.setProjGoalString("500");
+       assertEquals("main.xhtml",bean.createProject());
+
+       assertEquals(1,bean.getPopularProjects().size());
+       assertEquals("project.xhtml",bean.goToProjectPage((byte) 0));
+       
+       Long idpop = bean.getPopularProjects().get(0).getId();
+       Long idproj = bean.getProject(Integer.parseInt(idpop.toString())).getId();
+       assertEquals(idpop,idproj);
+       
+       killAll();
+       
+    }
+    
+    @Test
+    public void testCommentLogic() throws ParseException {
         bean = new ComBean("test.odb");
         
         bean.setName("User3");
@@ -179,14 +418,41 @@ public class BeanTest {
         assertEquals("Posted by User3", comments.get(1).getHeader());
         assertTrue(c2.getDate().after(c1.getDate()));
         
+        killAll(); 
+    }
+    
+    private void killClients() {
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Client");
+        q.executeUpdate();
+        em.getTransaction().commit();
+    }
+    
+    private void killProjects() {
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Project");
+        q.executeUpdate();
+        em.getTransaction().commit();
+    }
+    
+    private void killAll() {
         em.getTransaction().begin();
         Query q = em.createQuery("DELETE FROM Project");
         Query q2 = em.createQuery("DELETE FROM Client");
-        int a = q.executeUpdate();
-        int b = q2.executeUpdate();
+        q.executeUpdate();
+        q2.executeUpdate();
         em.getTransaction().commit();
-        assertEquals(1,a);
-        assertEquals(1,b); 
+    }
+    
+    private void killAllWithCmt() {
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Project");
+        Query q2 = em.createQuery("DELETE FROM Client");
+        Query q3 = em.createQuery("DELETE FROM Comment");
+        q.executeUpdate();
+        q2.executeUpdate();
+        q3.executeUpdate();
+        em.getTransaction().commit();
     }
         
 }

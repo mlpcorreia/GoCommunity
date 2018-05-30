@@ -1,12 +1,10 @@
 package com.mycompany.gocommunity;
 
-import java.util.logging.Logger;
 import db.Client;
 import db.Comment;
 import db.Project;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import javax.jdo.JDOHelper;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -278,16 +276,5 @@ public class DatabaseHandler {
         auxp.addComment(c);       
         em.getTransaction().commit();
     }
-    
-    public void clearDatabase() {
-        em.getTransaction().begin();
-        int x = em.createQuery("DELETE FROM Client").executeUpdate();
-        int y = em.createQuery("DELETE FROM Project").executeUpdate();
-        em.getTransaction().commit();
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("Deleted ").append(x).append(" clients, ").append(y).append(" projects.");
-        
-        Logger.getLogger("GoCommunityLog").log(Level.INFO, sb.toString());
-    }   
+
 }
