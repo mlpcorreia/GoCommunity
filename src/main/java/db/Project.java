@@ -74,6 +74,13 @@ public class Project implements Serializable {
         return String.format("%.2f€",goal);
     }
     
+    public void initValues() {
+       this.milestones = new HashMap<>();
+       this.progress = 0.0;
+       this.followers = new ArrayList<>();
+       this.comments = new ArrayList<>(); 
+    }
+    
     public Long getId() {
         return id;
     }
@@ -88,6 +95,10 @@ public class Project implements Serializable {
     
     public void setOwner(Long owner) {
         this.owner=owner;
+    }
+    
+    public void setProgress(double d) {
+        this.progress = d;
     }
     
     public void followedBy(long i) {

@@ -54,6 +54,14 @@ public class Client implements Serializable {
         this.id = id;
     }
     
+    public void setLastBadLogin(long ms) {
+        this.lastBadLogin = new Date(ms);
+    }
+    
+    public void setLoginTries(int i) {
+        this.loginTries = i;
+    }
+    
     public void goodLogin() {
         loginTries = 3;
     }
