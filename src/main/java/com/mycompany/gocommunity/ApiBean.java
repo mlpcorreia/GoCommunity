@@ -11,6 +11,7 @@ import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -82,7 +83,6 @@ public class ApiBean {
     public Response getPopularProjects() throws JSONException {
         
         List<Project> top = db.getPopularProjects();
-        JSONObject error = createErrorMessage("No projects found!",404);
             
         JSONObject json = new JSONObject();
         List<JSONObject> projects = new ArrayList<>();
@@ -241,6 +241,13 @@ public class ApiBean {
     }
     
     @Path("/follow")
+    @OPTIONS
+    @Produces("application/json")
+    public Response optF(JsonObject body) {
+        return optResponse();
+    }
+    
+    @Path("/follow")
     @POST
     @Consumes("application/json")
     @Produces("application/json")
@@ -301,6 +308,14 @@ public class ApiBean {
         
     }
     
+        
+    @Path("/createAccount")
+    @OPTIONS
+    @Produces("application/json")
+    public Response optCA(JsonObject body) {
+        return optResponse();
+    }
+    
     @Path("/createAccount")
     @POST
     @Consumes("application/json")
@@ -336,6 +351,13 @@ public class ApiBean {
             return postResponse(res);
         }
 
+    }
+    
+    @Path("/createProject")
+    @OPTIONS
+    @Produces("application/json")
+    public Response optCP(JsonObject body) {
+        return optResponse();
     }
     
     @Path("/createProject")
@@ -404,6 +426,13 @@ public class ApiBean {
     }
     
     @Path("/donate")
+    @OPTIONS
+    @Produces("application/json")
+    public Response optD(JsonObject body) {
+        return optResponse();
+    }
+    
+    @Path("/donate")
     @POST
     @Consumes("application/json")
     @Produces("application/json")
@@ -444,6 +473,13 @@ public class ApiBean {
         } else {
             return postResponse(badProject);
         }
+    }
+    
+    @Path("/addMilestone")
+    @OPTIONS
+    @Produces("application/json")
+    public Response optAM(JsonObject body) {
+        return optResponse();
     }
     
     @Path("/addMilestone")
@@ -490,6 +526,13 @@ public class ApiBean {
         } else {
             return postResponse(badProject);
         }
+    }
+    
+    @Path("/addComment")
+    @OPTIONS
+    @Produces("application/json")
+    public Response optAC(JsonObject body) {
+        return optResponse();
     }
     
     @Path("/addComment")
@@ -595,6 +638,16 @@ public class ApiBean {
         String hx = "Access-Control-Allow-Methods";
         String hy = "POST, GET, OPTIONS, PUT"; 
         return Response.status(201).header(ha, hb).header(hx, hy).entity(json.toString()).build();
+    }
+    
+    private Response optResponse() {
+        String ha = "Access-Control-Allow-Origin";
+        String hb = "*";
+        String hx = "Access-Control-Allow-Methods";
+        String hy = "POST, GET, OPTIONS, PUT"; 
+        String hk = "Access-Control-Allow-Headers";
+        String hw = "Content-Type";
+        return Response.ok().header(ha, hb).header(hx, hy).header(hk,hw).build();
     }
    
     private String moneyFormat(double original) {
