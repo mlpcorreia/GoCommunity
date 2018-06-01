@@ -19,6 +19,10 @@ import java.util.Calendar;
 import java.util.Random;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
@@ -44,7 +48,11 @@ import org.junit.Before;
 public class testIT {
     
     private String link = "http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data";
-    //"http://localhost:8080/GoCommunity/api/data";
+    //"http://localhost:8080/GoCommunity/api/data
+    
+    EntityManagerFactory emf =
+            Persistence.createEntityManagerFactory("$objectdb/db/go.odb");
+        EntityManager em = emf.createEntityManager();
     
     private final Random random = new Random();
     private final DatabaseHandler db = new DatabaseHandler("go.odb");
@@ -52,8 +60,10 @@ public class testIT {
     private javax.ws.rs.client.Client client;
     private WebTarget target;
     
-    /*@Test
-    public void testOpts() {     
+    @Test
+    public void testOpts() {
+        System.out.println("IT 0");
+    
         Response r;
         init();
         r = this.target.path("/createAccount").request(MediaType.APPLICATION_JSON).options();
@@ -73,48 +83,116 @@ public class testIT {
         init();
         r = this.target.path("/addComment").request(MediaType.APPLICATION_JSON).options();
         assertEquals(200,r.getStatus());
-    }*/
+    }
     
-    /*@Test
+    @Test
     public void testCreateGetAccount() throws JSONException {  
-        String uname; 
-        Response r;
+        System.out.println("IT 1");
+        
+        String uname;
+        String uname2;
+        JSONObject reply;
         
         do { //randomly generate username until an available one is found
         uname = randomName();
-        } while (db.apiGetUser(uname)!=null);
+        uname2 = randomName();
+        } while (db.apiGetUser(uname)!=null || db.apiGetUser(uname2)!=null);
         
         JSONObject json = new JSONObject();
         json.put("user", "IT");
         json.put("username", uname);
-        Entity e = Entity.json(json.toString());
-        System.out.println(json.toString());
-        init();
-        r = this.target.path("/createAccount").request(MediaType.APPLICATION_JSON).post(e);
-        String res = r.readEntity(String.class);
-        System.out.println(res);
-        JSONObject reply = new JSONObject(res);
-        System.out.println(reply.toString());
-    }*/
-    
-    
-    
-    /*@Test
-    public void testOspts() throws JSONException {     
-        JSONObject json = new JSONObject();
-        json.put("user", randomName());
-        json.put("username", randomName());
-        json.put("pword", "2");
-        Entity e = Entity.json(json);
+        reply = postJson(json, "/createAccount");
+        assertEquals("Invalid Parameters!",reply.getJSONObject("error").get("message"));
+        json.put("pword", (String) null);
+        reply = postJson(json, "/createAccount");
+        assertEquals("Invalid Parameters!",reply.getJSONObject("error").get("message"));
+        json.put("pword", "pw");
+        JSONObject real = postJson(json, "/createAccount");
+        assertTrue(real.has("id"));
+        reply = postJson(json, "/createAccount");
+        assertEquals("Username already exists.",reply.getJSONObject("error").get("message"));
         
-        String s = "{\"user\":\"u\",\"username\":\"x\",\"pword\":\"a\"}";
-        Entity es = Entity.json(s);
-        Response r = this.target.path("/createAccount").request(MediaType.APPLICATION_JSON).post(es);
-        String js = r.readEntity(String.class);
-        JSONObject jj = new JSONObject(js);
-        System.out.println("a: "+jj.toString());
-        System.out.println("ab: "+jj.getJSONObject("error").getString("message"));
+        reply = getJson("/user/"+uname2);
+        assertEquals("Not Found!",reply.getJSONObject("error").get("message"));
+        reply = getJson("/user/"+uname);
+        assertTrue(reply.has("id"));
+        reply = getJson("/user/"+real.getInt("id"));
+        assertTrue(reply.has("id"));
+        
+        killClient(uname);
+    }
+    
+    @Test
+    public void testPopular() throws JSONException {
+        System.out.println("IT 2");
+        
+        JSONObject reply = getJson("/popular");
+        assertTrue(reply.has("list"));
+    }
+      
+    /*@Test
+    public void testCreateGetProject() throws JSONException {   //not finished
+        System.out.println("IT 1");
+        
+        String uname;
+        String pname;
+        String pname2;
+        JSONObject reply;
+        
+        do { //randomly generate username until an available one is found
+        uname = randomName();
+        pname = randomName();
+        pname2 = randomName();
+        } while (db.apiGetUser(uname)!=null || db.apiGetProject(pname)!=null || db.apiGetProject(pname2)!=null);
+        
+        JSONObject json = new JSONObject();
+        json.put("user", "IT");
+        json.put("username", uname);
+        json.put("pword", "pw");
+        JSONObject realuser = postJson(json, "/createAccount");
+        assertTrue(realuser.has("id"));
+        
+        reply = postJson(json, "/createAccount");
+        assertEquals("Username already exists.",reply.getJSONObject("error").get("message"));
+        
+        reply = getJson("/project/"+pname2);
+        assertEquals("Not Found!",reply.getJSONObject("error").get("message"));
+        reply = getJson("/project/"+pname);
+        assertTrue(reply.has("id"));
+        reply = getJson("/project/"+real.getInt("id"));
+        assertTrue(reply.has("id"));
+        
+        killClient(uname);
     }*/
+    
+    private void killClient(String n) {
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Client c WHERE c.username=:n");
+        q.setParameter("n", n).executeUpdate();
+        em.getTransaction().commit();
+    }
+    
+    private void killProject(String n) {
+        em.getTransaction().begin();
+        Query q = em.createQuery("DELETE FROM Project c WHERE c.name:n");
+        q.setParameter("n", n).executeUpdate();
+        em.getTransaction().commit();
+    }
+    
+    private JSONObject getJson(String path) throws JSONException {
+        init();
+        Response r = target.path(path).request(MediaType.APPLICATION_JSON).get();
+        String res = r.readEntity(String.class);      
+        return new JSONObject(res);
+    }
+    
+    private JSONObject postJson(JSONObject json, String path) throws JSONException {
+        Entity e = Entity.json(json.toString());
+        init();
+        Response r = this.target.path(path).request(MediaType.APPLICATION_JSON).post(e);
+        String res = r.readEntity(String.class);      
+        return new JSONObject(res);
+    }
     
     private void init() {
         this.client = ClientBuilder.newClient();

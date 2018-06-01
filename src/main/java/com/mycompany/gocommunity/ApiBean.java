@@ -38,11 +38,7 @@ public class ApiBean {
     public Response getUserInfo(@PathParam("username") String username) throws JSONException {
         
         Client c = null;
-        JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
         JSONObject notFound = createErrorMessage("Not Found!", 404);
-        
-        if (username==null || username.equals(""))
-            return getResponse(invalid);
         
         try {
             long id = Long.parseLong(username);
@@ -132,11 +128,7 @@ public class ApiBean {
     public Response getProjectInfo(@PathParam("name") String name) throws JSONException {
         
         Project p = null;
-        JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
         JSONObject notFound = createErrorMessage("Not Found!", 404);
-        
-        if (name==null || name.equals(""))
-            return getResponse(invalid);
         
         try {
             long id = Long.parseLong(name);
@@ -188,11 +180,6 @@ public class ApiBean {
     @GET
     @Produces("application/json")
     public Response searchProject(@PathParam("query") String query) throws JSONException {
-        
-        JSONObject invalid = createErrorMessage("Invalid Parameter!", 404);
-        
-        if (query==null || query.equals(""))
-            return getResponse(invalid);
               
         List<JSONObject> res = new ArrayList<>();
         
