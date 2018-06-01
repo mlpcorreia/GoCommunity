@@ -18,7 +18,6 @@ A lógica do website encontra-se no bean **ComBean**, responsável pela procura 
 Os métodos do REST API estão na classe **ApiBean**, e são possíveis de aceder e testar através de URLs com a seguinte estrutura:
 
 ```
-
 http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/<@Path definido para o método>
 ```
 
