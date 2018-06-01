@@ -1,11 +1,11 @@
 # GoCommunity
 Projeto de TQS - LEI 2017/2018
 
+Disponível online [aqui](http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT), o Jenkins [aqui](http://192.168.160.226:8090/job/GoCommunity/) e o SonarQube [aqui](http://192.168.160.226:9000/dashboard/index/com.mycompany:GoCommunity).
+
 ## Descrição de práticas usadas
 
 O projeto utiliza arquitetura Java EE e um container Glassfish. O continuous deployment é feito por uma instância Jenkins.
-
-O projeto está disponível online [aqui](http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT), o Jenkins [aqui](http://192.168.160.226:8090/job/GoCommunity/) e o SonarQube [aqui](http://192.168.160.226:9000/dashboard/index/com.mycompany:GoCommunity).
 
 A unidade de persistência gere [dois tipos de entidades](https://github.com/chffUA/GoCommunity/tree/master/src/main/java/db), **Client** e **Project**. O terceiro tipo (TestEntityClass) existe apenas para realizar testes sobre a base de dados, não sendo diretamente relevante para o funcionamente do projeto.
 
