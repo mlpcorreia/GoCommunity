@@ -3,7 +3,9 @@ Projeto de TQS - LEI 2017/2018
 
 ## Descrição de práticas usadas
 
-O projeto utiliza arquitetura Java EE e um container Glassfish.
+O projeto utiliza arquitetura Java EE e um container Glassfish. O continuous deployment é feito por uma instância Jenkins.
+
+O projeto está disponível online [aqui](http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT), o Jenkins [aqui](http://192.168.160.226:8090/job/GoCommunity/) e o SonarQube [aqui](http://192.168.160.226:9000/dashboard/index/com.mycompany:GoCommunity).
 
 A unidade de persistência gere [dois tipos de entidades](https://github.com/chffUA/GoCommunity/tree/master/src/main/java/db), **Client** e **Project**. O terceiro tipo (TestEntityClass) existe apenas para realizar testes sobre a base de dados, não sendo diretamente relevante para o funcionamente do projeto.
 
@@ -16,15 +18,16 @@ A lógica do website encontra-se no bean **ComBean**, responsável pela procura 
 Os métodos do REST API estão na classe **ApiBean**, e são possíveis de aceder e testar através de URLs com a seguinte estrutura:
 
 ```
-/GoCommunity/api/data/<@Path definido para o método>
+
+http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/<@Path definido para o método>
 ```
 
 Como exemplo:
 
 ```
-/GoCommunity/api/data/user/1
-/GoCommunity/api/data/project/Exemplo
-/GoCommunity/api/data/popular
+http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/user/1
+http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/project/Exemplo
+http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/popular
 ```
 
 As [páginas web](https://github.com/chffUA/GoCommunity/tree/master/src/main/webapp) são do formato .xhtml, suportando JSF, e interagem com o **ComBean** para apresentar e processar informação.
@@ -36,6 +39,8 @@ O código é indentado com 4 espaços.
 Para garantir simplicidade e organização, interação com a persistence unit deve ser feita através do **DatabaseHandler**.
 
 Os nomes dos métodos e variáveis devem ser descritivos.
+
+Os "code smells" (como descritos pelo SonarQube) devem ser minimizados, exceto quando a sua correção gravemente piore a facilidade de leitura do código.
 
 Em condicionais, deve-se usar chavetas mesmo para possíveis "one-liners", de modo a manter consistência na escrita. Por exemplo:
 
