@@ -1,42 +1,19 @@
 package db;
 
-import com.mycompany.gocommunity.ApiBean;
 import com.mycompany.gocommunity.DatabaseHandler;
-import java.sql.Date;
-import java.util.Calendar;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import db.Client;
-import db.Comment;
-import db.Project;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.sql.Date;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Random;
-import javax.json.JsonException;
-import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.json.JSONArray;
+import org.hamcrest.CoreMatchers;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -60,15 +37,74 @@ public class testIT {
     private javax.ws.rs.client.Client client;
     private WebTarget target;
     
+    @Before
+    public void initClient() {
+        this.client = ClientBuilder.newClient();
+        this.target = client.target(link);
+    }
+    
+    @Test
+    public void testGetUserInfo() throws JSONException{
+        System.out.println("testGetUserInfo");
+        JSONObject user = getJson("/user/test");
+        
+        assertFalse(user.length() == 0);
+        assertTrue(user.getString("name").startsWith("test"));
+    }
+    
+    @Test
+    public void testGetNonExistentUser() throws JSONException{
+        System.out.println("testGetNonExistentUser");
+        JSONObject user = getJson("/user/null");
+        
+        assertFalse(user.length() == 0);
+        assertTrue(user.getJSONObject("error").getString("message").startsWith("Not Found!"));
+    }
+    
+    @Test
+    public void testGetPopularProjects() throws JSONException{
+        System.out.println("testGetPopularProjects");
+        JSONObject popular = getJson("/popular");
+        assertFalse(popular.getJSONArray("list").length() == 0);
+    }
+    
+    @Test
+    public void testGetProjectInfo() throws JSONException{
+        System.out.println("testGetProjectInfo");
+        JSONObject project = getJson("/project/test");
+        
+        assertFalse(project.length() == 0);
+        assertTrue(project.getString("name").startsWith("test"));
+        assertTrue(project.getString("description").startsWith("test"));
+    }
+    
+    @Test
+    public void testGetNonExistentProjectInfo() throws JSONException{
+        System.out.println("testGetNonExistentProjectInfo");
+        JSONObject project = getJson("/project/null");
+
+        assertFalse(project.length() == 0);
+        assertTrue(project.getJSONObject("error").getString("message").startsWith("Not Found!"));
+    }
+    
+    @Test
+    public void testGetSearchProject() throws JSONException{
+        System.out.println("testGetSearchProject");
+        JSONObject project = getJson("/search/test");
+        
+        assertFalse(project.length() == 0);
+        assertTrue(project.getJSONArray("list").getJSONObject(0).getString("name").startsWith("test"));
+    }
+    
     @Test
     public void testOpts() {
         System.out.println("IT 0");
     
         Response r;
-        init();
+        //init();
         r = this.target.path("/createAccount").request(MediaType.APPLICATION_JSON).options();
         assertEquals(200,r.getStatus());
-        init();
+        /*init();
         r = this.target.path("/follow").request(MediaType.APPLICATION_JSON).options();
         assertEquals(200,r.getStatus());
         init();
@@ -82,7 +118,7 @@ public class testIT {
         assertEquals(200,r.getStatus());
         init();
         r = this.target.path("/addComment").request(MediaType.APPLICATION_JSON).options();
-        assertEquals(200,r.getStatus());
+        assertEquals(200,r.getStatus());*/
     }
     
     @Test
@@ -120,14 +156,6 @@ public class testIT {
         assertTrue(reply.has("id"));
         
         killClient(uname);
-    }
-    
-    @Test
-    public void testPopular() throws JSONException {
-        System.out.println("IT 2");
-        
-        JSONObject reply = getJson("/popular");
-        assertTrue(reply.has("list"));
     }
       
     /*@Test
@@ -179,24 +207,19 @@ public class testIT {
         em.getTransaction().commit();
     }
     
-    private JSONObject getJson(String path) throws JSONException {
-        init();
-        Response r = target.path(path).request(MediaType.APPLICATION_JSON).get();
-        String res = r.readEntity(String.class);      
+    private JSONObject getJson(String path) throws JSONException{
+        Response response = target.path(path).request(MediaType.APPLICATION_JSON).get();
+        assertThat(response.getStatus(), CoreMatchers.is(200));
+        String res = response.readEntity(String.class);
         return new JSONObject(res);
     }
     
     private JSONObject postJson(JSONObject json, String path) throws JSONException {
         Entity e = Entity.json(json.toString());
-        init();
+        //init();
         Response r = this.target.path(path).request(MediaType.APPLICATION_JSON).post(e);
         String res = r.readEntity(String.class);      
         return new JSONObject(res);
-    }
-    
-    private void init() {
-        this.client = ClientBuilder.newClient();
-        this.target = client.target(link);
     }
 
     private int random(int min, int max) {
@@ -222,6 +245,6 @@ public class testIT {
             }
         }
         return sb.toString();    
-    }    
+    }
     
 }
