@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Calendar;
-import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -263,7 +262,7 @@ public class ApiBean {
         try { 
             uid = body.getString("user");
             pid = body.getString("project");
-        } catch (JsonException e) {
+        } catch (Exception e) {
             return postResponse(invalid);   
         }
         
@@ -332,7 +331,7 @@ public class ApiBean {
             userVisible = body.getString("user");
             username = body.getString("username");
             pword = body.getString("pword");
-        } catch (JsonException e) {
+        } catch (Exception e) {
             return postResponse(invalid);   
         }
         
@@ -382,7 +381,7 @@ public class ApiBean {
             goal = body.getString("goal");
             date = body.getString("date");
             owner = body.getString("owner");
-        } catch (JsonException e) {
+        } catch (Exception e) {
             return postResponse(invalid);   
         }
         
@@ -446,7 +445,7 @@ public class ApiBean {
         try {
             amt = body.getString("amount");
             pid = body.getString("project");
-        } catch (JsonException e) {
+        } catch (Exception e) {
             return postResponse(invalid);   
         }
         
@@ -498,7 +497,7 @@ public class ApiBean {
             amt = body.getString("amount");
             desc = body.getString("desc");
             pid = body.getString("project");
-        } catch (JsonException e) {
+        } catch (Exception e) {
             return postResponse(invalid);   
         }
         
@@ -552,7 +551,7 @@ public class ApiBean {
             content = body.getString("content");
             uid = body.getString("user");
             pid = body.getString("project");
-        } catch (JsonException e) {
+        } catch (Exception e) {
             return postResponse(invalid);   
         }
         
