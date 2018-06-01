@@ -56,6 +56,33 @@ Em vez de:
 if (c==null) return Response.status(404).entity(notFound).build();
 ```
 
+Métodos que retornem vários códigos de execução devem incluir um pequeno em dicionário em forma de comentários onde são incluídos, de forma a facilitar a leitura e extensão do código. Exemplo:
+
+```java
+//-3 = is owner
+//-2 = bad project
+//-1 = bad user
+//0 = unfollow
+//1 = follow
+int res = db.apiChangeStance(uidValue, pidValue);
+JSONObject json = new JSONObject();
+
+switch (res) {
+    case -3:
+        return postResponse(isOwner);
+    case -2:
+        return postResponse(badProject);
+    case -1:
+        return postResponse(badUser);
+    case 0:              
+        json.put("status", "unfollowed");
+        return postResponse(json);
+    default:
+        json.put("status", "followed");
+        return postResponse(json);
+}
+```
+
 Se possível, pedaços de código repetitivos devem ser usados como métodos privados, para diminuir a quantidade de código em métodos essenciais. Por exemplo:
 
 ```java
