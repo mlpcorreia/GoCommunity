@@ -1,6 +1,8 @@
 package db;
 
 import com.mycompany.gocommunity.DatabaseHandler;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import java.util.Random;
@@ -46,16 +48,32 @@ public class testIT {
     @Test
     public void testGetUserInfo() throws JSONException{
         System.out.println("testGetUserInfo");
-        JSONObject user = getJson("/user/test");
+        String rUsername;
+        do { //randomly generate username until an available one is found
+            rUsername = randomName();
+        } while (db.apiGetProject(rUsername)!=null);
         
+        JSONObject json = new JSONObject();
+        json.put("user", rUsername);
+        json.put("username", rUsername);
+        json.put("pword", rUsername);
+        JSONObject reply = postJson(json, "/createAccount");
+        assertTrue(reply.has("id"));
+        
+        JSONObject user = getJson("/user/"+rUsername);
         assertFalse(user.length() == 0);
-        assertTrue(user.getString("name").startsWith("test"));
+        assertTrue(user.getString("name").startsWith(rUsername));
     }
     
     @Test
     public void testGetNonExistentUser() throws JSONException{
         System.out.println("testGetNonExistentUser");
-        JSONObject user = getJson("/user/null");
+        String username;
+        do { //randomly generate username until an available one is found
+            username = randomName();
+        } while (db.apiGetProject(username)!=null);
+        
+        JSONObject user = getJson("/user/"+username);
         
         assertFalse(user.length() == 0);
         assertTrue(user.getJSONObject("error").getString("message").startsWith("Not Found!"));
@@ -71,17 +89,45 @@ public class testIT {
     @Test
     public void testGetProjectInfo() throws JSONException{
         System.out.println("testGetProjectInfo");
-        JSONObject project = getJson("/project/test");
+        String pName;
+        do { //randomly generate project until an available one is found
+            pName = randomName();
+        } while (db.apiGetProject(pName)!=null);
         
+        JSONObject json = new JSONObject();
+        json.put("user", "IT");
+        json.put("username", "IT");
+        json.put("pword", "IT");
+        JSONObject reply = postJson(json, "/createAccount");
+        assertTrue(reply.has("id"));
+        
+        JSONObject json2 = new JSONObject();
+        json2.put("name", pName);
+        json2.put("desc", "randomText");
+        json2.put("goal", "9000");
+        json2.put("date", "2018-01-01");
+        json2.put("owner", "1");
+        JSONObject reply2 = postJson(json2, "/createProject");
+        assertTrue(reply2.has("id"));
+        
+        
+        JSONObject project = getJson("/project/"+pName);
         assertFalse(project.length() == 0);
-        assertTrue(project.getString("name").startsWith("test"));
-        assertTrue(project.getString("description").startsWith("test"));
+        assertTrue(project.getString("name").startsWith(pName));
+        assertTrue(project.getString("description").startsWith("randomText"));
+        
+        killProject(pName);
     }
     
     @Test
     public void testGetNonExistentProjectInfo() throws JSONException{
         System.out.println("testGetNonExistentProjectInfo");
-        JSONObject project = getJson("/project/null");
+        String pName;
+        do { //randomly generate project until an available one is found
+            pName = randomName();
+        } while (db.apiGetProject(pName)!=null);
+        
+        JSONObject project = getJson("/project/"+pName);
 
         assertFalse(project.length() == 0);
         assertTrue(project.getJSONObject("error").getString("message").startsWith("Not Found!"));
@@ -90,10 +136,34 @@ public class testIT {
     @Test
     public void testGetSearchProject() throws JSONException{
         System.out.println("testGetSearchProject");
-        JSONObject project = getJson("/search/test");
+        String pName;
+        do { //randomly generate project until an available one is found
+            pName = randomName();
+        } while (db.apiGetProject(pName)!=null);
         
+        JSONObject json = new JSONObject();
+        json.put("user", "IT");
+        json.put("username", "IT");
+        json.put("pword", "IT");
+        JSONObject reply = postJson(json, "/createAccount");
+        assertTrue(reply.has("id"));
+        
+        JSONObject json2 = new JSONObject();
+        json2.put("name", pName);
+        json2.put("desc", "randomText");
+        json2.put("goal", "100");
+        json2.put("date", "2019-08-01");
+        json2.put("owner", reply.getString("id"));
+        JSONObject reply2 = postJson(json2, "/createProject");
+        assertTrue(reply2.has("id"));
+        
+        JSONObject project = getJson("/search/"+pName);
         assertFalse(project.length() == 0);
-        assertTrue(project.getJSONArray("list").getJSONObject(0).getString("name").startsWith("test"));
+        assertTrue(project.getJSONArray("list").getJSONObject(0).getString("name").startsWith(pName));
+        assertTrue(project.getJSONArray("list").getJSONObject(0).getString("description").startsWith("randomText"));
+        
+        killProject(pName);
+        killClient("IT");
     }
     
     @Test
@@ -130,8 +200,8 @@ public class testIT {
         JSONObject reply;
         
         do { //randomly generate username until an available one is found
-        uname = randomName();
-        uname2 = randomName();
+            uname = randomName();
+            uname2 = randomName();
         } while (db.apiGetUser(uname)!=null || db.apiGetUser(uname2)!=null);
         
         JSONObject json = new JSONObject();
@@ -216,9 +286,9 @@ public class testIT {
     
     private JSONObject postJson(JSONObject json, String path) throws JSONException {
         Entity e = Entity.json(json.toString());
-        //init();
-        Response r = this.target.path(path).request(MediaType.APPLICATION_JSON).post(e);
-        String res = r.readEntity(String.class);      
+        Response response = this.target.path(path).request(MediaType.APPLICATION_JSON).post(e);
+        assertThat(response.getStatus(), CoreMatchers.is(201));
+        String res = response.readEntity(String.class);      
         return new JSONObject(res);
     }
 
