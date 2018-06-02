@@ -86,7 +86,7 @@ public class testIT {
         assertFalse(popular.getJSONArray("list").length() == 0);
     }
     
-    @Test
+    /*@Test
     public void testGetProjectInfo() throws JSONException{
         System.out.println("testGetProjectInfo");
         String pName;
@@ -105,7 +105,7 @@ public class testIT {
         json2.put("name", pName);
         json2.put("desc", "randomText");
         json2.put("goal", "9000");
-        json2.put("date", "2018-01-01");
+        json2.put("date", "2019-01-01");
         json2.put("owner", "1");
         JSONObject reply2 = postJson(json2, "/createProject");
         assertTrue(reply2.has("id"));
@@ -118,7 +118,7 @@ public class testIT {
         
         killProject(pName);
         killClient("IT");
-    }
+    }*/
     
     @Test
     public void testGetNonExistentProjectInfo() throws JSONException{
@@ -134,7 +134,7 @@ public class testIT {
         assertTrue(project.getJSONObject("error").getString("message").startsWith("Not Found!"));
     }
     
-    @Test
+    /*@Test
     public void testGetSearchProject() throws JSONException{
         System.out.println("testGetSearchProject");
         String pName;
@@ -165,32 +165,7 @@ public class testIT {
         
         killProject(pName);
         killClient("IT");
-    }
-    
-    @Test
-    public void testOpts() {
-        System.out.println("IT 0");
-    
-        Response r;
-        //init();
-        r = this.target.path("/createAccount").request(MediaType.APPLICATION_JSON).options();
-        assertEquals(200,r.getStatus());
-        /*init();
-        r = this.target.path("/follow").request(MediaType.APPLICATION_JSON).options();
-        assertEquals(200,r.getStatus());
-        init();
-        r = this.target.path("/createProject").request(MediaType.APPLICATION_JSON).options();
-        assertEquals(200,r.getStatus());
-        init();
-        r = this.target.path("/donate").request(MediaType.APPLICATION_JSON).options();
-        assertEquals(200,r.getStatus());
-        init();
-        r = this.target.path("/addMilestone").request(MediaType.APPLICATION_JSON).options();
-        assertEquals(200,r.getStatus());
-        init();
-        r = this.target.path("/addComment").request(MediaType.APPLICATION_JSON).options();
-        assertEquals(200,r.getStatus());*/
-    }
+    }*/
     
     @Test
     public void testCreateGetAccount() throws JSONException {  
@@ -263,6 +238,57 @@ public class testIT {
         
         killClient(uname);
     }*/
+    
+    @Test
+    public void testGetEmptyLoginResult() throws JSONException{
+        System.out.println("testGetEmptyLoginResult");
+        JSONObject login = new JSONObject();
+        
+        assertFalse(login.length() == 0);
+        assertTrue(login.getJSONObject("error").getString("message").startsWith("Invalid Parameters!"));
+    }
+    
+    @Test
+    public void testOptCreateAccount() {
+        System.out.println("testOptCreateAccount");
+        Response response = this.target.path("/createAccount").request(MediaType.APPLICATION_JSON).options();;
+        assertThat(response.getStatus(), CoreMatchers.is(200));
+    }
+    
+    @Test
+    public void testOptFollow(){
+        System.out.println("testOptFollow");
+        Response response = this.target.path("/follow").request(MediaType.APPLICATION_JSON).options();;
+        assertThat(response.getStatus(), CoreMatchers.is(200));
+    }
+    
+    @Test
+    public void testOptCreateProject(){
+        System.out.println("testOptCreateProject");
+        Response response = this.target.path("/createProject").request(MediaType.APPLICATION_JSON).options();;
+        assertThat(response.getStatus(), CoreMatchers.is(200));
+    }
+    
+    @Test
+    public void testOptDonate(){
+        System.out.println("testOptDonate");
+        Response response = this.target.path("/donate").request(MediaType.APPLICATION_JSON).options();;
+        assertThat(response.getStatus(), CoreMatchers.is(200));
+    }
+    
+    @Test
+    public void testOptAddMilestone(){
+        System.out.println("testOptAddMilestone");
+        Response response = this.target.path("/addMilestone").request(MediaType.APPLICATION_JSON).options();;
+        assertThat(response.getStatus(), CoreMatchers.is(200));
+    }
+    
+    @Test
+    public void testOptAddComment(){
+        System.out.println("testOptAddComment");
+        Response response = this.target.path("/addComment").request(MediaType.APPLICATION_JSON).options();;
+        assertThat(response.getStatus(), CoreMatchers.is(200));
+    }
     
     private void killClient(String n) {
         em.getTransaction().begin();
