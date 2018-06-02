@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import java.util.Random;
+import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -143,9 +144,8 @@ public class testIT {
         String pName, pName2, uName;
         do { //randomly generate project until an available one is found
             pName = randomName();
-            pName2 = randomName();
             uName = randomName();
-        } while (db.apiGetProject(pName)!=null | db.apiGetProject(pName2)!=null | db.apiGetUser(uName)!=null);
+        } while (db.apiGetProject(pName)!=null | db.apiGetUser(uName)!=null);
         
         JSONObject json = new JSONObject();
         json.put("user", "IT");
@@ -160,15 +160,11 @@ public class testIT {
         json2.put("goal", "100");
         json2.put("date", "2019-08-01");
         json2.put("owner", reply.getString("id"));
-        // Search project by name and id
         JSONObject reply2 = postJson(json2, "/createProject");
         assertTrue(reply2.has("id"));
+        // Search project by name and id
         JSONObject replyId = getJson("/project/"+reply2.getInt("id"));
         assertTrue(replyId.has("id"));
-        
-        // Project non existent in the db
-        reply2 = getJson("/project/"+pName2);
-        assertTrue(reply2.getJSONObject("error").getString("message").startsWith("Not Found!"));
         
         JSONObject project = getJson("/search/"+pName);
         assertFalse(project.length() == 0);
@@ -181,7 +177,7 @@ public class testIT {
     
     @Test
     public void testCreateGetAccount() throws JSONException {  
-        System.out.println("IT 1");
+        System.out.println("testCreateGetAccount");
         
         String uname;
         String uname2;
@@ -217,6 +213,135 @@ public class testIT {
     }
     
     @Test
+    public void testDonateToProject() throws JSONException{
+        System.out.println("testDonateToProject");
+        String pName, uName;
+        JSONObject dReply;
+        do { //randomly generate project until an available one is found
+            pName = randomName();
+            uName = randomName();
+        } while (db.apiGetProject(pName)!=null | db.apiGetUser(uName)!=null);
+        
+        JSONObject json = new JSONObject();
+        json.put("user", "IT");
+        json.put("username", uName);
+        json.put("pword", "IT");
+        JSONObject reply = postJson(json, "/createAccount");
+        assertTrue(reply.has("id"));
+        
+        JSONObject json2 = new JSONObject();
+        json2.put("name", pName);
+        json2.put("desc", "randomText");
+        json2.put("goal", "100");
+        json2.put("date", "2019-08-01");
+        json2.put("owner", reply.getString("id"));
+        JSONObject reply2 = postJson(json2, "/createProject");
+        assertTrue(reply2.has("id"));
+        
+        JSONObject dJson = new JSONObject();
+        dJson.put("amount", "123");
+        dReply = postJson(dJson, "/donate");
+        assertTrue(dReply.getJSONObject("error").getString("message").startsWith("Invalid Parameters!"));
+        dJson.put("project", reply2.getString("id"));
+        dReply = postJson(dJson, "/donate");
+        assertTrue(dReply.getString("status").startsWith("success"));
+        
+        killProject(pName);
+        killClient(uName);
+        
+        /*dReply = postJson(dJson, "/donate");
+        assertTrue(dReply.getJSONObject("error").getString("message").startsWith("Project does not exist."));*/
+    }
+    
+    @Test
+    public void testAddMilestone() throws JSONException{
+        System.out.println("testDonateToProject");
+        String pName, uName;
+        JSONObject mReply;
+        do { //randomly generate project until an available one is found
+            pName = randomName();
+            uName = randomName();
+        } while (db.apiGetProject(pName)!=null | db.apiGetUser(uName)!=null);
+        
+        JSONObject json = new JSONObject();
+        json.put("user", "IT");
+        json.put("username", uName);
+        json.put("pword", "IT");
+        JSONObject reply = postJson(json, "/createAccount");
+        assertTrue(reply.has("id"));
+        
+        JSONObject json2 = new JSONObject();
+        json2.put("name", pName);
+        json2.put("desc", "randomText");
+        json2.put("goal", "100");
+        json2.put("date", "2019-08-01");
+        json2.put("owner", reply.getString("id"));
+        JSONObject reply2 = postJson(json2, "/createProject");
+        assertTrue(reply2.has("id"));
+        
+        JSONObject mJson = new JSONObject();
+        mJson.put("amount", "100");
+        mReply = postJson(mJson, "/addMilestone");
+        assertTrue(mReply.getJSONObject("error").getString("message").startsWith("Invalid Parameters!"));
+        mJson.put("desc", "randomText");
+        mJson.put("project", reply2.getString("id"));
+
+        mReply = postJson(mJson, "/addMilestone");
+        assertTrue(mReply.getString("status").startsWith("success"));
+        
+        killProject(pName);
+        killClient(uName);
+        
+        /*mReply = postJson(mJson, "/addMilestone");
+        assertTrue(mReply.getJSONObject("error").getString("message").startsWith("Project does not exist."));*/
+    }
+    
+    @Test
+    public void testAddComment() throws JSONException{
+        System.out.println("testDonateToProject");
+        String pName, uName;
+        JSONObject cReply;
+        do { //randomly generate project until an available one is found
+            pName = randomName();
+            uName = randomName();
+        } while (db.apiGetProject(pName)!=null | db.apiGetUser(uName)!=null);
+        
+        JSONObject json = new JSONObject();
+        json.put("user", "IT");
+        json.put("username", uName);
+        json.put("pword", "IT");
+        JSONObject reply = postJson(json, "/createAccount");
+        assertTrue(reply.has("id"));
+        
+        JSONObject json2 = new JSONObject();
+        json2.put("name", pName);
+        json2.put("desc", "randomText");
+        json2.put("goal", "100");
+        json2.put("date", "2019-08-01");
+        json2.put("owner", reply.getString("id"));
+        JSONObject reply2 = postJson(json2, "/createProject");
+        assertTrue(reply2.has("id"));
+
+        JSONObject cJson = new JSONObject();
+        cJson.put("content", "addingComment");
+        cReply = postJson(cJson, "/addComment");
+        assertTrue(cReply.getJSONObject("error").getString("message").startsWith("Invalid Parameters!"));
+        
+        cJson.put("user", reply.getString("id"));
+        cJson.put("project", reply2.getString("id"));
+        cReply = postJson(cJson, "/addComment");
+        assertTrue(cReply.getString("status").startsWith("success"));
+        
+        killProject(pName);
+        /*cReply = postJson(cJson, "/addComment");
+        assertTrue(mReply.getJSONObject("error").getString("message").startsWith("Project does not exist."));*/
+        
+        killClient(uName);
+        /*cReply = postJson(cJson, "/addComment");
+        assertTrue(mReply.getJSONObject("error").getString("message").startsWith("User does not exist."));*/
+    }
+    
+    @Test
     public void testGetEmptyLoginResult() throws JSONException{
         System.out.println("testGetEmptyLoginResult");
         JSONObject login = getJson("/login");
@@ -225,16 +350,18 @@ public class testIT {
         assertTrue(login.getJSONObject("error").getString("message").startsWith("Invalid Parameters!"));
     }
     
-    /*@Test
-    public void testGetLoginResult(){
+    @Test
+    public void testGetLoginResult() throws JSONException{
+        System.out.println("testGetLoginResult");
         Response response = target.path("/login").queryParam("user", "test").queryParam("pword", "test").request(MediaType.APPLICATION_JSON).get();
         assertThat(response.getStatus(), CoreMatchers.is(200));
         
-        JsonObject login = response.readEntity(JsonObject.class);
-        assertFalse(login.isEmpty());
+        String login = response.readEntity(String.class);
+        JSONObject log = new JSONObject(login);
+        assertFalse(log.length() == 0);
         
-        assertTrue(login.getString("status").startsWith("true"));
-    }*/
+        assertTrue(log.getString("status").startsWith("true"));
+    }
     
     @Test
     public void testOptCreateAccount() {
