@@ -117,6 +117,7 @@ public class testIT {
         assertTrue(project.getString("description").startsWith("randomText"));
         
         killProject(pName);
+        killClient("IT");
     }
     
     @Test
