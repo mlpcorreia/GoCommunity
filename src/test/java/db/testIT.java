@@ -86,17 +86,18 @@ public class testIT {
         assertFalse(popular.getJSONArray("list").length() == 0);
     }
     
-    /*@Test
+    @Test
     public void testGetProjectInfo() throws JSONException{
         System.out.println("testGetProjectInfo");
-        String pName;
+        String pName, uName;
         do { //randomly generate project until an available one is found
             pName = randomName();
-        } while (db.apiGetProject(pName)!=null);
+            uName = randomName();
+        } while (db.apiGetProject(pName)!=null | db.apiGetUser(uName)!=null);
         
         JSONObject json = new JSONObject();
         json.put("user", "IT");
-        json.put("username", "IT");
+        json.put("username", uName);
         json.put("pword", "IT");
         JSONObject reply = postJson(json, "/createAccount");
         assertTrue(reply.has("id"));
@@ -117,8 +118,8 @@ public class testIT {
         assertTrue(project.getString("description").startsWith("randomText"));
         
         killProject(pName);
-        killClient("IT");
-    }*/
+        killClient(uName);
+    }
     
     @Test
     public void testGetNonExistentProjectInfo() throws JSONException{
@@ -134,17 +135,18 @@ public class testIT {
         assertTrue(project.getJSONObject("error").getString("message").startsWith("Not Found!"));
     }
     
-    /*@Test
+    @Test
     public void testGetSearchProject() throws JSONException{
         System.out.println("testGetSearchProject");
-        String pName;
+        String pName, uName;
         do { //randomly generate project until an available one is found
             pName = randomName();
-        } while (db.apiGetProject(pName)!=null);
+            uName = randomName();
+        } while (db.apiGetProject(pName)!=null | db.apiGetUser(uName)!=null);
         
         JSONObject json = new JSONObject();
         json.put("user", "IT");
-        json.put("username", "IT");
+        json.put("username", uName);
         json.put("pword", "IT");
         JSONObject reply = postJson(json, "/createAccount");
         assertTrue(reply.has("id"));
@@ -164,8 +166,8 @@ public class testIT {
         assertTrue(project.getJSONArray("list").getJSONObject(0).getString("description").startsWith("randomText"));
         
         killProject(pName);
-        killClient("IT");
-    }*/
+        killClient(uName);
+    }
     
     @Test
     public void testCreateGetAccount() throws JSONException {  
@@ -242,7 +244,7 @@ public class testIT {
     @Test
     public void testGetEmptyLoginResult() throws JSONException{
         System.out.println("testGetEmptyLoginResult");
-        JSONObject login = new JSONObject();
+        JSONObject login = getJson("/login");
         
         assertFalse(login.length() == 0);
         assertTrue(login.getJSONObject("error").getString("message").startsWith("Invalid Parameters!"));
@@ -299,7 +301,7 @@ public class testIT {
     
     private void killProject(String n) {
         em.getTransaction().begin();
-        Query q = em.createQuery("DELETE FROM Project c WHERE c.name:n");
+        Query q = em.createQuery("DELETE FROM Project c WHERE c.name=:n");
         q.setParameter("n", n).executeUpdate();
         em.getTransaction().commit();
     }
