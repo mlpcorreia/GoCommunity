@@ -16,7 +16,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
  *
  * @author Carlos
  */
-public class SeleniumIT {
+public class ITselenium {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -29,7 +29,7 @@ public class SeleniumIT {
 
   @Before
   public void setUp() throws Exception {
-    System.setProperty("webdriver.chrome.driver", "C:/chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "/home/chff/chromedriver.exe");
     driver = new ChromeDriver();
     baseUrl = "https://www.katalon.com/";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);

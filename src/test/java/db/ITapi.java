@@ -22,7 +22,7 @@ import org.junit.Before;
  *
  * @author Carlos
  */
-public class RestIT {
+public class ITapi {
     
     private final String link = "http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data";
     //"http://localhost:8080/GoCommunity/api/data";
@@ -477,6 +477,7 @@ public class RestIT {
     }
     
     private JSONObject getJson(String path) throws JSONException{
+        initClient();
         Response response = target.path(path).request(MediaType.APPLICATION_JSON).get();
         assertThat(response.getStatus(), CoreMatchers.is(200));
         String res = response.readEntity(String.class);
@@ -484,6 +485,7 @@ public class RestIT {
     }
     
     private JSONObject postJson(JSONObject json, String path) throws JSONException {
+        initClient();
         Entity e = Entity.json(json.toString());
         Response response = this.target.path(path).request(MediaType.APPLICATION_JSON).post(e);
         assertThat(response.getStatus(), CoreMatchers.is(201));
