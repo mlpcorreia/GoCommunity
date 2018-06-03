@@ -63,29 +63,29 @@
 					           
 					        </div>
 			  				<div class="panel-body">
-			  					<h:form class="form-horizontal" role="form">
+			  					<h:form id="p" class="form-horizontal" role="form">
 								  <div class="form-group">
 								    <label class="col-sm-2 control-label">Project's name</label>
 								    <div class="col-sm-10">
-								      <h:inputText class="form-control" value="#{comBean.projName}"/>
+								      <h:inputText id="n" class="form-control" value="#{comBean.projName}"/>
 								    </div>
 								  </div>
 								    <div class="form-group">
 								    <label class="col-sm-2 control-label">Brief description</label>
 								    <div class="col-sm-10">
-								      <h:inputTextarea class="form-control" value="#{comBean.projDesc}"/>
+								      <h:inputTextarea id="d" class="form-control" value="#{comBean.projDesc}"/>
 								    </div>
 								  </div>
 								  <div class="form-group">
 								    <label class="col-sm-2 control-label">Goal (€)</label>
 								    <div class="col-sm-10">
-								      <h:inputText class="form-control" value="#{comBean.projGoalString}"/> 
+								      <h:inputText id="g" class="form-control" value="#{comBean.projGoalString}"/> 
 								    </div>
 								  </div>
 								   <div class="form-group">
 								    <label class="col-sm-2 control-label">Ends on (YYYY-MM-DD format)</label>
 								    <div class="col-sm-10">
-								      <h:inputText class="form-control" value="#{comBean.projEndsString}"/> 
+								      <h:inputText id="t" class="form-control" value="#{comBean.projEndsString}"/> 
 								    </div>
 								  </div>
 								<c:choose>
@@ -100,7 +100,7 @@
 								  
 								  <div class="form-group">
 								    <div class="col-sm-offset-2 col-sm-10" style="width:100%;margin-left:0px;">
-								    <h:commandButton style="margin-left:auto;margin-right:auto;display:block;" class="btn btn-success" value="Create" action="#{comBean.createProject()}"/> 
+								    <h:commandButton id="b" style="margin-left:auto;margin-right:auto;display:block;" class="btn btn-success" value="Create" action="#{comBean.createProject()}"/> 
                                                                         </div>
 								  </div>
 								</h:form>

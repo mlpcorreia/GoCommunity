@@ -36,14 +36,14 @@
 				<div class="login-wrapper">
 			        <div class="box">
 			            <div class="content-wrap">
-                                        <h:form role="form">
+                                        <h:form id="a" role="form">
 			                <h6>Sign Up</h6>
                                         <label>Name (the account's visible name):</label>
-			                <h:inputText class="form-control" value="#{comBean.name}"/> 
+			                <h:inputText id="n" class="form-control" value="#{comBean.name}"/> 
                                         <label>Username (secret name you'll use to log in):</label>
-			                <h:inputText class="form-control" value="#{comBean.username}"/> 
+			                <h:inputText id="un" class="form-control" value="#{comBean.username}"/> 
                                         <label>Password</label>
-			                <h:inputSecret class="form-control" value="#{comBean.password}"/> 
+			                <h:inputSecret id="p" class="form-control" value="#{comBean.password}"/> 
                                         <c:choose>
                                             <c:when test="#{!comBean.isEmptyString(comBean.createAccountErrorMessage)}">
                                         <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
@@ -54,7 +54,7 @@
                                             </c:otherwise>
                                         </c:choose> 
 			                <div>
-			                    <h:commandButton class="btn btn-success" value="Create" action="#{comBean.createAccount()}"/> 
+			                    <h:commandButton id="b" class="btn btn-success" value="Create" action="#{comBean.createAccount()}"/> 
 			                </div>   
                                             </h:form>
 			            </div>

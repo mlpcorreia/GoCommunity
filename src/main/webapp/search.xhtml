@@ -62,14 +62,14 @@
 					           
 					        </div>
 			  				<div class="panel-body">
-			  					<h:form class="form-horizontal" role="form">
+			  					<h:form id="s" class="form-horizontal" role="form">
 								  <div class="form-group">
 								    
 								    <div class="col-sm-8">
                                                                         <label>Please enter the partial or full name of a project.</label>
-								      <h:inputText class="form-control" value="#{comBean.search}"/> 
+								      <h:inputText id="se" class="form-control" value="#{comBean.search}"/> 
 								    </div>
-									 <h:commandButton class="btn btn-primary" style="margin-top: 22px;" value="Go" action="#{comBean.searchProjects()}"/> 
+									 <h:commandButton id="b" class="btn btn-primary" style="margin-top: 22px;" value="Go" action="#{comBean.searchProjects()}"/> 
                                                                          <c:choose>
                                                                             <c:when test="#{!comBean.isEmptyString(comBean.searchErrorMessage)}">
                                                                         <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
@@ -86,7 +86,7 @@
 								    <c:choose>
                                                                         <c:when test="#{comBean.searchProjects().size()>0}">
                                                                             <c:forEach var="i" begin="0" end="#{comBean.searchProjects().size()-1}">
-                                                                                <h:commandButton style="height:25px;padding-top:1px;padding-left:6px;padding-right:6px;margin-right:6px;" class="btn btn-default" value="▶"  action="#{comBean.goToSearchedProjectPage(i)}"/>
+                                                                                <h:commandButton id="pr" style="height:25px;padding-top:1px;padding-left:6px;padding-right:6px;margin-right:6px;" class="btn btn-default" value="▶"  action="#{comBean.goToSearchedProjectPage(i)}"/>
                                                                                 #{comBean.searchProjects().get(i).getOverview()}
  
                                                                                 <div style="height:5px;"></div>
