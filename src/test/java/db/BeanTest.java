@@ -1,7 +1,6 @@
 package db;
 
 import com.mycompany.gocommunity.ComBean;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -15,7 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 /**
  *
@@ -257,9 +255,10 @@ public class BeanTest {
        bean.addMilestone();
        assertEquals("Please insert a valid number in the \"value\" field.",bean.getCreateMilestoneErrorMessage());
        
-       bean.setMilestoneKey("5.05");
+       bean.setMilestoneKey("5.052");
        bean.addMilestone();
        assertEquals(1,bean.getActiveProject().getAmountOfMilestones());
+       assertEquals("5.05",bean.moneyFormat(bean.getActiveProject().getMilestoneKeys().get(0)));
        
        killAll();
    } 

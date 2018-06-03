@@ -12,6 +12,9 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- styles -->
     <link href="css/styles.css" rel="stylesheet"/>
+    <f:metadata>
+        <f:viewAction action="#{comBean.resetErrors()}"/>
+      </f:metadata>
   </h:head>
   <h:body>
   	<div class="header">
@@ -97,7 +100,7 @@
 								  
 								  <div class="form-group">
 								    <div class="col-sm-offset-2 col-sm-10" style="width:100%;margin-left:0px;">
-								    <h:commandButton style="margin-left:auto;margin-right:auto;display:block;" class="btn btn-primary" value="Create New Project" action="#{comBean.createProject()}"/> 
+								    <h:commandButton style="margin-left:auto;margin-right:auto;display:block;" class="btn btn-success" value="Create" action="#{comBean.createProject()}"/> 
                                                                         </div>
 								  </div>
 								</h:form>

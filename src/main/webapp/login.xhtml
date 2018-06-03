@@ -12,6 +12,9 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- styles -->
     <link href="css/styles.css" rel="stylesheet"/>
+    <f:metadata>
+        <f:viewAction action="#{comBean.resetErrors()}"/>
+      </f:metadata>
       </h:head>
   <h:body class="login-bg">
   	<div class="header">
@@ -38,7 +41,7 @@
                                         <label>Username</label>
 			                <h:inputText class="form-control" value="#{comBean.username}"/> 
                                         <label>Password</label>
-			                <h:inputText class="form-control" value="#{comBean.password}"/> 
+			                <h:inputSecret class="form-control" value="#{comBean.password}"/> 
                                         <c:choose>
                                             <c:when test="#{!comBean.isEmptyString(comBean.loginErrorMessage)}">
                                         <label style="width: 96%; word-wrap: break-word;margin: 10px 2%;padding: 3px;text-align: center;white-space: initial;text-align: center;border-radius: 20px;background-color: #ca6060;">
@@ -48,8 +51,8 @@
                                             <c:otherwise>  
                                             </c:otherwise>
                                         </c:choose>
-			                <div class="action">
-                                            <h:commandButton class="btn btn-primary signup" value="Submit" action="#{comBean.login()}"/> 
+			                <div>
+                                            <h:commandButton class="btn btn-primary" value="Submit" action="#{comBean.login()}"/> 
 			                </div>
                                             
 			            </div>
@@ -57,7 +60,7 @@
 
 			        <div class="already">
 			            <p>Don't have an account yet?</p>
-			            <a href="newAccount.xhtml">Sign Up</a>
+			            <a href="newAccount.xhtml" style="color:#428bca;">Sign Up</a>
 			        </div>
 			    </div>
                             </h:form>

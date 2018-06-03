@@ -12,6 +12,9 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- styles -->
     <link href="css/styles.css" rel="stylesheet"/>
+    <f:metadata>
+        <f:viewAction action="#{comBean.resetErrors()}"/>
+      </f:metadata>
   </h:head>
   <h:body>
   	<div class="header">
@@ -54,7 +57,7 @@
 		  		<div class="col-md-10">
 	  					<div class="content-box-large">
 			  				<div class="panel-heading">
-					            <div class="panel-title"><b>Project Search</b></div>
+					            <div class="panel-title" style="padding-left:0px;"><b>Project Search</b></div>
 					          
 					           
 					        </div>
@@ -63,7 +66,7 @@
 								  <div class="form-group">
 								    
 								    <div class="col-sm-8">
-                                                                        <label>Please enter the partial or full name of a project</label>
+                                                                        <label>Please enter the partial or full name of a project.</label>
 								      <h:inputText class="form-control" value="#{comBean.search}"/> 
 								    </div>
 									 <h:commandButton class="btn btn-primary" style="margin-top: 22px;" value="Go" action="#{comBean.searchProjects()}"/> 
@@ -77,15 +80,16 @@
                                                                             </c:otherwise>
                                                                         </c:choose>
 								  </div>
-								    <div class="form-group">
+								    <div class="form-group" style="padding-left:12px;">
 								    <label>Search results:</label>
                                                                     <br/><br/>
 								    <c:choose>
                                                                         <c:when test="#{comBean.searchProjects().size()>0}">
                                                                             <c:forEach var="i" begin="0" end="#{comBean.searchProjects().size()-1}">
+                                                                                <h:commandButton style="height:25px;padding-top:1px;padding-left:6px;padding-right:6px;margin-right:6px;" class="btn btn-default" value="▶"  action="#{comBean.goToSearchedProjectPage(i)}"/>
                                                                                 #{comBean.searchProjects().get(i).getOverview()}
-                                                                                <h:commandButton value="Project Page" action="#{comBean.goToSearchedProjectPage(i)}"/>
-                                                                                <br/>
+ 
+                                                                                <div style="height:5px;"></div>
                                                                             </c:forEach>
                                                                         </c:when>
                                                                         <c:otherwise>

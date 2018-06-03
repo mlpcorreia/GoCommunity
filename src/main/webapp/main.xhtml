@@ -12,7 +12,10 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- styles -->
     <link href="css/styles.css" rel="stylesheet"/>
-  </h:head>
+    <f:metadata>
+        <f:viewAction action="#{comBean.resetErrors()}"/>
+      </f:metadata>
+  </h:head>  
   <h:body>
   	<div class="header">
 	     <div class="container">
@@ -54,7 +57,7 @@
 		  		<div class="col-md-10">
 		  			<div class="content-box-large">
                                             <h:form>
-						<div class="panel-title">Welcome back, #{comBean.user.name}</div>
+                                                <div class="panel-title">Welcome back, <b>#{comBean.user.name}</b>!</div>
 						<br></br>
 					
 						<font size="4"><b>Projects you own:</b></font>
@@ -62,9 +65,10 @@
                                                 <c:choose>
                                                     <c:when test="#{comBean.user.owns.size()>0}">
                                                         <c:forEach var="i" begin="0" end="#{comBean.user.owns.size()-1}">
+                                                            <h:commandButton style="height:25px;padding-top:1px;padding-left:6px;padding-right:6px;margin-right:6px;" class="btn btn-default" value="▶" action="#{comBean.goToOwnedProjectPage(i)}"/>
                                                             #{comBean.getProject(comBean.user.owns.get(i)).getOverview()}
-                                                            <h:commandButton value="Project Page" action="#{comBean.goToOwnedProjectPage(i)}"/>
-                                                            <br/>
+                                                            
+                                                            <div style="height:5px;"></div>
                                                         </c:forEach>
                                                     </c:when>
                                                     <c:otherwise>
@@ -77,9 +81,10 @@
                                                 <c:choose>
                                                     <c:when test="#{comBean.user.follows.size()>0}">
                                                         <c:forEach var="i" begin="0" end="#{comBean.user.follows.size()-1}">
+                                                            <h:commandButton style="height:25px;padding-top:1px;padding-left:6px;padding-right:6px;margin-right:6px;" class="btn btn-default" value="▶" action="#{comBean.goToFollowedProjectPage(i)}"/>
                                                             #{comBean.getProject(comBean.user.follows.get(i)).getOverview()}
-                                                            <h:commandButton value="Project Page" action="#{comBean.goToFollowedProjectPage(i)}"/>
-                                                            <br/>
+                                                            
+                                                            <div style="height:5px;"></div>
                                                         </c:forEach>
                                                     </c:when>
                                                     <c:otherwise>
@@ -92,9 +97,10 @@
                                                 <c:choose>
                                                     <c:when test="#{comBean.getPopularProjects().size()>0}">
                                                         <c:forEach var="i" begin="0" end="#{comBean.getPopularProjects().size()-1}">
+                                                            <h:commandButton style="height:25px;padding-top:1px;padding-left:6px;padding-right:6px;margin-right:6px;" class="btn btn-default" value="▶" action="#{comBean.goToProjectPage(i)}"/>
                                                             #{comBean.getPopularProjects().get(i).getOverview()}
-                                                            <h:commandButton value="Project Page" action="#{comBean.goToProjectPage(i)}"/>
-                                                            <br/>
+                                                            <div style="height:5px;"></div>
+                                                           
                                                         </c:forEach>
                                                     </c:when>
                                                     <c:otherwise>

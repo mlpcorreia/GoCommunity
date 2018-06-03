@@ -148,6 +148,16 @@ public class ComBean {
 
     }
     
+    public void resetErrors() {
+        loginErrorMessage = "";
+        createAccountErrorMessage = "";
+        createProjectErrorMessage = "";
+        donationErrorMessage = "";
+        createMilestoneErrorMessage = "";
+        searchErrorMessage = "";
+        commentErrorMessage = "";
+    }
+    
     public List<Project> searchProjects() {
         if (search==null || search.equals("")) {
             searchErrorMessage = "Please insert a search term.";
@@ -230,6 +240,10 @@ public class ComBean {
     
     public boolean isEmptyString(String s) {
         return s.equals("");
+    }
+    
+    public String moneyFormat(double original) {
+        return String.format("%.2f", original);
     }
     
     public boolean isVisitingFollowedProject() {

@@ -127,7 +127,8 @@ public class Project implements Serializable {
     }
     
     public void addMilestone(Double money, String text) {
-        milestones.put(money, text);
+        double key = Math.round(money*100d)/100d;
+        milestones.put(key, text);
     }
     
     public List<Double> getMilestoneKeys() {

@@ -12,6 +12,9 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- styles -->
     <link href="css/styles.css" rel="stylesheet"/>
+    <f:metadata>
+        <f:viewAction action="#{comBean.resetErrors()}"/>
+      </f:metadata>
   </h:head>
   <h:body>
   	<div class="header">
@@ -60,10 +63,10 @@
                                                                         <br/>
                                                                         <c:choose>
                                                                             <c:when test="#{comBean.visitingFollowedProject}">
-                                                                                <h:commandButton class="btn btn-primary" value="Unfollow" action="#{comBean.unfollow()}"/>
+                                                                                <h:commandButton class="btn btn-danger" value="Unfollow" action="#{comBean.unfollow()}"/>
                                                                             </c:when>
                                                                             <c:otherwise>
-                                                                                <h:commandButton class="btn btn-primary" value="Follow" action="#{comBean.follow()}"/>
+                                                                                <h:commandButton class="btn btn-warning" value="Follow" action="#{comBean.follow()}"/>
                                                                             </c:otherwise>
                                                                         </c:choose>
                                                                     </c:if>
@@ -77,7 +80,7 @@
                                                                     
 								  <div class="form-group">
 								    <div class="col-sm-8" style="max-width: 38%;">
-                                                                        <label>Please enter the amount you'd like to donate (€)"</label>
+                                                                        <label>Amount you'd like to donate? (€)</label>
 								    <h:inputText class="form-control" value="#{comBean.donation}"/> 
                                                                     </div>
 									 <h:commandButton class="btn btn-primary" style="margin-top: 22px;" value="Donate" action="#{comBean.donate()}"/>
@@ -94,19 +97,19 @@
 								    <div class="form-group">
 								    <label class="col-sm-2 control-label">Description:</label>
 								    <div class="col-sm-10" style="padding-top: 7px;">
-								      <label>#{comBean.activeProject.description}</label>
+								      <label style="font-weight:normal;">#{comBean.activeProject.description}</label>
 								    </div>
 									</div>
 								   <div class="form-group">
 								    <label class="col-sm-2 control-label">Status:</label>
 								    <div class="col-sm-10" style="padding-top: 7px;">
-								      <label>#{comBean.activeProject.printFormattedProgress()} / #{comBean.activeProject.printFormattedGoal()}</label>
+								      <label style="font-weight:normal;">#{comBean.activeProject.printFormattedProgress()} / #{comBean.activeProject.printFormattedGoal()}</label>
 								    </div>
 									</div>
 								    <div class="form-group">
 								    <label class="col-sm-2 control-label">Lifespan:</label>
 								    <div class="col-sm-10" style="padding-top: 7px;">
-								      <label>Running from #{comBean.activeProject.createdOn} to #{comBean.activeProject.endsOn}</label>
+								      <label style="font-weight:normal;">Running from #{comBean.activeProject.createdOn} to #{comBean.activeProject.endsOn}</label>
 								    </div>
 									</div>
                                                                     <div class="form-group">
@@ -115,7 +118,7 @@
 								      <c:choose>
                                                                         <c:when test="#{comBean.activeProject.amountOfMilestones>0}">
                                                                             <c:forEach var="i" begin="0" end="#{comBean.activeProject.amountOfMilestones-1}">
-                                                                                #{comBean.activeProject.milestoneKeys.get(i)}€ - #{comBean.activeProject.getMilestoneText(comBean.activeProject.milestoneKeys.get(i))}
+                                                                                #{comBean.moneyFormat(comBean.activeProject.milestoneKeys.get(i))}€ → #{comBean.activeProject.getMilestoneText(comBean.activeProject.milestoneKeys.get(i))}
                                                                                 <br/>
                                                                             </c:forEach>
                                                                         </c:when>
@@ -131,21 +134,21 @@
 								    <label class="col-sm-2 control-label">Add a milestone:</label>
 								    <div class="col-sm-10" style="padding-top: 7px;">
                                                                         <label>Milestone value (€)</label>
-								      <h:inputText class="form-control" value="#{comBean.milestoneKey}"/>
+								      <h:inputText id="mkey" class="form-control" value="#{comBean.milestoneKey}"/>
 								    </div>
 									</div>
 									<div class="form-group">
 								    <label class="col-sm-2 control-label"></label>
 								    <div class="col-sm-10" style="padding-top: 7px;">
                                                                         <label>Milestone description</label>
-								      <h:inputTextarea class="form-control" value="#{comBean.milestoneText}"/>
+								      <h:inputTextarea id="mtxt" class="form-control" value="#{comBean.milestoneText}"/>
 								    </div>
 									</div>
                                                                         
 									<div class="form-group">
 								    <div class="col-sm-offset-2 col-sm-10">
                                                                         
-									<h:commandButton class="btn btn-primary" value="Add milestone" action="#{comBean.addMilestone()}"/>
+									<h:commandButton id="madd" class="btn btn-primary" value="Add milestone" action="#{comBean.addMilestone()}"/>
 								    
                                                                     </div>
                                                                             <c:choose>
@@ -167,7 +170,7 @@
                                                                             <c:forEach var="i" begin="0" end="#{comBean.activeProject.comments.size()-1}">
                                                                                 <label>#{comBean.activeProject.comments.get(i).header} on #{comBean.activeProject.comments.get(i).formattedDate}</label>
                                                                                 <br/>
-                                                                                <label>#{comBean.activeProject.comments.get(i).content}</label>
+                                                                                <label style="font-weight:normal;">#{comBean.activeProject.comments.get(i).content}</label>
                                                                                 <br/><br/>
                                                                             </c:forEach>
                                                                         </c:when>
@@ -182,14 +185,14 @@
 								    <label class="col-sm-2 control-label">Add a comment:</label>
 								    <div class="col-sm-10" style="padding-top: 7px;">
                                                                         <label>Content</label>
-								      <h:inputTextarea class="form-control" value="#{comBean.commentText}"/>
+								      <h:inputTextarea id="cmttxt" class="form-control" value="#{comBean.commentText}"/>
 								    </div>
                                                                     
 									</div>
                                                                     <div class="form-group">
 									<div class="col-sm-offset-2 col-sm-10">
 									
-									<h:commandButton class="btn btn-primary" value="Add comment" action="#{comBean.addComment()}"/>
+									<h:commandButton id="cmtadd" class="btn btn-primary" value="Add comment" action="#{comBean.addComment()}"/>
 								    </div>
                                                                         <c:choose>
                                                                             <c:when test="#{!comBean.isEmptyString(comBean.commentErrorMessage)}">

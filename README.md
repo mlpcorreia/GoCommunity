@@ -1,11 +1,9 @@
 # GoCommunity
 Projeto de TQS - LEI 2017/2018
 
-Disponível online [aqui](http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT), o Jenkins [aqui](http://192.168.160.226:8090/job/GoCommunity/) e o SonarQube [aqui](http://192.168.160.226:9000/dashboard/index/com.mycompany:GoCommunity).
-
 ## Descrição de práticas usadas
 
-O projeto utiliza arquitetura Java EE e um container Glassfish. O continuous deployment é feito por uma instância Jenkins.
+O projeto utiliza arquitetura Java EE e um container Glassfish.
 
 A unidade de persistência gere [dois tipos de entidades](https://github.com/chffUA/GoCommunity/tree/master/src/main/java/db), **Client** e **Project**. O terceiro tipo (TestEntityClass) existe apenas para realizar testes sobre a base de dados, não sendo diretamente relevante para o funcionamente do projeto.
 
@@ -18,15 +16,15 @@ A lógica do website encontra-se no bean **ComBean**, responsável pela procura 
 Os métodos do REST API estão na classe **ApiBean**, e são possíveis de aceder e testar através de URLs com a seguinte estrutura:
 
 ```
-http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/<@Path definido para o método>
+/GoCommunity/api/data/<@Path definido para o método>
 ```
 
 Como exemplo:
 
 ```
-http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/user/1
-http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/project/Exemplo
-http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/popular
+/GoCommunity/api/data/user/1
+/GoCommunity/api/data/project/Exemplo
+/GoCommunity/api/data/popular
 ```
 
 As [páginas web](https://github.com/chffUA/GoCommunity/tree/master/src/main/webapp) são do formato .xhtml, suportando JSF, e interagem com o **ComBean** para apresentar e processar informação.
@@ -38,8 +36,6 @@ O código é indentado com 4 espaços.
 Para garantir simplicidade e organização, interação com a persistence unit deve ser feita através do **DatabaseHandler**.
 
 Os nomes dos métodos e variáveis devem ser descritivos.
-
-Os "code smells" (como descritos pelo SonarQube) devem ser minimizados, exceto quando a sua correção gravemente piore a facilidade de leitura do código.
 
 Em condicionais, deve-se usar chavetas mesmo para possíveis "one-liners", de modo a manter consistência na escrita. Por exemplo:
 
@@ -53,33 +49,6 @@ Em vez de:
 
 ```java
 if (c==null) return Response.status(404).entity(notFound).build();
-```
-
-Métodos que retornem vários códigos de execução devem incluir um pequeno em dicionário em forma de comentários onde são incluídos, de forma a facilitar a leitura e extensão do código. Exemplo:
-
-```java
-//-3 = is owner
-//-2 = bad project
-//-1 = bad user
-//0 = unfollow
-//1 = follow
-int res = db.apiChangeStance(uidValue, pidValue);
-JSONObject json = new JSONObject();
-
-switch (res) {
-    case -3:
-        return postResponse(isOwner);
-    case -2:
-        return postResponse(badProject);
-    case -1:
-        return postResponse(badUser);
-    case 0:              
-        json.put("status", "unfollowed");
-        return postResponse(json);
-    default:
-        json.put("status", "followed");
-        return postResponse(json);
-}
 ```
 
 Se possível, pedaços de código repetitivos devem ser usados como métodos privados, para diminuir a quantidade de código em métodos essenciais. Por exemplo:
