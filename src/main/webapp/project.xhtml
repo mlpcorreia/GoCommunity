@@ -78,6 +78,7 @@
 			  				<div class="panel-body">
 			  					<h:form id="p" class="form-horizontal" role="form">
                                                                     
+                                                                 <c:if test="#{!comBean.visitingOwnedProject}">
 								  <div class="form-group">
 								    <div class="col-sm-8" style="max-width: 38%;">
                                                                         <label>Amount you'd like to donate? (€)</label>
@@ -94,6 +95,7 @@
                                                                             </c:otherwise>
                                                                         </c:choose> 
 								  </div>
+                                                                 </c:if>
 								    <div class="form-group">
 								    <label class="col-sm-2 control-label">Description:</label>
 								    <div class="col-sm-10" style="padding-top: 7px;">
