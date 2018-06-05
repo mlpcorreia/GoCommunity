@@ -65,6 +65,18 @@ public class BeanTest {
    }
    
    @Test
+   public void testClearErrors() {
+       bean = new ComBean("test.odb");
+       
+       bean.setUsername("user");
+       bean.setPassword("pw");
+       assertEquals("login.xhtml",bean.login());
+       assertEquals("Account not found.",bean.getLoginErrorMessage());
+       bean.resetErrors();
+       assertEquals("",bean.getLoginErrorMessage());
+   }
+   
+   @Test
    public void testLogin() {
         bean = new ComBean("test.odb");
        
