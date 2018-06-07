@@ -12,8 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 
 /**
- *
- * @author Carlos
+ * Comment Entity
  */
 @Entity
 public class Comment implements Serializable {

@@ -17,8 +17,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 /**
- *
- * @author Carlos
+ * Set of Database tests 
  */
 public class DatabaseTest {
     

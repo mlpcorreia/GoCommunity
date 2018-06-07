@@ -6,8 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
- *
- * @author Carlos
+ * Set of tests to the Entities
  */
 public class EntityTest {
     

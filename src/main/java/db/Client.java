@@ -13,8 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 
 /**
- *
- * @author Carlos
+ * Client Entity
  */
 @Entity
 public class Client implements Serializable {

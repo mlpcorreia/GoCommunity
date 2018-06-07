@@ -15,8 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 /**
- *
- * @author Carlos
+ * Project Entity
  */
 @Entity
 public class Project implements Serializable {
@@ -98,8 +97,9 @@ public class Project implements Serializable {
     }
     
     public void followedBy(long i) {
-        if (!followers.contains(i))
+        if (!followers.contains(i)) {
             followers.add(i);
+        }
     }
     
     public void unfollowedBy(long i) {
@@ -203,5 +203,4 @@ public class Project implements Serializable {
     public String toString() {
         return "db.Project[ id=" + id + " ]";
     }
-    
 }

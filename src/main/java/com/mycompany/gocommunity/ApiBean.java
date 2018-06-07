@@ -22,21 +22,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- *
- * @author Carlos
+ * Exposes web resources using REST
  */
 @Path("/data")
-public class ApiBean {
-    
+public class ApiBean {   
     //url structure is: /GoCommunity/api/data/
-
     private final DatabaseHandler db = new DatabaseHandler("go.odb");   
  
+    /**
+     * Get the information of a particular user 
+     * @param username
+     * @return JSON message with the user information
+     * @throws JSONException 
+     */
     @Path("/user/{username}")
     @GET
     @Produces("application/json")
-    public Response getUserInfo(@PathParam("username") String username) throws JSONException {
-        
+    public Response getUserInfo(@PathParam("username") String username) throws JSONException {      
         Client c = null;
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
@@ -47,8 +49,9 @@ public class ApiBean {
             c = db.apiGetUser(username);
         }
         
-        if (c==null)
+        if (c==null){
             return getResponse(notFound);
+        }
         
         JSONObject json = new JSONObject();
         
@@ -72,11 +75,15 @@ public class ApiBean {
         return getResponse(json);
     }
     
+    /**
+     * Get the popular projects
+     * @return JSON message with a list that includes the information of the projects
+     * @throws JSONException 
+     */
     @Path("/popular")
     @GET
     @Produces("application/json")
-    public Response getPopularProjects() throws JSONException {
-        
+    public Response getPopularProjects() throws JSONException {       
         List<Project> top = db.getPopularProjects();
             
         JSONObject json = new JSONObject();
@@ -94,7 +101,7 @@ public class ApiBean {
                 JSONObject mitem = new JSONObject();
                 mitem.put(moneyFormat(key), tmp.getMilestoneText(key));
                 milestones.add(mitem);
-        }
+            }
         
             item.put("milestones", milestones);
             item.put("progress", moneyFormatAsDouble(tmp.getProgress()));
@@ -122,11 +129,16 @@ public class ApiBean {
         return getResponse(json);
     }
     
+    /**
+     * Get the information about a project
+     * @param name
+     * @return JSON message with the project information
+     * @throws JSONException 
+     */
     @Path("/project/{name}")
     @GET
     @Produces("application/json")
-    public Response getProjectInfo(@PathParam("name") String name) throws JSONException {
-        
+    public Response getProjectInfo(@PathParam("name") String name) throws JSONException {     
         Project p = null;
         JSONObject notFound = createErrorMessage("Not Found!", 404);
         
@@ -137,8 +149,9 @@ public class ApiBean {
             p = db.apiGetProject(name);
         }
         
-        if (p==null)
+        if (p==null) {
             return getResponse(notFound);
+        }
         
         JSONObject json = new JSONObject();
         
@@ -176,11 +189,16 @@ public class ApiBean {
         return getResponse(json);
     }
     
+    /**
+     * Search for a particular project
+     * @param query
+     * @return JSON message that contains all the information about a search
+     * @throws JSONException 
+     */
     @Path("/search/{query}")
     @GET
     @Produces("application/json")
-    public Response searchProject(@PathParam("query") String query) throws JSONException {
-              
+    public Response searchProject(@PathParam("query") String query) throws JSONException {           
         List<JSONObject> res = new ArrayList<>();
         
         List<Project> list = db.searchProjects(query);
@@ -222,10 +240,14 @@ public class ApiBean {
         JSONObject result = new JSONObject();
         result.put("list", res);
         
-        return getResponse(result);
-        
+        return getResponse(result);       
     }
     
+    /**
+     * Get information about the follow resource
+     * @param body
+     * @return JSON message with the available options
+     */
     @Path("/follow")
     @OPTIONS
     @Produces("application/json")
@@ -233,6 +255,12 @@ public class ApiBean {
         return optResponse();
     }
     
+    /**
+     * Send request to follow a project
+     * @param body
+     * @return JSON message with the response about the project
+     * @throws JSONException 
+     */
     @Path("/follow")
     @POST
     @Consumes("application/json")
@@ -288,13 +316,14 @@ public class ApiBean {
             default:
                 json.put("status", "followed");
                 return postResponse(json);
-        }
-        
-        
-        
+        } 
     }
     
-        
+    /**
+     * Get information about the createAccount resource
+     * @param body
+     * @return JSON message with the available options
+     */   
     @Path("/createAccount")
     @OPTIONS
     @Produces("application/json")
@@ -302,6 +331,12 @@ public class ApiBean {
         return optResponse();
     }
     
+    /**
+     * Send request to create an account
+     * @param body
+     * @return JSON message with the create account result(success, fail,...)
+     * @throws JSONException 
+     */
     @Path("/createAccount")
     @POST
     @Consumes("application/json")
@@ -336,9 +371,13 @@ public class ApiBean {
             res.put("id", id);
             return postResponse(res);
         }
-
     }
     
+    /**
+     * Get information about the createProject resource
+     * @param body
+     * @return JSON message with the available options 
+     */
     @Path("/createProject")
     @OPTIONS
     @Produces("application/json")
@@ -346,6 +385,12 @@ public class ApiBean {
         return optResponse();
     }
     
+    /**
+     * Send request to create a project
+     * @param body
+     * @return JSON message with the create project result (success, invalid parameters, ...)
+     * @throws JSONException 
+     */
     @Path("/createProject")
     @POST
     @Consumes("application/json")
@@ -368,8 +413,7 @@ public class ApiBean {
             goal = body.getString("goal");
             date = body.getString("date");
             owner = body.getString("owner");
-        } catch (Exception e) {
-           
+        } catch (Exception e) {  
             return postResponse(invalid);   
         }
         
@@ -409,10 +453,14 @@ public class ApiBean {
             JSONObject res = new JSONObject();
             res.put("id", id);
             return postResponse(res);
-        }
-        
+        }  
     }
     
+    /**
+     * Get information about the donate resource
+     * @param body
+     * @return JSON message with the available options
+     */
     @Path("/donate")
     @OPTIONS
     @Produces("application/json")
@@ -420,6 +468,12 @@ public class ApiBean {
         return optResponse();
     }
     
+    /**
+     * Send request to donate to a project
+     * @param body
+     * @return JSON message with donate result
+     * @throws JSONException 
+     */
     @Path("/donate")
     @POST
     @Consumes("application/json")
@@ -463,6 +517,11 @@ public class ApiBean {
         }
     }
     
+    /**
+     * Get information about the addMilestone resource
+     * @param body
+     * @return JSON message with the available options
+     */
     @Path("/addMilestone")
     @OPTIONS
     @Produces("application/json")
@@ -470,6 +529,12 @@ public class ApiBean {
         return optResponse();
     }
     
+    /**
+     * Send request to add milestone on a project
+     * @param body
+     * @return JSON message with the add milestone result
+     * @throws JSONException 
+     */
     @Path("/addMilestone")
     @POST
     @Consumes("application/json")
@@ -516,6 +581,11 @@ public class ApiBean {
         }
     }
     
+    /**
+     * Get information about the addComment resource
+     * @param body
+     * @return JSON message with the available options 
+     */
     @Path("/addComment")
     @OPTIONS
     @Produces("application/json")
@@ -523,6 +593,12 @@ public class ApiBean {
         return optResponse();
     }
     
+    /**
+     * Send request to add a comment to a project
+     * @param body
+     * @return JSON message with the add comment result
+     * @throws JSONException 
+     */
     @Path("/addComment")
     @POST
     @Consumes("application/json")
@@ -573,6 +649,13 @@ public class ApiBean {
         }
     }
     
+    /**
+     * Get login result
+     * @param user
+     * @param pword
+     * @return JSON message with the login results(invalid,not existing)
+     * @throws JSONException 
+     */
     @Path("/login")
     @GET
     @Produces("application/json")
@@ -612,6 +695,11 @@ public class ApiBean {
         }
     }
     
+    /**
+     * Create a Response to a get resource
+     * @param json
+     * @return 
+     */
     private Response getResponse(JSONObject json) {
         String ha = "Access-Control-Allow-Origin";
         String hb = "*";
@@ -620,6 +708,11 @@ public class ApiBean {
         return Response.status(200).header(ha, hb).header(hx, hy).entity(json.toString()).build();
     }
     
+    /**
+     * Create a Response to a post resource
+     * @param json
+     * @return 
+     */
     private Response postResponse(JSONObject json) {
         String ha = "Access-Control-Allow-Origin";
         String hb = "*";
@@ -628,6 +721,10 @@ public class ApiBean {
         return Response.status(201).header(ha, hb).header(hx, hy).entity(json.toString()).build();
     }
     
+    /**
+     * Create a Response to a option request
+     * @return 
+     */
     private Response optResponse() {
         String ha = "Access-Control-Allow-Origin";
         String hb = "*";
@@ -638,20 +735,42 @@ public class ApiBean {
         return Response.ok().header(ha, hb).header(hx, hy).header(hk,hw).build();
     }
    
+    /**
+     * Format the money values
+     * @param original
+     * @return string with the formated value
+     */
     private String moneyFormat(double original) {
         return String.format("%.2f", original);
     }
     
+    /**
+     * Format the money values
+     * @param original
+     * @return double with the formated value
+     */
     private double moneyFormatAsDouble(double original) {
         return Double.parseDouble(moneyFormat(original));
     }
     
+    /**
+     * Format the projects descriptions
+     * @param original
+     * @return String with the formated descriptions
+     */
     private String cleanDescription(String original) {
         return original.replace("\t", "\\t")
                        .replace("\r", "\\r")
                        .replace("\n", "\\n");
     }
     
+    /**
+     * Create a JSON error message
+     * @param message
+     * @param code
+     * @return JSONObject error
+     * @throws JSONException 
+     */
     private JSONObject createErrorMessage(String message, int code) throws JSONException{
         JSONObject error = new JSONObject();
         JSONObject tmp = new JSONObject();

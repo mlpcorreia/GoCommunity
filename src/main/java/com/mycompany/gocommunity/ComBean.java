@@ -11,10 +11,12 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
 /**
- *
- * @author Carlos
+ * Manage the web application resources
+ * @author Carlos Ferreira
+ * @author Daniel Silva
+ * @author Miguel Correia
+ * @author Pedro Nunes
  */
-
 @ManagedBean
 @ApplicationScoped
 public class ComBean {     

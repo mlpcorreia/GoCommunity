@@ -65,6 +65,5 @@ public class TestEntityClass implements Serializable {
     @Override
     public String toString() {
         return "db.TestEntityClass[ id=" + id + " ]";
-    }
-    
+    }   
 }

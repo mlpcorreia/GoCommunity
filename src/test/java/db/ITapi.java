@@ -19,8 +19,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 
 /**
- *
- * @author Carlos
+ * Set of API tests
  */
 public class ITapi {
     

@@ -12,8 +12,7 @@ import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 /**
- *
- * @author Carlos
+ * Manage the database
  */
 public class DatabaseHandler {
     
@@ -66,7 +65,9 @@ public class DatabaseHandler {
         List<Project> res = query.setParameter("n", "%"+search+"%").getResultList();
         if (!res.isEmpty()) {
             return res;
-        } else return new ArrayList<>();
+        } else {
+            return new ArrayList<>();
+        }
     }
     
     public Client login(String username, String word) {
@@ -76,7 +77,9 @@ public class DatabaseHandler {
         List<Client> res = query.setParameter("user", username).setParameter("word", word).getResultList();
         if (!res.isEmpty()) {
             return res.get(0);
-        } else return null;
+        } else {
+            return null;
+        }
     }
     
     public int apiChangeStance(long uid, long pid) {
@@ -114,7 +117,9 @@ public class DatabaseHandler {
         List<Client> res = query.setParameter("id", id).getResultList();
         if (!res.isEmpty()) {
             return res.get(0);
-        } else return null;
+        } else {
+            return null;
+        }
     }
     
     public Client apiGetUser(String username) {
@@ -124,7 +129,9 @@ public class DatabaseHandler {
         List<Client> res = query.setParameter("user", username).getResultList();
         if (!res.isEmpty()) {
             return res.get(0);
-        } else return null;
+        } else {
+            return null;
+        }
     }
     
     public Project apiGetProject(long id) {
@@ -134,7 +141,9 @@ public class DatabaseHandler {
         List<Project> res = query.setParameter("id", id).getResultList();
         if (!res.isEmpty()) {
             return res.get(0);
-        } else return null;
+        } else {
+            return null;
+        }
     }
     
     public Project apiGetProject(String name) {
@@ -145,7 +154,9 @@ public class DatabaseHandler {
 
         if (!res.isEmpty()) {
             return res.get(0);
-        } else return null;
+        } else {
+            return null;
+        }
     }
     
     public Project getProject(long id) {
@@ -167,7 +178,9 @@ public class DatabaseHandler {
         TypedQuery<Client> query = em.createQuery(
                 CLIENTNAMEQUERY, Client.class);
         
-        if (!query.setParameter("user", user.getUsername()).getResultList().isEmpty()) return false;
+        if (!query.setParameter("user", user.getUsername()).getResultList().isEmpty()) {
+            return false;
+        }
         
         em.getTransaction().begin();
         em.persist(user);
@@ -179,7 +192,9 @@ public class DatabaseHandler {
         TypedQuery<Client> query = em.createQuery(
                 CLIENTNAMEQUERY, Client.class);
         
-        if (!query.setParameter("user", user.getUsername()).getResultList().isEmpty()) return -1;
+        if (!query.setParameter("user", user.getUsername()).getResultList().isEmpty()) {
+            return -1;
+        }
         
         em.getTransaction().begin();
         em.persist(user);
@@ -193,7 +208,9 @@ public class DatabaseHandler {
     
     public boolean apiDonate(double amt, long pid) {
         Project aux = em.find(Project.class, pid);
-        if (aux==null) return false;
+        if (aux==null) {
+            return false;
+        }
         
         em.getTransaction().begin();
         aux.addToProgress(amt);
@@ -204,7 +221,9 @@ public class DatabaseHandler {
     
     public boolean apiAddMilestone(double amt, String desc, long pid) {
         Project aux = em.find(Project.class, pid);
-        if (aux==null) return false;
+        if (aux==null) {
+            return false;
+        }
         
         aux.addMilestone(amt, desc);
         updateField(aux, "milestones");
@@ -213,10 +232,14 @@ public class DatabaseHandler {
     
     public int apiAddComment(long uid, String content, long pid) {
         Client auxc = em.find(Client.class, uid);
-        if (auxc==null) return -1;
+        if (auxc==null) {
+            return -1;
+        }
         
         Project auxp = em.find(Project.class, pid);
-        if (auxp==null) return -2;
+        if (auxp==null) {
+            return -2;
+        }
         
         Comment c = new Comment(auxc, content);
         
@@ -232,10 +255,14 @@ public class DatabaseHandler {
         TypedQuery<Project> query = em.createQuery(
                PROJECTNAMEQUERY, Project.class);
         
-        if (!query.setParameter("name", p.getName()).getResultList().isEmpty()) return -1;
+        if (!query.setParameter("name", p.getName()).getResultList().isEmpty()){
+            return -1;
+        }
         
         Client c = em.find(Client.class, p.getOwner());
-        if (c==null) return -2;
+        if (c==null) {
+            return -2;
+        }
         
         em.getTransaction().begin();
         em.persist(p);
@@ -256,7 +283,9 @@ public class DatabaseHandler {
         TypedQuery<Project> query = em.createQuery(
                PROJECTNAMEQUERY, Project.class);
 
-        if (!query.setParameter("name", p.getName()).getResultList().isEmpty()) return -1;
+        if (!query.setParameter("name", p.getName()).getResultList().isEmpty()) {
+            return -1;
+        }
         
         em.getTransaction().begin();
         em.persist(p);
@@ -276,5 +305,4 @@ public class DatabaseHandler {
         auxp.addComment(c);       
         em.getTransaction().commit();
     }
-
 }
