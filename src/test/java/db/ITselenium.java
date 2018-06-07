@@ -1,89 +1,67 @@
 package db;
 
-import com.mycompany.gocommunity.DatabaseHandler;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import static org.junit.Assert.*;
 
-/**
- *
- * @author Carlos
- */
 public class ITselenium {
-  /*private WebDriver driver;
+  private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
-  private Random random = new Random();
-  private final DatabaseHandler db = new DatabaseHandler("go.odb");
-  EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("$objectdb/db/go.odb");
-        EntityManager em = emf.createEntityManager();
 
   @Before
   public void setUp() throws Exception {
-    System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-    driver = new ChromeDriver();
+    //System.setProperty("webdriver.gecko.driver", "/home/miguel/geckodriver.exe");
+    driver = new FirefoxDriver();
     baseUrl = "https://www.katalon.com/";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
   @Test
-  public void seleniumTest() throws Exception {
-    System.out.println("Selenium Test");
-    
-    String uname;
-    String pname;
-    
-    do { //randomly generate names until available ones are found
-        uname = randomName();
-        pname = randomName();
-    } while (db.apiGetUser(uname)!=null || db.apiGetProject(pname)!=null);
-
-    driver.get("http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT");
+  public void testCreateAccount() throws Exception {
+    driver.get("http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/");
     driver.findElement(By.linkText("Sign Up")).click();
+    driver.findElement(By.id("a:n")).click();
     driver.findElement(By.id("a:n")).clear();
-    driver.findElement(By.id("a:n")).sendKeys("Selenium User");
+    driver.findElement(By.id("a:n")).sendKeys("Selenium test");
+    driver.findElement(By.id("a:un")).click();
     driver.findElement(By.id("a:un")).clear();
-    driver.findElement(By.id("a:un")).sendKeys(uname);
+    driver.findElement(By.id("a:un")).sendKeys("seleniumtest");
+    driver.findElement(By.id("a:p")).click();
     driver.findElement(By.id("a:p")).clear();
-    driver.findElement(By.id("a:p")).sendKeys("password219380");
+    driver.findElement(By.id("a:p")).sendKeys("test123");
     driver.findElement(By.id("a:b")).click();
+    driver.findElement(By.linkText("Logout")).click();
+  }
+  
+  @Test
+  public void testFollowProject() throws Exception {
+    driver.get("http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/login.xhtml");
+    driver.findElement(By.name("j_idt7:j_idt9")).clear();
+    driver.findElement(By.name("j_idt7:j_idt9")).sendKeys("seleniumtest");
+    driver.findElement(By.name("j_idt7:j_idt11")).clear();
+    driver.findElement(By.name("j_idt7:j_idt11")).sendKeys("test123");
+    driver.findElement(By.name("j_idt7:j_idt13")).click();
+    driver.findElement(By.name("j_idt7:j_idt13")).click();
+    driver.findElement(By.name("j_idt7:j_idt9")).click();
     driver.findElement(By.linkText("New Project")).click();
+    driver.findElement(By.id("p:n")).click();
     driver.findElement(By.id("p:n")).clear();
-    driver.findElement(By.id("p:n")).sendKeys(pname);
+    driver.findElement(By.id("p:n")).sendKeys("Selenium Test Project");
+    driver.findElement(By.id("p:d")).click();
     driver.findElement(By.id("p:d")).clear();
-    driver.findElement(By.id("p:d")).sendKeys("This is the project's description. It's not very big but it gets the job done.");
+    driver.findElement(By.id("p:d")).sendKeys("Selenium Test Project");
+    driver.findElement(By.id("p:g")).click();
     driver.findElement(By.id("p:g")).clear();
-    driver.findElement(By.id("p:g")).sendKeys("3500.75");
+    driver.findElement(By.id("p:g")).sendKeys("9000");
+    driver.findElement(By.id("p:t")).click();
     driver.findElement(By.id("p:t")).clear();
-    int nextyear = Calendar.getInstance().get(Calendar.YEAR) + 1;
-    driver.findElement(By.id("p:t")).sendKeys(nextyear+"-06-06");
+    driver.findElement(By.id("p:t")).sendKeys("2018-09-01");
     driver.findElement(By.id("p:b")).click();
-    driver.findElement(By.linkText("Search Projects")).click();
-    driver.findElement(By.id("s:se")).click();
-    driver.findElement(By.id("s:se")).clear();
-    driver.findElement(By.id("s:se")).sendKeys(pname);
-    driver.findElement(By.id("s:b")).click();
-    List<WebElement> li = driver.findElements(By.cssSelector("input[type=submit]"));
-    li.get(1).click();
-    driver.findElement(By.id("p:mkey")).clear();
-    driver.findElement(By.id("p:mkey")).sendKeys("100.00");
-    driver.findElement(By.id("p:mtxt")).clear();
-    driver.findElement(By.id("p:mtxt")).sendKeys("A free t-shirt for every backer if we get this far.");
-    driver.findElement(By.id("p:madd")).click();
-    driver.findElement(By.id("p:cmttxt")).clear();
-    driver.findElement(By.id("p:cmttxt")).sendKeys("First comment!");
-    driver.findElement(By.id("p:cmtadd")).click();
-
+    driver.findElement(By.linkText("Logout")).click();
   }
 
   @After
@@ -94,31 +72,6 @@ public class ITselenium {
       fail(verificationErrorString);
     }
   }
-  
-  private int random(int min, int max) {
-        return random.nextInt(max + 1 - min) + min;
-    }
-    
-    private String randomName() {
-        int type;
-        StringBuilder sb = new StringBuilder("Selenium-");
-        
-        for (int i=0;i<20;i++) {
-            type = random.nextInt(3);
-            switch (type) {
-                case 0:
-                    sb.append(random(0,10));
-                    break;
-                case 1:
-                    sb.append((char) random(65,90));
-                    break;
-                default:
-                    sb.append((char) random(97,122));
-                    break;
-            }
-        }
-        return sb.toString();    
-    }
 
   private boolean isElementPresent(By by) {
     try {
@@ -151,6 +104,5 @@ public class ITselenium {
     } finally {
       acceptNextAlert = true;
     }
-  }*/
+  }
 }
-
