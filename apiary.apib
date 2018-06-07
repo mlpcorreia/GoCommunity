@@ -1,11 +1,11 @@
 FORMAT: 1A
-HOST: http://host//GoCommunity/api/data/
+HOST: http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data/
 
 # GoCommunity
 
-This is a simple API that allows consumers to retrieve public info about existing projects and users.
+This is a simple API that allows consumers to retrieve public info about existing projects and users, and create their owns accounts and projects.
 
-## Popular Projects [/popular]
+## Get Popular Projects [/popular]
 
 ### List Most Popular Projects [GET]
 
@@ -18,20 +18,48 @@ Returns an array with the 0-10 currently most popular projects.
                 {
                     "id": 1,
                     "name": "Example Project",
-                    "progress": 6222.00,
-                    "goal": 6500.00,
+                    "owner": 12,
+                    "description": "Text goes here.",
+                    "milestones": [
+                        {
+                            "10.00": "A prize."
+                        }
+                    ],
+                    "comments": [
+                        {
+                            "date": "Thu, 7 Jun 2018",
+                            "user": "Superuser",
+                            "content": "Some comment text here."
+                        }
+                    ],
+                    "progress": 6222,
+                    "goal": 6500,
                     "endsOn": "2018-10-25"
                 }, {
                     "id": 17,
                     "name": "Another Example Project",
-                    "progress": 3220.00,
-                    "goal": 125000.00,
+                    "owner": 15,
+                    "description": "A short sentence.",
+                    "milestones": [
+                        {
+                            "10.00": "A prize."
+                        }
+                    ],
+                    "comments": [
+                        {
+                            "date": "Thu, 7 Jun 2018",
+                            "user": "Superuser",
+                            "content": "Some comment text here."
+                        }
+                    ],
+                    "progress": 3220,
+                    "goal": 125000,
                     "endsOn": "2019-08-06"
                 }
             ]
         }
         
-## Users [/user/{username}]
+## Get Users [/user/{username}]
 
 ### Get User Info [GET]
 
@@ -43,7 +71,6 @@ The "username" parameter can be a long (id) or username (String).
 
         {
             "id": 1,
-            "username": "user1",
             "name": "John",
             "owns": [
                 1,
@@ -59,7 +86,7 @@ The "username" parameter can be a long (id) or username (String).
             ]
         }
         
-## Projects [/project/{name}]
+## Get Projects [/project/{name}]
 
 ### Get Project Info [GET]
 
@@ -83,18 +110,222 @@ The "name" parameter can be a long (id) or project name (String).
                     "100.00": "The biggest prize."
                 }
             ],
-            "goal": 750000.00,
-            "progress": 125.00,
+            "goal": 750000,
+            "progress": 125.15,
             "createdOn": "2018-05-17",
             "endsOn": "2026-10-10",
-            "followers": [
-                12,
-                26,
-                31,
-                52,
-                66,
-                1,
-                3,
-                17
+            "comments": [
+                {
+                    "date": "Thu, 7 Jun 2018",
+                    "user": "Superuser",
+                    "content": "Some comment text here."
+                }, {
+                    "date": "Thu, 5 Jun 2018",
+                    "user": "Someone",
+                    "content": "Another comment."
+                }
             ]
+        }
+        
+## Search Projects [/search/{query}]
+
+### Search for Projects [GET]
+
+Returns an array with every project whose name contains the query as a substring.
+
++ Response 200 (application/json)
+
+        {
+            "list": [
+                {
+                    "id": 1,
+                    "name": "Example Project",
+                    "owner": 12,
+                    "description": "Text goes here.",
+                    "milestones": [
+                        {
+                            "10.00": "A prize."
+                        }
+                    ],
+                    "comments": [
+                        {
+                            "date": "Thu, 7 Jun 2018",
+                            "user": "Superuser",
+                            "content": "Some comment text here."
+                        }
+                    ],
+                    "progress": 6222,
+                    "goal": 6500,
+                    "endsOn": "2018-10-25"
+                }, {
+                    "id": 17,
+                    "name": "Another Example Project",
+                    "owner": 15,
+                    "description": "A short sentence.",
+                    "milestones": [
+                        {
+                            "10.00": "A prize."
+                        }
+                    ],
+                    "comments": [
+                        {
+                            "date": "Thu, 7 Jun 2018",
+                            "user": "Superuser",
+                            "content": "Some comment text here."
+                        }
+                    ],
+                    "progress": 3220,
+                    "goal": 125000,
+                    "endsOn": "2019-08-06"
+                }
+            ]
+        }
+        
+## Follow Project [/follow]
+
+### Change User's Stance [POST]
+
+Invert a given user's (found by id) stance towards a particular project (also found by id).
+
+If it is invoked on a project that is being followed by the user, it will be unfollowed.
+
+If it's not being followed, it will become followed by that user.
+
++ Request (application/json)
+
+        {
+            "user": "10",
+            "project": "16"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "status": "followed"
+        }
+        
+## New Account [/createAccount]
+
+### Create an Account [POST]
+
+Creates a new account in the database. If successful, returns the account's id.
+
++ Request (application/json)
+
+        {
+            "user": "Real Name",
+            "username": "mysecretname",
+            "pword": "12345password"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "id": 144
+        }
+        
+## New Project [/createProject]
+
+### Create a Project [POST]
+
+Creates a new project in the database. If successful, returns the project's id.
+
+The user that owns this project is found by id.
+
++ Request (application/json)
+
+        {
+            "name": "Project's Name",
+            "desc": "Its description.",
+            "goal": "1755.25",
+            "date": "2018-12-12",
+            "owner": "21"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "id": 120
+        }
+        
+## Donate [/donate]
+
+### Donate to a Project [POST]
+
+Donate money to a project.
+
+The project is found by id.
+
++ Request (application/json)
+
+        {
+            "amount": "1.15",
+            "project": "20"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "status": "success"
+        }
+        
+## New Milestone [/addMilestone]
+
+### Add a Milestone to a Project [POST]
+
+Add a milestone to a project.
+
+The project is found by id.
+
++ Request (application/json)
+
+        {
+            "amount": "12500",
+            "desc": "A free pair of our special shoes.",
+            "project": "20"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "status": "success"
+        }
+        
+## New Comment [/addComment]
+
+### Add a Comment to a Project [POST]
+
+Add a comment to a project.
+
+Both the project and user are found by their ids.
+
++ Request (application/json)
+
+        {
+            "content": "Very nice!",
+            "user": "16",
+            "project": "20"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "status": "success"
+        }       
+     
+## Log In [/login?user={user}&pword={pword}]
+
+### Send a login attempt [GET]
+
+Try to log into the GoCommunity platform. 
+
+Too many (3) unsuccessful attempts in a row will block the account from logging in through the API for a period of 24 hours.
+
+A successful attempt will return the user's id.
+
++ Response 200 (application/json)
+
+        {
+            "status": "true",
+            "id": 26
         }
