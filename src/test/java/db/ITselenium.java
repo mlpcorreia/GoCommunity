@@ -18,7 +18,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
  * @author Carlos
  */
 public class ITselenium {
-  private WebDriver driver;
+  /*private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
@@ -152,6 +152,6 @@ public class ITselenium {
     } finally {
       acceptNextAlert = true;
     }
-  }
+  }*/
 }
 
