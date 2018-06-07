@@ -2,6 +2,7 @@ package db;
 
 import com.mycompany.gocommunity.DatabaseHandler;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
@@ -11,7 +12,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 /**
  *
@@ -30,10 +30,8 @@ public class ITselenium {
 
   @Before
   public void setUp() throws Exception {
-    //System.setProperty("webdriver.chrome.driver", "/home/chff/chromedriver");
-    ChromeOptions options = new ChromeOptions();
-    options.addArguments("--headless");
-    driver = new ChromeDriver(options);
+    System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+    driver = new ChromeDriver();
     baseUrl = "https://www.katalon.com/";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
@@ -75,7 +73,8 @@ public class ITselenium {
     driver.findElement(By.id("s:se")).clear();
     driver.findElement(By.id("s:se")).sendKeys(pname);
     driver.findElement(By.id("s:b")).click();
-    driver.findElement(By.id("s:pr")).click();
+    List<WebElement> li = driver.findElements(By.cssSelector("input[type=submit]"));
+    li.get(1).click();
     driver.findElement(By.id("p:mkey")).clear();
     driver.findElement(By.id("p:mkey")).sendKeys("100.00");
     driver.findElement(By.id("p:mtxt")).clear();
