@@ -11,13 +11,14 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 /**
  *
  * @author Carlos
  */
 public class ITselenium {
-  /*private WebDriver driver;
+  private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
@@ -29,8 +30,10 @@ public class ITselenium {
 
   @Before
   public void setUp() throws Exception {
-    System.setProperty("webdriver.chrome.driver", "/home/chff/chromedriver");
-    driver = new ChromeDriver();
+    //System.setProperty("webdriver.chrome.driver", "/home/chff/chromedriver");
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--headless");
+    driver = new ChromeDriver(options);
     baseUrl = "https://www.katalon.com/";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
@@ -47,7 +50,7 @@ public class ITselenium {
         pname = randomName();
     } while (db.apiGetUser(uname)!=null || db.apiGetProject(pname)!=null);
 
-    driver.get("http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/faces/api/data");
+    driver.get("http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT");
     driver.findElement(By.linkText("Sign Up")).click();
     driver.findElement(By.id("a:n")).clear();
     driver.findElement(By.id("a:n")).sendKeys("Selenium User");
@@ -149,6 +152,6 @@ public class ITselenium {
     } finally {
       acceptNextAlert = true;
     }
-  }*/
+  }
 }
 
