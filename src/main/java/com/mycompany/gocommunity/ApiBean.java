@@ -355,7 +355,7 @@ public class ApiBean {
         String desc;
         String goal;
         String date;
-        int owner;
+        String owner;
         
         JSONObject invalid = createErrorMessage("Invalid Parameters!", 404);
         JSONObject exists = createErrorMessage("Name already exists.", 404);
@@ -367,7 +367,7 @@ public class ApiBean {
             desc = body.getString("desc");
             goal = body.getString("goal");
             date = body.getString("date");
-            owner = body.getInt("owner");
+            owner = body.getString("owner");
         } catch (Exception e) {
            
             return postResponse(invalid);   
@@ -386,7 +386,7 @@ public class ApiBean {
         
         try {
             goalValue = Double.parseDouble(goal);
-            ownerId = (long) owner;
+            ownerId = Long.parseLong(owner);
             end = Date.valueOf(date);
         } catch (NumberFormatException e) {
             return postResponse(invalid);
