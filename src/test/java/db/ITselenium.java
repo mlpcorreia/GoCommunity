@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import static org.junit.Assert.*;
 
 public class ITselenium {
@@ -15,7 +16,9 @@ public class ITselenium {
   @Before
   public void setUp() throws Exception {
     //System.setProperty("webdriver.gecko.driver", "/home/miguel/geckodriver.exe");
-    driver = new FirefoxDriver();
+    FirefoxOptions options = new FirefoxOptions();
+    options.addArguments("--headless", "--disable-gpu");
+    driver = new FirefoxDriver(options);
     baseUrl = "https://www.katalon.com/";
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
