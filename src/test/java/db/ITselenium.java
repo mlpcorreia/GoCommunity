@@ -52,6 +52,9 @@ public class ITselenium {
     driver.findElement(By.id("p:t")).clear();
     driver.findElement(By.id("p:t")).sendKeys("2018-09-01");
     driver.findElement(By.id("p:b")).click();
+    driver.findElement(By.linkText("Dashboard")).click();
+    driver.findElement(By.name("j_idt7:j_idt13")).click();
+    driver.findElement(By.name("j_idt7:j_idt9")).click();
     driver.findElement(By.linkText("Search Projects")).click();
     driver.findElement(By.id("s:se")).click();
     driver.findElement(By.id("s:se")).clear();
