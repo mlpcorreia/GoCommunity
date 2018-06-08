@@ -57,8 +57,6 @@ public class ITselenium {
     driver.findElement(By.id("s:se")).clear();
     driver.findElement(By.id("s:se")).sendKeys("Seleni");
     driver.findElement(By.id("s:b")).click();
-    driver.findElement(By.name("s:j_idt15")).click();
-    driver.findElement(By.name("j_idt7:j_idt9")).click();
     driver.findElement(By.linkText("Logout")).click();
   }
 
