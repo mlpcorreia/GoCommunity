@@ -25,7 +25,7 @@ public class ITselenium {
 
   @Test
   public void testCreateAccount() throws Exception {
-    driver.get("http://192.168.160.226:8181/GoCommunity-1.0-SNAPSHOT/");
+    driver.get("http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/");
     driver.findElement(By.linkText("Sign Up")).click();
     driver.findElement(By.id("a:n")).click();
     driver.findElement(By.id("a:n")).clear();
