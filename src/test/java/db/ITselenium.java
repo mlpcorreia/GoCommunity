@@ -7,7 +7,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import static org.junit.Assert.*;
 
 public class ITselenium {
-  private WebDriver driver;
+  /*private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
@@ -104,5 +104,5 @@ public class ITselenium {
     } finally {
       acceptNextAlert = true;
     }
-  }
+  }*/
 }
