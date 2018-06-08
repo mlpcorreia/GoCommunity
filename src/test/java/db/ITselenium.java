@@ -37,33 +37,28 @@ public class ITselenium {
     driver.findElement(By.id("a:p")).clear();
     driver.findElement(By.id("a:p")).sendKeys("test123");
     driver.findElement(By.id("a:b")).click();
-    driver.findElement(By.linkText("Logout")).click();
-  }
-  
-  @Test
-  public void testFollowProject() throws Exception {
-    driver.get("http://deti-tqs-05.ua.pt:8181/GoCommunity-1.0-SNAPSHOT/login.xhtml");
-    driver.findElement(By.name("j_idt7:j_idt9")).clear();
-    driver.findElement(By.name("j_idt7:j_idt9")).sendKeys("seleniumtest");
-    driver.findElement(By.name("j_idt7:j_idt11")).clear();
-    driver.findElement(By.name("j_idt7:j_idt11")).sendKeys("test123");
-    driver.findElement(By.name("j_idt7:j_idt13")).click();
-    driver.findElement(By.name("j_idt7:j_idt13")).click();
-    driver.findElement(By.name("j_idt7:j_idt9")).click();
     driver.findElement(By.linkText("New Project")).click();
     driver.findElement(By.id("p:n")).click();
     driver.findElement(By.id("p:n")).clear();
     driver.findElement(By.id("p:n")).sendKeys("Selenium Test Project");
     driver.findElement(By.id("p:d")).click();
     driver.findElement(By.id("p:d")).clear();
-    driver.findElement(By.id("p:d")).sendKeys("Selenium Test Project");
+    driver.findElement(By.id("p:d")).sendKeys("Selenium Test Project Description");
     driver.findElement(By.id("p:g")).click();
     driver.findElement(By.id("p:g")).clear();
     driver.findElement(By.id("p:g")).sendKeys("9000");
     driver.findElement(By.id("p:t")).click();
+    driver.findElement(By.id("p:t")).click();
     driver.findElement(By.id("p:t")).clear();
     driver.findElement(By.id("p:t")).sendKeys("2018-09-01");
     driver.findElement(By.id("p:b")).click();
+    driver.findElement(By.name("j_idt7:j_idt13")).click();
+    driver.findElement(By.name("j_idt7:j_idt9")).click();
+    driver.findElement(By.linkText("Search Projects")).click();
+    driver.findElement(By.id("s:se")).click();
+    driver.findElement(By.id("s:se")).clear();
+    driver.findElement(By.id("s:se")).sendKeys("Seleni");
+    driver.findElement(By.id("s")).submit();
     driver.findElement(By.linkText("Logout")).click();
   }
 
